@@ -1,24 +1,21 @@
 <template>
-  <div>
-    <manageNav></manageNav>
-
-    <div class="contain-right">
-      <router-view></router-view>
-    </div>
+  <div class="contain-right">
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
   //vant
-  import manageNav from "./components/manageNav";
-  import contain from "./components/contain";
   export default {
+    data(){
+      return {
+
+      }
+    },
     components: {
-      manageNav,
-      contain
+      
     },
     methods: {
-     
     }
   }
 </script>

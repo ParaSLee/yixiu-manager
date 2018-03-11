@@ -41,6 +41,7 @@
     methods: {
       login(){
         this.loading = true;
+        this.$router.push("/home")
       }
     }
   }
