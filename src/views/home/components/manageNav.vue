@@ -1,9 +1,14 @@
 <template>
   <div class="manage-container">
     <div class="manage-left">
-      <router-link to="/home/adduser" tag="div" class="chosedTag"> 添加商户 </router-link>
-      <router-link to="/home/listmanage" tag="div"> 查删订单 </router-link>
-      <router-link to="/signin" tag="div"> 退出 </router-link>
+      <div 
+        v-for="(item, index) in items" 
+        @click="changeTage(index)"
+        :class="index == nowitem ? 'chosedTag' : ''"
+        :key="index"
+      > 
+        {{ item.name }} 
+      </div>
     </div>
   </div>
 </template>
@@ -13,14 +18,32 @@
   export default {
     data(){
       return {
+        nowitem: 0,
+        items:[
+          {
+            name:"添加商户",
+            url:"/home/adduser"
+          },
+          {
+            name:"查删订单",
+            url:"/home/listmanage"
+          },
+          {
+            name:"退出",
+            url:"/signin"
+          },
 
+        ]
       }
     },
     components: {
       
     },
     methods: {
-      
+      changeTage(index) {
+        this.nowitem = index;
+        this.$router.push(this.items[index].url)
+      },
     }
   }
 </script>
