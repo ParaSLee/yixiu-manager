@@ -1,0 +1,144 @@
+<template>
+  <div class="signin-container">
+    <div class="signin-box">
+      <h2 class="signin-title">登录</h2>
+      <div class="signin-content">
+        <p>账号：</p>
+        <input type="text" v-model="id">
+      </div>
+      <div class="signin-content">
+        <p>密码：</p>
+        <input type="password" v-model="password">
+      </div>
+      <div class="signin-content" @click="login">
+        <button>登录</button>
+      </div>
+
+    </div>
+    <div class="loadingBox"  v-if="loading">
+      <div class="Loading">
+        <van-loading color="black" size="70px"/>
+      </div>
+    </div>
+    
+  </div>
+</template>
+
+<script>
+  //vant
+  import { Loading } from 'vant';
+  export default {
+    data(){
+      return {
+        loading:false,
+        id:"",
+        password:""
+      }
+    },
+    components: {
+      [Loading.name]: Loading,
+    },
+    methods: {
+      login(){
+        this.loading = true;
+      }
+    }
+  }
+</script>
+
+<style scoped>
+  .signin-container{
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background-image: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
+    overflow: hidden;
+  }
+  .signin-box{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-left: -170px;
+    margin-top: -210px;
+    height: 420px;
+    width: 340px;
+    background-color: rgb(254, 240, 226);
+    -moz-box-shadow:0px 2px 1px #005792; 
+    -webkit-box-shadow:0px 2px 1px #005792; 
+    box-shadow:0px 2px 1px #005792;
+  }
+  .signin-title{
+    margin: 0;
+    padding: 0.4em 0 0.3em;
+    text-align: center;
+    font-weight: 300;
+    font-size: 3.5em;
+    color: #e75854;
+    font-family: "Microsoft YaHei"
+  }
+  .signin-content{
+    padding: 0px 30px 0 30px;
+    margin-bottom: 5px;
+  }
+  .signin-content p {
+    display: block;
+    padding: 10px 0 0;
+    color: #d5bba4;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: bold;
+    font-size: 1em;
+    line-height: 1.75;
+    text-align: left;    
+  }
+  .signin-content input{
+    padding: 10px;
+    width: 100%;
+    height: 52px;
+    border: 2px solid #ebd3bd;
+    background: transparent;
+    color: #b09a86;
+    font-weight: 300;
+    font-size: 2.2em;
+    line-height: normal;
+    box-sizing: border-box;
+  }
+  .signin-content input:focus{
+    outline-color: #e75854;
+    color: #e75854;
+  }
+  .signin-content button{
+    display: block;
+    height: 61px;
+    width: 100%;
+    border: none;
+    margin-top: 30px;
+    background: #e75854;
+    color: #f9f6e5;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 800;
+    font-size: 1.25em;
+    cursor: pointer;
+  }
+  .Loading{
+    position: relative;
+    top: 50%;
+    left: 50%;
+    margin-top: -35px;
+    margin-left: -35px;
+    border-radius: 50%;
+    overflow: hidden;
+    width: 70px;
+    height: 70px;
+    background-color: rgba(124, 124, 124, 1);
+  }
+  .loadingBox{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(124, 124, 124,0.2);
+  }
+  
+
+</style>
