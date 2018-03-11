@@ -52,7 +52,9 @@
     position: absolute;
     height: 100%;
     width: 100%;
-    background-image: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);
+    /*background-image: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);*/
+    /*background: rgb(58, 58, 58);*/
+    background: #2C2C2C;
     overflow: hidden;
   }
   .signin-box{
@@ -63,7 +65,8 @@
     margin-top: -210px;
     height: 420px;
     width: 340px;
-    background-color: rgb(254, 240, 226);
+    /*background-color: rgb(254, 240, 226);*/
+    background-color: #FCFCFC;
     -moz-box-shadow:0px 2px 1px #005792; 
     -webkit-box-shadow:0px 2px 1px #005792; 
     box-shadow:0px 2px 1px #005792;
@@ -74,7 +77,7 @@
     text-align: center;
     font-weight: 300;
     font-size: 3.5em;
-    color: #e75854;
+    color: #FF5F5F;
     font-family: "Microsoft YaHei"
   }
   .signin-content{
@@ -84,7 +87,7 @@
   .signin-content p {
     display: block;
     padding: 10px 0 0;
-    color: #d5bba4;
+    color: #BBBBBB;
     text-transform: uppercase;
     letter-spacing: 1px;
     font-weight: bold;
@@ -96,7 +99,7 @@
     padding: 10px;
     width: 100%;
     height: 52px;
-    border: 2px solid #ebd3bd;
+    border: 2px solid #BBBBBB;
     background: transparent;
     color: #b09a86;
     font-weight: 300;
@@ -105,8 +108,9 @@
     box-sizing: border-box;
   }
   .signin-content input:focus{
-    outline-color: #e75854;
-    color: #e75854;
+    outline-color: #1989AC;
+    border-color: #1989AC;
+    color: #1989AC;
   }
   .signin-content button{
     display: block;
@@ -114,7 +118,7 @@
     width: 100%;
     border: none;
     margin-top: 30px;
-    background: #e75854;
+    background: #FF5F5F;
     color: #f9f6e5;
     text-transform: uppercase;
     letter-spacing: 1px;

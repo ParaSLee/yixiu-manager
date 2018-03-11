@@ -11,11 +11,9 @@
 <script>
   //vant
   import manageNav from "./components/manageNav";
-  import contain from "./components/contain";
   export default {
     components: {
       manageNav,
-      contain
     },
     methods: {
      
