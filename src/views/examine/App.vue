@@ -21,14 +21,10 @@
         <mu-td>{{ shop.name }}</mu-td>
         <mu-td>{{ shop.contactNumber}}</mu-td>
         <mu-td>{{ shop.time}}</mu-td>
-        <mu-td v-if="shop.qualification" class="normal">
-          <span>正常</span>
-          <mu-icon-button tooltip="查看详情" tooltipPosition="bottom-right" touch @click="open(shop)" />
-            <sicon name="check" scale="2.3" class="checkI"></sicon>
-          </mu-icon-button>
-        </mu-td>
-        <mu-td  class="wait" v-else>
-          <span>待审核</span>
+        <mu-td>
+          <span v-if="shop.qualification===false" class="wait">待审核</span>
+          <span v-else-if="shop.qualification===0" class="unpass">未通过</span>
+          <span v-else-if="shop.qualification===1" class="normal">正常</span>
           <mu-icon-button tooltip="查看详情" tooltipPosition="bottom-right" touch @click="open(shop)" />
             <sicon name="check" scale="2.3" class="checkI"></sicon>
           </mu-icon-button>
@@ -74,7 +70,7 @@
             // name:"", //店铺名
             // createdAt:"",  建立时间
             // time:"", 用于显示的时间
-            // qualification: "",   是否通过审核
+            // qualification: "",   是否通过审核  false未审核  0未通过  1通过
             // _id:"",   传入的ID
             // id:"",   用于显示的ID
             // contactNumber:"",   联系方式
@@ -180,11 +176,14 @@
     margin-bottom: -5px;
     margin-left: -38px;
   }
-  .normal span{
+  .normal{
     color: #17B978;
   }
-  .wait span{
+  .wait{
     color: #EC7700;
+  }
+  .unpass{
+    color: #E43A19;
   }
   .myinput{
     position: absolute;

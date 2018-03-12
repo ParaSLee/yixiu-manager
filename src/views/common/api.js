@@ -118,10 +118,10 @@ export function getShopData(shopId) {
 }
 
 
-//上传证书
-export function updatafile(data) {
+//更改商户信息
+export function changeState(data) {
   return new Promise((resolve, reject) => {
-    ajax.post(`${url}/upload/shop/certificate/`,data).then((res) => {
+    ajax.post(`${url}/shop/update`,data).then((res) => {
       resolve(res);
     }).then((err) => {
       reject(err);

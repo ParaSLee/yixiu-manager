@@ -32,29 +32,32 @@
     </p>
     <p class="dialogBox">
       <span class="messageTitle">商户证书：</span> 
-      <span v-if="shopData.certificate !='' && shopData.certificate && shopData.certificate!=null">
-        {{ shopData.certificate }}
-      </span>
-      <span v-else>
+      <span>
         <van-uploader :after-read="onRead" accept="image/gif, image/jpeg" multiple>
           <van-icon name="photograph" />
         </van-uploader>
-
         <!-- <input name="file" type="file" accept="image/png,image/gif,image/jpeg" @change="update"/> -->
       </span>
+      <span>
+        {{ shopData.certificate }}
+      </span>
     </p>
-    <p class="dialogBox">
+    <p class="dialogBox checkBox">
       <span class="messageTitle">商户状态：</span> 
-      <span v-if="shopData.qualification">
-        正常
+      <span v-if="!changestateShow">
+        <span v-if="shopData.qualification===false" class="wait">待审核</span>
+        <span v-else-if="shopData.qualification===0" class="unpass">未通过</span>
+        <span v-else-if="shopData.qualification===1" class="normal">正常</span>
+        <mu-flat-button label="修改状态" class="demo-flat-button changestateBtn" @click="chosestate" />
       </span>
-      <span v-else>
-        未审核
+      <span v-else class="changestateBox">
+        <mu-radio label="未通过" name="group" nativeValue="0" v-model="chosevalue" class="demo-radio"/>
+        <mu-radio label="正常" name="group" nativeValue="1" v-model="chosevalue" class="demo-radio"/>
+        
+        <mu-raised-button label="取消" class="demo-raised-button" @click="closechosestate" />
+        <mu-raised-button label="更新" class="demo-raised-button" @click="changestate" primary/>
       </span>
     </p>
-
-    
-
     <mu-flat-button slot="actions" @click="close" primary label="关闭"/>
   </mu-dialog>
 
@@ -63,7 +66,7 @@
 
 <script>
 import { Uploader, Icon } from 'vant';
-import { updatafile } from '../../common/api'
+import { changeState } from '../../common/api'
 import axios from 'axios'
 
   export default {
@@ -73,7 +76,11 @@ import axios from 'axios'
     },
     data(){
       return {
-
+        chosevalue:-1,
+        changestateShow:false,
+        shop:{
+          qualification: null
+        }
       }
     },
     components: {
@@ -109,9 +116,11 @@ import axios from 'axios'
       //    // console.log(response.data)
       //   })
       // },
+      //关闭dialog
       close(){
         this.$emit("close")
       },
+      //传递照片
       onRead(file,content){
         let fd = new FormData();
 
@@ -126,9 +135,38 @@ import axios from 'axios'
         .then(res => {
           console.log(res);
         })
+      },
+      //改变状态
+      chosestate(){
+        this.changestateShow = true;
+      },
+      //关闭更改状态
+      closechosestate(){
+        this.changestateShow = false;
+        this.chosevalue = -1;
+        this.shop.qualification = null;
+      },
+      //更新状态
+      changestate(){
+        if(this.chosevalue===false){
+          alert("尚未选择");
+        }else if (this.shop.qualification == this.chosevalue) {
+          alert("没有改变状态")
+        }else{
+          this.shop.qualification = this.chosevalue;
+          changeState(this.shop.qualification).then(res => {
+            console.log(res)
+          },(err => {
+            console.log(err)
+          }))
+        }
+        
+        // changeState()
       }
     },
     created(){ 
+      this.chosevalue = this.shopData.qualification;
+      this.shop.qualification = this.chosevalue;
     }
   }
 </script>
@@ -138,7 +176,7 @@ import axios from 'axios'
     font-size: 18px;
     margin-bottom: 5px;
     padding-bottom: 5px;
-    border-bottom: 1px solid rgba(153, 153, 153,0.1);
+    border-bottom: 0.5px solid rgba(153, 153, 153,0.1);
   }
   .messageTitle{
     display: inline-block;
@@ -149,5 +187,31 @@ import axios from 'axios'
   .cover{
     max-width: 200px;
     max-height: 200px; 
+  }
+  .normal{
+    color: #17B978;
+  }
+  .wait{
+    color: #EC7700;
+  }
+  .unpass{
+    color: #E43A19;
+  }
+  .changestateBtn{
+    margin-left: 10px;
+  }
+  .checkBox{
+    display: flex;
+    align-items: center;
+  }
+  .changestateBox{
+    display: flex;
+    align-items: center;
+  }
+  .changestateBox label{
+    margin-right: 10px;
+  }
+  .changestateBox button{
+    margin-left: 10px;
   }
 </style>
