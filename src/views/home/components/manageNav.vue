@@ -21,7 +21,7 @@
         nowitem: 0,
         items:[
           {
-            name:"添加商户",
+            name:"商户管理",
             url:"/home/adduser"
           },
           {
