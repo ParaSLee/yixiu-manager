@@ -25,6 +25,10 @@
             url:"/home/adduser"
           },
           {
+            name:"商户审核",
+            url:"/home/examine"
+          },
+          {
             name:"查删订单",
             url:"/home/listmanage"
           },

@@ -1,7 +1,7 @@
 import ajaxLib from '../../lib/ajax';
 const ajax = ajaxLib.ajax;
-const url = 'https://m.yixiutech.com';
-// const url = "https://yixiu.natappvip.cc";
+// const url = 'https://m.yixiutech.com';
+const url = "https://yixiu.natappvip.cc";
 
 //获取商家列表
 export function getShopList() {
@@ -14,16 +14,7 @@ export function getShopList() {
   });
 }
 
-//获取商家详情
-export function getShopData(shopId) {
-  return new Promise((resolve, reject) => {
-    ajax.get(`${url}/shop/${shopId}`).then((res) => {
-      resolve(res);
-    }).then((err) => {
-      reject(err);
-    })
-  })
-}
+
 
 //  获取手机品牌
 export function getPhoneBrand(shopid) {
@@ -72,6 +63,27 @@ export function getChildrenProblem(data) {
   })
 }
 
+//  确认下单
+export function sureOrder(data) {
+  return new Promise((resolve, reject) => {
+    ajax.post(`${url}/order/service`, data).then((res) => {
+      resolve(res);
+    }).then((err) => {
+      reject(err);
+    })
+  })
+}
+
+
+
+/******************************************************/
+/******************************************************/
+/******************************************************/
+/******************************************************/
+
+
+
+
 //根据筛选条件获取商家列表
 export function getShopListSort(data) {
   return new Promise((resolve, reject) => {
@@ -83,14 +95,37 @@ export function getShopListSort(data) {
   })
 }
 
-
-//  确认下单
-export function sureOrder(data) {
+//获取商家总数
+export function getShopListAllNumber() {
   return new Promise((resolve, reject) => {
-    ajax.post(`${url}/order/service`, data).then((res) => {
+    ajax.get(`${url}/shop/count`).then((res) => {
       resolve(res);
     }).then((err) => {
       reject(err);
     })
   })
 }
+
+//通过商家ID获取商家详情
+export function getShopData(shopId) {
+  return new Promise((resolve, reject) => {
+    ajax.get(`${url}/shop/${shopId}`).then((res) => {
+      resolve(res);
+    }).then((err) => {
+      reject(err);
+    })
+  })
+}
+
+
+//上传证书
+export function updatafile(data) {
+  return new Promise((resolve, reject) => {
+    ajax.post(`${url}/upload/shop/certificate/`,data).then((res) => {
+      resolve(res);
+    }).then((err) => {
+      reject(err);
+    })
+  })
+}
+

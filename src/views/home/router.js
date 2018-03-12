@@ -5,6 +5,7 @@
 import App from './App'
 import adduser from "../adduser/App"
 import listmanage from "../listmanage/App"
+import examine from "../examine/App"
 
 export default [{
   path: '/home',
@@ -23,6 +24,11 @@ export default [{
       name: "listmanage",
   		path: "listmanage",
   		component: listmanage
-  	}
+  	},
+    {
+      name: "examine",
+      path: "examine",
+      component: examine
+    }
   ]
 }]

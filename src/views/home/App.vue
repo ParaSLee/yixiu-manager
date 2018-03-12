@@ -24,7 +24,6 @@
 <style scoped>
   .contain-right{
     position: absolute;
-    width: 100%;
     height: 100%;
     margin-left: 288px;
     background: #fff;
