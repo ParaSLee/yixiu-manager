@@ -1,7 +1,7 @@
 import ajaxLib from '../../lib/ajax';
 const ajax = ajaxLib.ajax;
-// const url = 'https://m.yixiutech.com';
-const url = "https://yixiu.natappvip.cc";
+const url = 'https://m.yixiutech.com';
+// const url = "https://yixiu.natappvip.cc";
 
 //获取商家列表
 export function getShopList() {
@@ -131,7 +131,7 @@ export function changeState(data) {
 
 
 //根据筛选条件获取订单列表
-export function getOrderList(data) {
+export function getOrderListData(data) {
   return new Promise((resolve, reject) => {
     ajax.post(`${url}/order/service/filter`, data).then((res) => {
       resolve(res);

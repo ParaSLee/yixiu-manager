@@ -1,32 +1,43 @@
 <template>
 <div>
-  <mu-text-field hintText="搜索商户" v-model="searchText"/>
-  <mu-raised-button label="返回全部" @click="returnAll" v-if="returnAllShow" class="returnBtn" primary/>
+  <div class="serchBox">
+    <p style="color:rgb(185, 185, 185);margin-bottom:10px;">商户ID和用户id至少填一个,但是不能同时填入</p>
+    <mu-text-field hintText="根据商户ID搜索" v-model="searchShop" :disabled="searchUser!=''"/>
+
+    <mu-text-field hintText="根据用户ID搜索" v-model="searchUser" :disabled="searchShop!=''"/>
+
+    <mu-raised-button label="搜索" @click="toSearch" class="returnBtn" primary/>
+    
+    <mu-raised-button label="清空" @click="clearBtn" class="returnBtn"/>
+
+    <mu-circular-progress :size="40" v-if="circleShow" class="circleBox"/>
+  </div>
 
   <br/>
-  <input type="text" v-model="searchText" @keyup.enter="toSearch" class="myinput">
 
   <mu-table multiSelectable enableSelectAll ref="table" class="listTable" :height="'660px'" @rowSelection="addID">
     <mu-thead>
       <mu-tr>
-        <mu-th>ID</mu-th>
-        <mu-th>商户名</mu-th>
-        <mu-th>联系方式</mu-th>
+        <mu-th>订单号</mu-th>
+        <mu-th>支付方式</mu-th>
         <mu-th>创建时间</mu-th>
-        <mu-th>商家状态</mu-th>
+        <mu-th>总金额</mu-th>
+        <mu-th>对方名称</mu-th>
+        <mu-th>备注</mu-th>
+        <mu-th>订单状态</mu-th>
       </mu-tr>
     </mu-thead>
     <mu-tbody>
-      <mu-tr v-for="shop in shopData" :key="shop._id" >
-        <mu-td>{{ shop.id }}</mu-td>
-        <mu-td>{{ shop.name }}</mu-td>
-        <mu-td>{{ shop.contactNumber}}</mu-td>
-        <mu-td>{{ shop.time}}</mu-td>
+      <mu-tr v-for="order in orderData" :key="order._id" >
+        <mu-td>{{ order.id }}</mu-td>
+        <mu-td>{{ order.paymentTypeW }}</mu-td>
+        <mu-td>{{ order.time }}</mu-td>
+        <mu-td>{{ order.price/100 }}</mu-td>
+        <mu-td>{{ order.name }}</mu-td>
+        <mu-td>{{ order.remark }}</mu-td>
         <mu-td>
-          <span v-if="shop.qualificationState==='待审核'" class="wait">待审核</span>
-          <span v-else-if="shop.qualificationState==='未通过'" class="unpass">未通过</span>
-          <span v-else-if="shop.qualificationState==='正常'" class="normal">正常</span>
-          <mu-icon-button tooltip="查看详情" tooltipPosition="bottom-right" touch @click.capture="open(shop)" />
+          {{ order.stateW }}
+          <mu-icon-button tooltip="查看详情" tooltipPosition="bottom-right" touch @click.capture="open(order)" />
             <sicon name="check" scale="2.3" class="checkI"></sicon>
           </mu-icon-button>
         </mu-td>
@@ -38,20 +49,26 @@
     <mu-raised-button label="删除订单" class="demo-raised-button" secondary @click="delShop"/>
   </div>
   
-  <mu-circular-progress :size="40" v-if="circleShow" class="circleBox"/>
+  
 
 
-  <Mdialog @close="close" :shopData="signalShop" :dialog="dialog"></Mdialog>
+  <Mdialog @close="close" :orderData="signalOrder" :dialog="dialog"></Mdialog>
 
-  <mu-pagination :total="total" :current="current" @pageChange="handleClick" class="ManagePagination">
-  </mu-pagination>
+  <div class="ManagePagination">
+    <mu-raised-button v-if="nextpage" label="点击加载更多" class="demo-raised-button" @click="moreSearch" :disabled="loading" primary/>
+    <mu-raised-button v-else label="已无法获取更多内容" class="demo-raised-button" disabled/>
+  </div>
 
   <mu-dialog :open="dialog2" title="尚未选择要删除的内容" @close="nodelcolse">
     <mu-flat-button slot="actions" primary @click="nodelcolse" label="确定"/>
   </mu-dialog>
 
+  <mu-dialog :open="dialog4" title="请输入要查询的内容" @close="nosearch">
+    <mu-flat-button slot="actions" primary @click="nosearch" label="确定"/>
+  </mu-dialog>
+
   <mu-dialog :open="dialog3" title="确定要删除吗？" @close="delcolse">
-    <p v-for="list in delshopList">{{ shopData[list].name }}</p>
+    <p v-for="list in delshopList">订单号：{{ orderData[list]._id }}</p>
     <mu-flat-button slot="actions" @click="delcolse" primary label="取消"/>
     <mu-flat-button slot="actions" primary @click="delOK" secondary label="删除"/>
   </mu-dialog>
@@ -59,41 +76,37 @@
 </template>
 
 <script>
-  import { 
-    getOrderList, 
-    getShopListAllNumber,
-  } from '../common/api'
+  import { getOrderListData } from '../common/api'
   import Mdialog from "./components/dialog"
 
   export default {
     data(){
       return {
-        searchText:"",  //搜索的文字
-        returnAllShow:false,
+        searchShop:"5aa27cf18d78c262b3f19937",
+        searchUser:"",
+        loading:true,
+        nextpage:true,
         circleShow:false,  //数据读取中
         dialog: false,    //弹窗
         dialog2:false,   //点击删除却没有选择内容的时候
         dialog3:false,   //取消删除
-        total: 10,    //总页数
-        current: 1,   //当前页数
-        findshopLish:{
-          // name: "",
+        dialog4:false,   //没有查询内容
+        findorderList:{
           limit:10,//一次获取列表的条数,系统默认为10
           skip:0//跳过几个数据,系统默认为0
         },
-        shopData:[
-          {
-            // name:"", //店铺名
-            // createdAt:"",  建立时间
-            // time:"", 用于显示的时间
-            // qualificationState: "",   是否通过审核  false未审核  0未通过  1通过
-            // _id:"",   传入的ID
-            // id:"",   用于显示的ID
-            // contactNumber:"",   联系方式
-          }
+        orderData:[
+          // {
+            // paymentType:""  //付款方式
+            // remark:""  备注
+            // price:0   总金额，优惠券前
+            // payment:0   实付金额
+            // state:"",  订单状态
+            // _id:"",   订单id
+          // }
         ],
-        //单个shop信息
-        signalShop:{},
+        //单个order信息
+        signalOrder:{},
         delshopList:[]//存储要删除Shop的ID
       }
     },
@@ -101,55 +114,121 @@
       Mdialog
     },
     methods: {
-      //点击页码
-      handleClick (newIndex) {
-        this.findshopLish.limit = 10*newIndex;
-        this.findshopLish.skip = this.findshopLish.limit-10;
-        this.getShopList(this.findshopLish);
-      },
       //获取10条商家内容
-      getShopList (pickData){
+      getOrderList (pickData,type){
         this.circleShow = true;
-        getOrderList(pickData).then(res => {
-          this.listShopData(res)
+        getOrderListData(pickData).then(res => {
+          this.listOrderData(res, type)
         },(err => {
           console.log(err)
         }))
+      },
+      //填入获取到的内容
+      inputArr(Arr){
+        Arr.time = this.datestr(Arr.createdAt,"yyyy.MM.d hh:mm");
+
+        Arr.id = this.idstr(Arr._id);
+
+        if (Arr.paymentType===0) {
+          Arr.paymentTypeW = "在线支付";
+        }else if (Arr.paymentType===1){
+          Arr.paymentTypeW = "线下支付";
+        }else if (Arr.paymentType===2){
+          Arr.paymentTypeW = "修好后支付";
+        }
+
+        if(this.searchShop!=""){
+          Arr.name = Arr.user.name;
+        }else if(this.searchUser!=""){
+          Arr.name = 123;
+        }
+
+        if (Arr.serviceWay=="1") {
+          Arr.serviceWayW = "上门服务";
+        }else if (Arr.serviceWay=="2"){
+          Arr.serviceWayW = "自行到店";
+        }else{
+          Arr.serviceWayW = "其他";
+        }
+
+        switch(Arr.state){
+          case 10:
+            Arr.stateW="待付款";
+            break;
+          case 11:
+            Arr.stateW="已付款";
+            break;
+          case 12:
+            Arr.stateW="维修中";
+            break;
+          case 13:
+            Arr.stateW="已完成";
+            break;
+          case 14:
+            Arr.stateW="待评价";
+            break;
+          case 15:
+            Arr.stateW="评价完成";
+            break;
+          case 100:
+            Arr.stateW="已取消";
+            break;
+          case 101:
+            Arr.stateW="已关闭";
+            break;
+          case 102:
+            Arr.stateW="退款中";
+            break;
+        }
       },
       //显示商家内容
-      listShopData (Arr){
+      listOrderData (Arr,type){
+        // console.log(Arr)
         for(let i in Arr){
-          Arr[i].time = this.datestr(Arr[i].createdAt,"yyyy.MM.d");
-          Arr[i].id = this.idstr(Arr[i]._id);
+          this.inputArr(Arr[i])
         }
-        this.shopData = Arr;
+        this.orderData = Arr;
+        console.log(this.orderData)
+        // if (type==="增加") {
+        //   if (Arr.length < 10) {
+        //     this.nextpage = false;
+        //   }
+        //   this.orderData = this.orderData.concat(Arr);
+        //   this.loading=false;
+        // }else{
+        //   this.orderData = Arr;
+        //   if (Arr.length < 10) {
+        //     this.nextpage = false;
+        //   }
+        //   this.loading=false;
+        // }
+
+        // this.delshopList = [];
         this.circleShow = false;
-        this.delshopList = [];
+      },    
+      //搜索更多
+      moreSearch(){
+
       },
-      //获取商家总数
-      getShopNumber (){
-        getShopListAllNumber().then(res => {
-          this.total = res;
-        },(err => {
-          console.log(err)
-        }))
-      },
-      //返回全部搜索
-      returnAll(){
-        delete this.findshopLish.name;
-        this.findshopLish.limit=10;
-        this.findshopLish.skip=0;
-        this.getShopList(this.findshopLish);
-        this.returnAllShow = false;
-        this.searchText = "";
-      },      
       //搜索
       toSearch(){
-        this.findshopLish.name=this.searchText;
-        this.findshopLish.limit=10;
-        this.findshopLish.skip=0;
-        this.getShopList(this.findshopLish)
-        this.returnAllShow = true;
+        if (this.searchShop!=="") {
+          this.findorderList.shop = this.searchShop.replace(/\s/g, "");
+        }else if(this.searchUser!==""){
+          this.findorderList.user = this.searchUser.replace(/\s/g, "");
+        }else{
+          this.dialog4 = true;
+        }
+
+        this.findorderList.limit=10;
+        this.findorderList.skip=0;
+        this.getOrderList(this.findorderList)
+      },
+      //清空
+      clearBtn(){
+        this.searchShop = "";
+        this.searchUser = "";
+        this.orderData = []
       },
       //添加删除ID
       addID(list){
@@ -159,7 +238,7 @@
       delShop(){
         let delData = [];
         for(let ind in this.delshopList){
-          delData[ind] = this.shopData[ind]._id;
+          delData[ind] = this.orderData[ind]._id;
         }
         if (!delData || delData.length === 0) {
           this.dialog2 = true;
@@ -171,33 +250,32 @@
         
       },
       //弹出
-      open (shopData) {
+      open (orderData) {
         this.dialog = true;
-        this.signalShop = shopData;
-        console.log(this.signalShop);
+        this.signalOrder = orderData;
+        console.log(this.signalOrder);
       },
       //关闭
       close () {
         this.dialog = false;
-        this.signalShop = {};
+        // this.signalOrder = {};
       },
       nodelcolse(){
         this.dialog2 = false;
       },
       delcolse(){
         this.dialog3 = false;
+      },
+      nosearch(){
+        this.dialog4 = false;
       }
-    },
-    created(){ 
-      this.getShopNumber();
-      this.getShopList(this.findshopLish)
     }
   }
 </script>
 
 <style scoped>
   .listTable{
-    margin-top: 30px;
+    /*margin-top: 30px;*/
   }
   .mu-table tbody{
     line-height: 48px;
@@ -212,6 +290,7 @@
   }
   .circleBox{
     position: absolute;
+    margin-left: 10px;
   }
   .checkI{
     margin-bottom: -5px;

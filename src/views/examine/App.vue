@@ -17,7 +17,7 @@
   
   <mu-circular-progress :size="40" v-if="circleShow" class="circleBox"/>
 
-  <mu-table enableSelectAll  :showCheckbox="false" ref="table" class="listTable" :height="'660px'">
+  <mu-table enableSelectAll :showCheckbox="false" ref="table" class="listTable" :height="'660px'">
     <mu-thead>
       <mu-tr>
         <mu-th>ID</mu-th>
@@ -102,7 +102,7 @@
           skip:0//跳过几个数据,系统默认为0
         },
         shopData:[
-          {
+          // {
             // name:"", //店铺名
             // createdAt:"",  建立时间
             // time:"", 用于显示的时间
@@ -110,7 +110,7 @@
             // _id:"",   传入的ID
             // id:"",   用于显示的ID
             // contactNumber:"",   联系方式
-          }
+          // }
         ],
         //单个shop信息
         signalShop:{},
@@ -158,8 +158,6 @@
         }
         // this.delshopList = [];
         this.circleShow = false;
-        
-        
       },
       //获取商家总数
       getShopNumber (){

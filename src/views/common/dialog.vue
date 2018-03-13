@@ -1,7 +1,7 @@
 <template>
 <div>
   <mu-dialog :open="dialog" title="商户详情" @close="close" scrollable>   
-    <p class="dialogBox">
+    <p class="dialogBox canchose">
       <span class="messageTitle">商户ID：</span> 
       {{ shopData._id }}
     </p>
@@ -15,7 +15,7 @@
         尚未添加
       </span>
     </p>
-    <p class="dialogBox">
+    <p class="dialogBox canchose">
       <span class="messageTitle">商户名：</span> 
       {{ shopData.name }}
     </p>
@@ -24,7 +24,7 @@
       <span class="messageTitle">商户封面：</span> 
       <img :src="shopData.cover" class="cover" @click="lookImg(shopData.cover)">
     </p>
-    <p class="dialogBox">
+    <p class="dialogBox canchose">
       <span class="messageTitle">商户联系方式：</span> 
       {{ shopData.contactNumber }}
     </p>
@@ -181,6 +181,11 @@ import axios from 'axios'
 </script>
 
 <style scoped>
+  .canchose{
+    -moz-user-select: text;
+    -khtml-user-select: text;
+    user-select: text;
+  }
   .dialogBox{
     font-size: 18px;
     margin-bottom: 5px;
