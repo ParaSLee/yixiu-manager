@@ -129,3 +129,14 @@ export function changeState(data) {
   })
 }
 
+
+//根据筛选条件获取订单列表
+export function getOrderList(data) {
+  return new Promise((resolve, reject) => {
+    ajax.post(`${url}/order/service/filter`, data).then((res) => {
+      resolve(res);
+    }).then((err) => {
+      reject(err);
+    })
+  })
+}

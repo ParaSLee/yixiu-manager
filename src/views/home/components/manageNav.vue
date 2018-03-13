@@ -18,10 +18,10 @@
   export default {
     data(){
       return {
-        nowitem: 0,
+        nowitem: null,
         items:[
           {
-            name:"商户管理",
+            name:"添加商户",
             url:"/home/adduser"
           },
           {
@@ -45,9 +45,23 @@
     },
     methods: {
       changeTage(index) {
+        console.log(this.nowitem);
         this.nowitem = index;
         this.$router.push(this.items[index].url)
       },
+      changeTag(url){
+        
+      }
+    },
+    created(){
+      if (this.$route.path === "/home/adduser") {
+        this.nowitem = 0
+      }else if(this.$route.path === "/home/examine") {
+        this.nowitem = 1
+      }else if(this.$route.path === "/home/listmanage") {
+        this.nowitem = 2
+      }
+      // this.changeTag(this.$route.path);
     }
   }
 </script>
