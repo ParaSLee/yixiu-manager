@@ -15,7 +15,7 @@
 
   <br/>
 
-  <mu-table multiSelectable enableSelectAll ref="table" class="listTable" :height="'660px'" @rowSelection="addID">
+  <mu-table multiSelectable enableSelectAll :showCheckbox="false" ref="table" class="listTable" :height="'660px'" @rowSelection="addID">
     <mu-thead>
       <mu-tr>
         <mu-th>订单号</mu-th>
@@ -45,9 +45,9 @@
     </mu-tbody>
   </mu-table>
 
-  <div class="deleteShopBtn">
+  <!-- <div class="deleteShopBtn">
     <mu-raised-button label="删除订单" class="demo-raised-button" secondary @click="delShop"/>
-  </div>
+  </div> -->
   
   
 
