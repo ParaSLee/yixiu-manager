@@ -116,11 +116,7 @@
       </p>
     </div>
     <mu-flat-button slot="actions" @click="close" primary label="关闭"/>
-    
   </mu-dialog>
-
-  
-
 </div>
 </template>
 
@@ -159,8 +155,6 @@
     font-size: 18px;
     margin-bottom: 5px;
     padding-bottom: 5px;
-    /*border-bottom: 0.5px solid rgba(153, 153, 153,0.3);*/
-
     display: flex;
     align-items: center;
 

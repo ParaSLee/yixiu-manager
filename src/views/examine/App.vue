@@ -58,7 +58,7 @@
   </mu-pagination>
 
   <div v-else class="ManagePagination">
-    <mu-raised-button v-if="nextpage" label="更多" class="demo-raised-button" @click="moreSearch" :disabled="loading"/>
+    <mu-raised-button v-if="nextpage" label="获取更多内容" primary class="demo-raised-button" @click="moreSearch" :disabled="loading"/>
     <mu-raised-button v-else label="已无法获取更多内容" class="demo-raised-button" disabled/>
   </div>
   

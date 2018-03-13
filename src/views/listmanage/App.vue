@@ -82,7 +82,7 @@
   export default {
     data(){
       return {
-        searchShop:"5aa27cf18d78c262b3f19937",
+        searchShop:"",
         searchUser:"",
         loading:true,
         nextpage:true,
@@ -183,51 +183,54 @@
       },
       //显示商家内容
       listOrderData (Arr,type){
-        // console.log(Arr)
         for(let i in Arr){
           this.inputArr(Arr[i])
         }
-        this.orderData = Arr;
-        console.log(this.orderData)
-        // if (type==="增加") {
-        //   if (Arr.length < 10) {
-        //     this.nextpage = false;
-        //   }
-        //   this.orderData = this.orderData.concat(Arr);
-        //   this.loading=false;
-        // }else{
-        //   this.orderData = Arr;
-        //   if (Arr.length < 10) {
-        //     this.nextpage = false;
-        //   }
-        //   this.loading=false;
-        // }
-
-        // this.delshopList = [];
+        if (type==="增加") {
+          if (Arr.length < 10) {
+            this.nextpage = false;
+          }
+          this.orderData = this.orderData.concat(Arr);
+        }else{
+          this.orderData = Arr;
+          this.delshopList = [];
+          if (Arr.length < 10) {
+            this.nextpage = false;
+          }
+        }
+        this.loading=false;
         this.circleShow = false;
       },    
       //搜索更多
       moreSearch(){
-
+        this.findorderList.limit+=10;
+        this.findorderList.skip+=0;
+        this.getOrderList(this.findorderList,"增加")
       },
       //搜索
       toSearch(){
+        this.loading = true;
+        this.findorderList.limit=10;
+        this.findorderList.skip=0;
         if (this.searchShop!=="") {
           this.findorderList.shop = this.searchShop.replace(/\s/g, "");
+          this.getOrderList(this.findorderList)
         }else if(this.searchUser!==""){
           this.findorderList.user = this.searchUser.replace(/\s/g, "");
+          this.getOrderList(this.findorderList)
         }else{
           this.dialog4 = true;
         }
-
-        this.findorderList.limit=10;
-        this.findorderList.skip=0;
-        this.getOrderList(this.findorderList)
+        console.log(this.findorderList)
       },
       //清空
       clearBtn(){
         this.searchShop = "";
         this.searchUser = "";
+        this.nextpage = true;
+        this.loading = true;
+        delete this.findorderList.shop;
+        delete this.findorderList.user;
         this.orderData = []
       },
       //添加删除ID
