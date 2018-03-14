@@ -96,14 +96,14 @@
           skip:0//跳过几个数据,系统默认为0
         },
         orderData:[
-          {
+          // {
             // paymentType:""  //付款方式
             // remark:""  备注
             // price:0   总金额，优惠券前
             // payment:0   实付金额
             // state:"",  订单状态
             // _id:"",   订单id
-          }
+          // }
         ],
         //单个order信息
         signalOrder:{},
