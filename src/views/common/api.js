@@ -71,3 +71,14 @@ export function getAllOrderListData(data) {
     })
   })
 }
+
+// 管理员登录
+export function managerlogin(data) {
+  return new Promise((resolve, reject) => {
+    ajax.post(`${url}/user/login/sys`, data).then((res) => {
+      resolve(res);
+    }).then((err) => {
+      reject(err);
+    })
+  })
+}

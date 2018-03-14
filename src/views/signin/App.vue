@@ -3,11 +3,11 @@
     <div class="signin-box">
       <h2 class="signin-title">登录</h2>
       <div class="signin-content">
-        <p>账号：</p>
+        <p>账号：<span v-if="idText">{{idText}}</span></p>
         <input type="text" v-model="id">
       </div>
       <div class="signin-content">
-        <p>密码：</p>
+        <p>密码：<span v-if="passwordText">{{passwordText}}</span></p>
         <input type="password" v-model="password">
       </div>
       <div class="signin-content" @click="login">
@@ -27,9 +27,14 @@
 <script>
   //vant
   import { Loading } from 'vant';
+  import md5 from "js-md5";
+  import { managerlogin } from '../common/api'
+
   export default {
     data(){
       return {
+        idText:"",
+        passwordText:"",
         loading:false,
         id:"",
         password:""
@@ -41,7 +46,43 @@
     methods: {
       login(){
         this.loading = true;
-        this.$router.push("/home")
+        console.log(this.password);
+        console.log(this.id);
+        if (this.id==="" && this.password==="") {
+          this.idText="用户名不能为空";
+          this.passwordText="密码不能为空";
+        }else if (this.id==="") {
+          this.idText="用户名不能为空";
+          this.passwordText="";
+        }else if(this.password===""){
+          this.idText="";
+          this.passwordText="密码不能为空";
+        }else{
+          this.idText="";
+          this.passwordText="";
+          let accound = {
+            username: this.id,
+            password: md5(this.password)
+          }
+          console.log(accound);
+
+          managerlogin(accound).then(res => {
+            if (res.errMsg == "用户不存在") {
+              this.idText="用户不存在";
+              this.passwordText="";
+            }else if(res.errMsg == "密码错误"){
+              this.idText="";
+              this.passwordText="密码错误";
+            }else{
+              this.$router.push("/home")
+            }
+            console.log(res)
+
+          },(err => {
+            console.log(err)
+          }))
+        }
+        this.loading = false;
       }
     }
   }
@@ -83,6 +124,9 @@
   .signin-content{
     padding: 0px 30px 0 30px;
     margin-bottom: 5px;
+  }
+  .signin-content span{
+    color: #FF5F5F
   }
   .signin-content p {
     display: block;
