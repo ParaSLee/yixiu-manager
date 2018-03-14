@@ -13,39 +13,39 @@
       <div class="dialogBland"></div>
       <p class="dialogBox canchose">
         <span class="messageTitle">订单ID：</span> 
-        {{ orderData._id }}
+        {{ signalorderData._id }}
       </p>
       <p class="dialogBox">
         <span class="messageTitle">订单状态：</span> 
-        {{ orderData.stateW }}
+        {{ signalorderData.stateW }}
       </p>
       <p class="dialogBox">
         <span class="messageTitle">创建时间：</span> 
-        {{ orderData.time }}
+        {{ signalorderData.time }}
       </p>
       <div class="dialogBland2 bottomline"></div>
       <div class="dialogBland2"></div>
       <p class="dialogBox">
         <span class="messageTitle">用户昵称：</span> 
-        {{ orderData.user.name }}
+        {{ signalorderData.user.name }}
       </p>
       <p class="dialogBox">
         <span class="messageTitle">店铺名称：</span> 
-        {{ orderData.shop.name }}
+        {{ signalorderData.shop.name }}
       </p>
       <div class="dialogBland2 bottomline"></div>
       <div class="dialogBland2"></div>
       <p class="dialogBox">
         <span class="messageTitle">总金额：</span> 
-        {{ orderData.price/100 }} 元
+        {{ signalorderData.price/100 }} 元
       </p>
       <p class="dialogBox">
         <span class="messageTitle">实付金额：</span> 
-        {{ orderData.payment/100 }} 元
+        {{ signalorderData.payment/100 }} 元
       </p>
       <p class="dialogBox">
         <span class="messageTitle">交易方式：</span> 
-        {{ orderData.paymentTypeW }}
+        {{ signalorderData.paymentTypeW }}
       </p>
     </div>
 
@@ -54,19 +54,19 @@
       <div class="dialogBland"></div>
       <p class="dialogBox canchose">
         <span class="messageTitle">用户ID：</span> 
-        {{ orderData.user._id }}
+        {{ signalorderData.user._id }}
       </p>
       <p class="dialogBox">
         <span class="messageTitle">用户昵称：</span> 
-        {{ orderData.user.name }}
+        {{ signalorderData.user.name }}
       </p>
       <p class="dialogBox canchose">
         <span class="messageTitle">用户电话：</span> 
-        {{ orderData.user.mobile }}
+        {{ signalorderData.user.mobile }}
       </p>
       <p class="dialogBox canchose">
         <span class="messageTitle">用户邮箱：</span> 
-        {{ orderData.user.email }}
+        {{ signalorderData.user.email }}
       </p>
       <div class="dialogBland"></div>
       <div class="dialogBland"></div>
@@ -77,15 +77,15 @@
       <div class="dialogBland"></div>
       <p class="dialogBox canchose">
         <span class="messageTitle">店铺ID：</span> 
-        {{ orderData.shop._id }}
+        {{ signalorderData.shop._id }}
       </p>
       <p class="dialogBox">
         <span class="messageTitle">店铺名称：</span> 
-        {{ orderData.shop.name }}
+        {{ signalorderData.shop.name }}
       </p>
       <p class="dialogBox canchose">
         <span class="messageTitle">店铺联系方式：</span> 
-        {{ orderData.shop.contactNumber }}
+        {{ signalorderData.shop.contactNumber }}
       </p>
       <div class="dialogBland"></div>
     </div>
@@ -94,16 +94,16 @@
       <div class="dialogBland"></div>
       <p class="dialogBox">
         <span class="messageTitle">服务方式：</span> 
-        {{ orderData.serviceWayW }}
+        {{ signalorderData.serviceWayW }}
       </p>
       <p class="dialogBox">
         <span class="messageTitle">手机属性：</span> 
-        {{ orderData.phoneModel.name }} &nbsp; 
-        {{ orderData.phoneModel.color[0] }} &nbsp;
+        {{ signalorderData.phoneModel.name }} &nbsp; 
+        {{ signalorderData.phoneModel.color[0] }} &nbsp;
       </p>
       <div class="dialogBox">
         <span class="messageTitle">服务内容：</span> 
-        <div v-for="serviceOrder in orderData.service" class="divflex">
+        <div v-for="serviceOrder in signalorderData.service" class="divflex">
           <span class="messageTitle">名称：{{ serviceOrder.name }}</span> 
           <span class="messageTitle">金额：{{ serviceOrder.price }} 元</span> 
         </div>
@@ -112,7 +112,7 @@
       <div class="dialogBland2"></div>
       <p class="dialogBox">
         <span class="messageTitle">备注：</span> 
-        {{ orderData.remark }}
+        {{ signalorderData.remark }}
       </p>
     </div>
     <mu-flat-button slot="actions" @click="close" primary label="关闭"/>
@@ -123,7 +123,7 @@
 <script>
   export default {
     props:{
-      orderData:Object,
+      signalorderData:Object,
       dialog:Boolean
     },
     data(){
@@ -136,6 +136,7 @@
     methods: {
       //关闭dialog
       close(){
+        // this.signalorderData = [];
         this.$emit("close")
       },
       handleTabChange (val) {

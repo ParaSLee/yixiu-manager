@@ -2,9 +2,9 @@
 <div>
   <div class="serchBox">
     <p style="color:rgb(185, 185, 185);margin-bottom:10px;">商户ID和用户id至少填一个,但是不能同时填入</p>
-    <mu-text-field hintText="根据商户ID搜索" v-model="searchShop" :disabled="searchUser!=''"/>
+    <mu-text-field hintText="根据商户名搜索" v-model="searchShop" :disabled="searchUser!=''"/>
 
-    <mu-text-field hintText="根据用户ID搜索" v-model="searchUser" :disabled="searchShop!=''"/>
+    <mu-text-field hintText="根据用户手机号搜索" v-model="searchUser" :disabled="searchShop!=''"/>
 
     <mu-raised-button label="搜索" @click="toSearch" class="returnBtn" primary/>
     
@@ -15,7 +15,7 @@
 
   <br/>
 
-  <mu-table multiSelectable enableSelectAll :showCheckbox="false" ref="table" class="listTable" :height="'660px'" @rowSelection="addID">
+  <mu-table multiSelectable enableSelectAll :showCheckbox="false" ref="table" class="listTable" :height="'660px'">
     <mu-thead>
       <mu-tr>
         <mu-th>订单号</mu-th>
@@ -28,7 +28,7 @@
       </mu-tr>
     </mu-thead>
     <mu-tbody>
-      <mu-tr v-for="order in orderData" :key="order._id" >
+      <mu-tr v-for="(order,index) in orderData" :key="index">
         <mu-td>{{ order.id }}</mu-td>
         <mu-td>{{ order.paymentTypeW }}</mu-td>
         <mu-td>{{ order.time }}</mu-td>
@@ -52,31 +52,31 @@
   
 
 
-  <Mdialog @close="close" :orderData="signalOrder" :dialog="dialog"></Mdialog>
+  <Mdialog @close="close" :signalorderData="signalOrder" :dialog="dialog"></Mdialog>
 
   <div class="ManagePagination">
     <mu-raised-button v-if="nextpage" label="点击加载更多" class="demo-raised-button" @click="moreSearch" :disabled="loading" primary/>
     <mu-raised-button v-else label="已无法获取更多内容" class="demo-raised-button" disabled/>
   </div>
 
-  <mu-dialog :open="dialog2" title="尚未选择要删除的内容" @close="nodelcolse">
+<!--   <mu-dialog :open="dialog2" title="尚未选择要删除的内容" @close="nodelcolse">
     <mu-flat-button slot="actions" primary @click="nodelcolse" label="确定"/>
-  </mu-dialog>
+  </mu-dialog> -->
 
   <mu-dialog :open="dialog4" title="请输入要查询的内容" @close="nosearch">
     <mu-flat-button slot="actions" primary @click="nosearch" label="确定"/>
   </mu-dialog>
 
-  <mu-dialog :open="dialog3" title="确定要删除吗？" @close="delcolse">
+<!--   <mu-dialog :open="dialog3" title="确定要删除吗？" @close="delcolse">
     <p v-for="list in delshopList">订单号：{{ orderData[list]._id }}</p>
     <mu-flat-button slot="actions" @click="delcolse" primary label="取消"/>
     <mu-flat-button slot="actions" primary @click="delOK" secondary label="删除"/>
-  </mu-dialog>
+  </mu-dialog> -->
 </div>
 </template>
 
 <script>
-  import { getOrderListData } from '../common/api'
+  import { getOrderListData,getAllOrderListData } from '../common/api'
   import Mdialog from "./components/dialog"
 
   export default {
@@ -96,18 +96,18 @@
           skip:0//跳过几个数据,系统默认为0
         },
         orderData:[
-          // {
+          {
             // paymentType:""  //付款方式
             // remark:""  备注
             // price:0   总金额，优惠券前
             // payment:0   实付金额
             // state:"",  订单状态
             // _id:"",   订单id
-          // }
+          }
         ],
         //单个order信息
         signalOrder:{},
-        delshopList:[]//存储要删除Shop的ID
+        // delshopList:[]//存储要删除Shop的ID
       }
     },
     components: {
@@ -117,7 +117,7 @@
       //获取10条商家内容
       getOrderList (pickData,type){
         this.circleShow = true;
-        getOrderListData(pickData).then(res => {
+        getAllOrderListData(pickData).then(res => {
           this.listOrderData(res, type)
         },(err => {
           console.log(err)
@@ -213,10 +213,10 @@
         this.findorderList.limit=10;
         this.findorderList.skip=0;
         if (this.searchShop!=="") {
-          this.findorderList.shop = this.searchShop.replace(/\s/g, "");
+          this.findorderList.shopName = this.searchShop.replace(/\s/g, "");
           this.getOrderList(this.findorderList)
         }else if(this.searchUser!==""){
-          this.findorderList.user = this.searchUser.replace(/\s/g, "");
+          this.findorderList.phone = this.searchUser.replace(/\s/g, "");
           this.getOrderList(this.findorderList)
         }else{
           this.dialog4 = true;
@@ -229,10 +229,11 @@
         this.searchUser = "";
         this.nextpage = true;
         this.loading = true;
-        delete this.findorderList.shop;
-        delete this.findorderList.user;
-        this.orderData = []
+        delete this.findorderList.shopName;
+        delete this.findorderList.phone;
+        this.orderData = [];
       },
+      /*
       //添加删除ID
       addID(list){
         this.delshopList = list
@@ -252,6 +253,7 @@
       delOK(){
         
       },
+      */
       //弹出
       open (orderData) {
         this.dialog = true;
