@@ -33,6 +33,10 @@
             url:"/home/listmanage"
           },
           {
+            name:"问题审核",
+            url:"/home/questionexamine"
+          },
+          {
             name:"退出",
             url:"/signin"
           },
@@ -60,6 +64,8 @@
         this.nowitem = 1
       }else if(this.$route.path === "/home/listmanage") {
         this.nowitem = 2
+      }else if(this.$route.path === "/home/questionexamine") {
+        this.nowitem = 3
       }
       // this.changeTag(this.$route.path);
     }

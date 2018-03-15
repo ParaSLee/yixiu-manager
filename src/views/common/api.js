@@ -1,7 +1,7 @@
 import ajaxLib from '../../lib/ajax';
 const ajax = ajaxLib.ajax;
-const url = 'https://m.yixiutech.com';
-// const url = "https://yixiu.natappvip.cc";
+// const url = 'https://m.yixiutech.com';
+const url = "https://yixiu.natappvip.cc";
 
 
 //根据筛选条件获取商家列表
@@ -81,4 +81,26 @@ export function managerlogin(data) {
       reject(err);
     })
   })
+}
+
+// 根据筛选条件获取问题详情
+export function getQuestionList(data){
+  return new Promise((resolve, reject) => {
+    ajax.post(`${url}/question/filter`,data).then((res) => {
+      resolve(res);
+    }).then((err) => {
+      reject(err);
+    });
+  });
+}
+
+// 修改问题信息
+export function updateQuestion(data){
+  return new Promise((resolve, reject) => {
+    ajax.post(`${url}/question/update`,data).then((res) => {
+      resolve(res);
+    }).then((err) => {
+      reject(err);
+    });
+  });
 }

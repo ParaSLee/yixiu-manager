@@ -96,6 +96,7 @@ import axios from 'axios'
         bigImgUrl:"",
         chosevalue:-1,
         changestateShow:false,
+        oldqualificationState:"",
         shop:{
           qualificationState: "待审核",
           _id:"",
@@ -144,12 +145,13 @@ import axios from 'axios'
       //改变状态
       chosestate(){
         this.changestateShow = true;
+        this.oldqualificationState = this.shop.qualificationState
       },
       //关闭更改状态
       closechosestate(){
         this.changestateShow = false;
         this.chosevalue = -1;
-        this.shop.qualificationState = "待审核";
+        this.shop.qualificationState = this.oldqualificationState;
       },
       //更新状态
       changestate(){
