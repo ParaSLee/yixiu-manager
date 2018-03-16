@@ -7,9 +7,9 @@
     </p>
     <p class="dialogBox">
       <span class="messageTitle">商户身份证：</span> 
-      <span v-if="shopData.certificate && shopData.certificate.length != 0">
-        <img :src="shopData.certificate" class="beforeImg" @click="lookImg(shopData.certificate)">
-        <img :src="shopData.certificate" class="beforeImg" @click="lookImg(shopData.certificate)">
+      <span v-if="thephoto.idcarda && thephoto.idcarda.length != 0">
+        <img :src="thephoto.idcarda" class="beforeImg" @click="lookImg(thephoto.idcarda)">
+        <img :src="thephoto.idcardb" class="beforeImg" @click="lookImg(thephoto.idcardb)">
       </span>
       <span v-else>
         尚未添加
@@ -39,8 +39,8 @@
           <van-icon name="photograph" />
         </van-uploader>
       </span> -->
-      <span v-if="shopData.certificate && shopData.certificate.length != 0">
-        <img :src="shopData.certificate" class="beforeImg" @click="lookImg(shopData.certificate)">
+      <span v-if="thephoto.certificate && thephoto.certificate.length != 0">
+        <img :src="thephoto.certificate" class="beforeImg" @click="lookImg(thephoto.certificate)">
       </span>
       <span v-else>
         尚未添加
@@ -48,8 +48,8 @@
     </p>
     <p class="dialogBox">
       <span class="messageTitle">营业执照：</span> 
-      <span v-if="shopData.certificate && shopData.certificate.length != 0">
-        <img :src="shopData.certificate" class="beforeImg" @click="lookImg(shopData.certificate)">
+      <span v-if="thephoto.certificate && thephoto.certificate.length != 0">
+        <img :src="thephoto.certificate" class="beforeImg" @click="lookImg(thephoto.certificate)">
       </span>
       <span v-else>
         尚未添加
@@ -93,6 +93,14 @@ import axios from 'axios'
     },
     data(){
       return {
+        thephoto:{
+          idcarda:"",
+          idcardb:"",
+          license:"",
+          certificate:"",
+          protocol:"",
+          bigImgUrl:"",
+        },
         bigImgUrl:"",
         chosevalue:-1,
         changestateShow:false,
@@ -122,26 +130,26 @@ import axios from 'axios'
         this.bigImgUrl = ""
       },
       //传递照片
-      onRead(file,content){
-        let fd = new FormData();
+      // onRead(file,content){
+      //   let fd = new FormData();
 
-        let a = {
-          name:"certificate",
-          data:file.file
-        }
+      //   let a = {
+      //     name:"certificate",
+      //     data:file.file
+      //   }
         
-        fd.append('file', file.file);
-        fd.append("_id", this.shopData._id);
+      //   fd.append('file', file.file);
+      //   fd.append("_id", this.shopData._id);
 
-        let config = {
-          headers: {'Content-Type': 'multipart/form-data'}
-        }
-        console.log(fd.get('_id'))
-        axios.post('https://yixiu.natappvip.cc/upload/shop/certificate/', fd, config)
-        .then(res => {
-          console.log(res);
-        })
-      },
+      //   let config = {
+      //     headers: {'Content-Type': 'multipart/form-data'}
+      //   }
+      //   console.log(fd.get('_id'))
+      //   axios.post('https://yixiu.natappvip.cc/upload/shop/certificate/', fd, config)
+      //   .then(res => {
+      //     console.log(res);
+      //   })
+      // },
       //改变状态
       chosestate(){
         this.changestateShow = true;
@@ -173,9 +181,26 @@ import axios from 'axios'
         }
         
         // changeState()
+      },
+      enterPhoto(){
+        for(let ind of this.shopData.certificate){
+          if (ind.name=="idcard1") {
+            this.thephoto.idcarda = ind.src
+          }else if(ind.name=="idcard2"){
+            this.thephoto.idcardb = ind.src
+          }else if(ind.name=="license"){
+            this.thephoto.license = ind.src
+          }else if(ind.name=="certificate"){
+            this.thephoto.certificate = ind.src
+          }else if(ind.name=="protocol"){
+            this.thephoto.protocol = ind.src
+          }
+        }
       }
     },
     created(){ 
+      
+      this.enterPhoto();
       this.chosevalue = this.shopData.qualificationState;
       this.shop.qualificationState = this.chosevalue;
     }
