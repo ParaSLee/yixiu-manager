@@ -34,8 +34,9 @@
         <mu-td>{{ quetion.id }}</mu-td>
         <mu-td class="texthidden">{{ quetion.title }}</mu-td>
         <mu-td class="texthidden">{{ quetion.intro }}</mu-td>
-        <mu-td class="texthidden">{{ quetion.author.name}}</mu-td>
-        <mu-td class="texthidden">{{ quetion.time}}</mu-td>
+        <mu-td class="texthidden" v-if="quetion.author!=null">{{ quetion.author.name }}</mu-td>
+        <mu-td class="texthidden" v-else>无</mu-td>
+        <mu-td class="texthidden">{{ quetion.time }}</mu-td>
         <mu-td>
           <span :class="stateStyle[quetion.state]">{{ stateText[quetion.state] }}</span>
           <mu-icon-button tooltip="查看详情" tooltipPosition="bottom-right" touch @click.capture="open(quetion)"/>
@@ -87,6 +88,7 @@
           limit:10, //一次获取列表的条数,系统默认为10
           skip:0 //跳过几个数据,系统默认为0
         },
+        author:[],
         questionData:[],
         //单个quetion信息
         signalquetion:{},
@@ -115,12 +117,19 @@
       },
       //显示问题内容
       listquestionData (Arr,type){
-        console.log(Arr)
+        // console.log(Arr)
         for(let i in Arr){
+          
+          // if (Arr[i].author==null) {
+          //   this.author = this.author.concat("{name:'无'}")
+          // }else{
+          //   this.author = this.author.concat(Arr[i].author);
+          // }
           Arr[i].time = this.datestr(Arr[i].createdAt,"yyyy.MM.d");
           Arr[i].id = this.idstr(Arr[i]._id);
           Arr[i].intro = this.delHTML(Arr[i].info)
         }
+        console.log(this.author)
         if (type==="增加") {
           if (Arr.length < 10) {
             this.nextpage = false;

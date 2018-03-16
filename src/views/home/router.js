@@ -12,9 +12,9 @@ export default [{
   path: '/home',
   component: App,
   redirect: '/home/adduser',
-  meta: {
-    keepAlive: true // 需要被缓存
-  },
+  // meta: {
+  //   keepAlive: true // 需要被缓存
+  // },
   children:[
   	{
       name: "adduser",
