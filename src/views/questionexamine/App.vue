@@ -128,6 +128,9 @@
           Arr[i].time = this.datestr(Arr[i].createdAt,"yyyy.MM.d");
           Arr[i].id = this.idstr(Arr[i]._id);
           Arr[i].intro = this.delHTML(Arr[i].info)
+          for(let index in Arr[i].image){
+            Arr[i].info = Arr[i].info.concat(`<img src='${Arr[i].image[index]}'>`)
+          }
         }
         console.log(this.author)
         if (type==="增加") {
