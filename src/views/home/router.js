@@ -9,6 +9,8 @@ import examine from "../examine/App"
 import questionexamine from "../questionexamine/App"
 import phonebrand from "../phonebrand/App"
 import phonemodel from "../phonemodel/App"
+import service from "../service/App"
+import serviceClassification from "../serviceClassification/App"
 
 export default [{
   path: '/home',
@@ -47,6 +49,17 @@ export default [{
       name: "phonemodel",
       path: "phonemodel",
       component: phonemodel
+    },
+    {
+      name: "service",
+      path: "service",
+      component: service
+    },
+    {
+      name: "serviceClassification",
+      path: "serviceClassification",
+      component: serviceClassification
     }
+
   ]
 }]

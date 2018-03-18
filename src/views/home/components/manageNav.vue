@@ -45,6 +45,14 @@
             url:"/home/phonemodel"
           },
           {
+            name:"维修分类管理",
+            url:"/home/serviceClassification"
+          },
+          {
+            name:"维修内容管理",
+            url:"/home/service"
+          },
+          {
             name:"退出",
             url:"/signin"
           },
@@ -78,7 +86,12 @@
         this.nowitem = 4
       }else if(this.$route.path === "/home/phonemodel") {
         this.nowitem = 5
+      }else if(this.$route.path === "/home/serviceClassification") {
+        this.nowitem = 6
+      }else if(this.$route.path === "/home/service") {
+        this.nowitem = 7
       }
+
       // this.changeTag(this.$route.path);
     }
   }
