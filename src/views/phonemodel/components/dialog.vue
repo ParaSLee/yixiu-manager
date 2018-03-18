@@ -2,7 +2,7 @@
 <div>
   <mu-dialog :open="dialog" @close="close" scrollable>
     <div slot="title" class="titleBox">
-      品牌详情
+      型号详情
       <mu-flat-button label="修改信息" class="demo-flat-button changebtn blueBtn" v-if="!changebtnShow" @click="confirmchange"/>
       <span class="changebtn" v-else>
         <mu-flat-button label="取消" class="demo-flat-button" @click="closeChange"/>
@@ -11,34 +11,46 @@
       <mu-circular-progress :size="40" v-if="circleShow" class="circleBox changebtn"/>
     </div>
     <p class="dialogBox canchose topItem">
-      <span class="messageTitle">品牌ID：</span> 
-      {{ phonebrandData._id }}
+      <span class="messageTitle">型号ID：</span> 
+      {{ phoneModelData._id }}
     </p>
 
     <p class="dialogBox canchose">
-      <span class="messageTitle">手机品牌：</span> 
-      <span v-if="!changebtnShow">{{ phonebrandData.name }}</span>
+      <span class="messageTitle">手机型号：</span> 
+      <span v-if="!changebtnShow">{{ phoneModelData.name }}</span>
       <mu-text-field v-else v-model="newBrandData.name"/>
     </p>
+
     <p class="dialogBox canchose">
-      <span class="messageTitle">英文名：</span> 
-      <span v-if="!changebtnShow">{{ phonebrandData.alias }}</span>
-      <mu-text-field v-else v-model="newBrandData.alias"/>
+      <span class="messageTitle">别名：</span> 
+      <span v-if="!changebtnShow">{{ phoneModelData.alias ? phoneModelData.alias : '无' }}</span>
+      <mu-text-field v-else v-model="newBrandData.alias" hintText="(选填)"/>
     </p>
+
+    <p class="dialogBox canchose">
+      <span class="messageTitle">型号颜色：</span> 
+      <span v-if="!changebtnShow">
+        <span v-for="item in phoneModelData.color">{{ item }} </span>
+      </span>
+      <mu-text-field v-else v-model="newcolor" label="请用1个空格隔开不同颜色"/>
+    </p>
+
     <p class="dialogBox canchose">
       <span class="messageTitle">描述：</span> 
-      <span v-if="!changebtnShow">{{ phonebrandData.desc ? phonebrandData.desc : '无' }}</span>
-      <mu-text-field v-else v-model="newBrandData.desc"/>
+      
+      <span v-if="!changebtnShow">{{ phoneModelData.desc ? phoneModelData.desc : '无' }}</span>
+      <mu-text-field v-else v-model="newBrandData.desc" hintText="(选填)"/>
     </p>
-    
+
     <p class="dialogBox">
-      <span class="messageTitle">品牌封面：</span> 
+      <span v-if="!changebtnShow" class="messageTitle">封面：</span> 
+      <span v-else class="messageTitle">封面(选填)：</span> 
       <span v-if="!changebtnShow"> 
-        <img :src="phonebrandData.cover" class="cover" @click="lookImg(phonebrandData.cover)">
+        <img :src="phoneModelData.cover ? phoneModelData.cover: ''" class="cover" @click="lookImg(phoneModelData.cover)">
       </span>
       
       <span v-else class="photobox"> 
-        <img :src="newBrandData.cover" class="cover" @click="lookImg(phonebrandData.cover)">
+        <img :src="newBrandData.cover" class="cover" @click="lookImg(phoneModelData.cover)">
         <van-uploader :after-read="onRead" accept="image/jpeg,image/png,image/jpg">
           <van-icon name="photograph" />
         </van-uploader>
@@ -47,12 +59,14 @@
     </p>
 
     <p class="dialogBox">
-      <span class="messageTitle">品牌添加时间：</span> 
-      {{ phonebrandData.time }}
+      <span class="messageTitle">型号添加时间：</span> 
+      {{ phoneModelData.time }}
     </p>
-    <mu-flat-button label="删除该品牌" class="demo-flat-button delbtn" @click="confirmdel" secondary/>
-    <mu-flat-button slot="actions" @click="close" label="关闭"/>
+
     <seebigphoto v-if="bigImgUrl!==''" :imgurl="bigImgUrl" @closeimg="closeimg"></seebigphoto>
+
+    <mu-flat-button label="删除该型号" class="demo-flat-button delbtn" @click="confirmdel" secondary/>
+    <mu-flat-button slot="actions" @click="close" label="关闭"/>
   </mu-dialog>
 
 
@@ -67,14 +81,14 @@
 </template>
 
 <script>
-import { delPhoneBrand,updataPhoneBrand } from '../../common/api'
+import { delPhoneModel,updataPhoneModel } from '../../common/api'
 import seebigphoto from "../../common/seeBigPhoto"
 import axios from 'axios'
 import { Uploader,Icon } from 'vant';
 
   export default {
     props:{
-      phonebrandData:Object,
+      phoneModelData:Object,
       dialog:Boolean
     },
     data(){
@@ -85,11 +99,14 @@ import { Uploader,Icon } from 'vant';
         //保存修改的手机数据
         newBrandData:{
           name:"",
-          alias: "",
-          desc:"",
-          cover:"",
           _id:"",
+          color:[],
+          alias:"",
+          cover:"",
+          desc:""
         },
+        newcolor:"",
+        phonebrand:"",  //手机品牌
         bigImgUrl:"",
       }
     },
@@ -133,18 +150,28 @@ import { Uploader,Icon } from 'vant';
       changestate(){
         this.circleShow = true;
         delete this.newBrandData.id;
+        delete this.newBrandData.manufacturer;
         delete this.newBrandData.time;
         delete this.newBrandData.createdAt;
         delete this.newBrandData.updatedAt;
         delete this.newBrandData.__v;
 
+        let colorArr = this.newcolor.split(" ");
+        for(let index in colorArr){
+          if (colorArr[index]==="") {
+            delete colorArr[index]
+          }
+        }
+        this.newBrandData.color = colorArr;
         console.log(this.newBrandData)
-        updataPhoneBrand(this.newBrandData).then(res => {
+
+        updataPhoneModel(this.newBrandData).then(res => {
           if (res==="更新成功") {
-            this.phonebrandData.name = this.newBrandData.name;
-            this.phonebrandData.alias = this.newBrandData.alias;
-            this.phonebrandData.desc = this.newBrandData.desc;
-            this.phonebrandData.cover = this.newBrandData.cover;
+            this.phoneModelData.name = this.newBrandData.name;
+            this.phoneModelData.color = this.newBrandData.color;
+            this.phoneModelData.cover = this.newBrandData.cover;
+            this.phoneModelData.desc = this.newBrandData.desc;
+            this.phoneModelData.alias = this.newBrandData.alias;
             this.changebtnShow = false;
             alert("更新成功")
           }else{
@@ -155,23 +182,23 @@ import { Uploader,Icon } from 'vant';
           console.log(err)
         }))
       },
-      // 点击修改品牌
+      // 点击修改型号
       confirmchange(){
         this.changebtnShow = true;
-        this.newBrandData = this.copy(this.phonebrandData);
-        // this.newBrandData.cover = this.phonebrandData.cover,
-        // this.newBrandData.desc = "",
+        this.newBrandData = this.copy(this.phoneModelData);
+        for(let index in this.phoneModelData.color){
+          this.newcolor = this.newcolor.concat(`${this.phoneModelData.color[index]} `)
+        }
       },
-      // 关闭修改品牌
+      // 关闭修改型号
       closeChange(){
         this.changebtnShow = false;
         this.newBrandData = {
           name:"",
-          alias: "",
-          desc:"",
-          coer:"",
-          _id:""
+          _id:"",
+          color:[],
         }
+        this.newcolor = "";
       },
       //判断是否删除
       confirmdel(){
@@ -181,13 +208,13 @@ import { Uploader,Icon } from 'vant';
       closedel(){
         this.delDialog = false;
       },
-      //删除这个品牌
+      //删除这个型号
       delthisbrand(){
         this.circleShow = true;
         let delData = {
-          _id: this.phonebrandData._id
+          _id: this.phoneModelData._id
         }
-        delPhoneBrand(delData).then(res => {
+        delPhoneModel(delData).then(res => {
           this.circleShow = false;
           alert("删除成功")
           location.reload();

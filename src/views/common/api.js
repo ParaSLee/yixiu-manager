@@ -150,3 +150,48 @@ export function addPhoneBrand(data){
     });
   });
 }
+
+// 根据手机品牌ID查询手机型号
+export function getPhoneModelById(id){
+  return new Promise((resolve, reject) => {
+    ajax.get(`${url}/phone/model/${id}`).then((res) => {
+      resolve(res);
+    }).then((err) => {
+      reject(err);
+    });
+  });
+}
+
+
+// 删除手机型号
+export function delPhoneModel(data){
+  return new Promise((resolve, reject) => {
+    ajax.post(`${url}/phone/model/delete`,data).then((res) => {
+      resolve(res);
+    }).then((err) => {
+      reject(err);
+    });
+  });
+}
+
+// 更新手机型号
+export function updataPhoneModel(data){
+  return new Promise((resolve, reject) => {
+    ajax.post(`${url}/phone/model/update`,data).then((res) => {
+      resolve(res);
+    }).then((err) => {
+      reject(err);
+    });
+  });
+}
+
+// 添加手机型号
+export function addPhoneModel(data){
+  return new Promise((resolve, reject) => {
+    ajax.post(`${url}/phone/model`,data).then((res) => {
+      resolve(res);
+    }).then((err) => {
+      reject(err);
+    });
+  });
+}

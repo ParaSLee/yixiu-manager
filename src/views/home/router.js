@@ -8,6 +8,7 @@ import listmanage from "../listmanage/App"
 import examine from "../examine/App"
 import questionexamine from "../questionexamine/App"
 import phonebrand from "../phonebrand/App"
+import phonemodel from "../phonemodel/App"
 
 export default [{
   path: '/home',
@@ -41,6 +42,11 @@ export default [{
       name: "phonebrand",
       path: "phonebrand",
       component: phonebrand
+    },
+    {
+      name: "phonemodel",
+      path: "phonemodel",
+      component: phonemodel
     }
   ]
 }]

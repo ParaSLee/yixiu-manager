@@ -41,6 +41,10 @@
             url:"/home/phonebrand"
           },
           {
+            name:"手机型号管理",
+            url:"/home/phonemodel"
+          },
+          {
             name:"退出",
             url:"/signin"
           },
@@ -70,6 +74,10 @@
         this.nowitem = 2
       }else if(this.$route.path === "/home/questionexamine") {
         this.nowitem = 3
+      }else if(this.$route.path === "/home/phonebrand") {
+        this.nowitem = 4
+      }else if(this.$route.path === "/home/phonemodel") {
+        this.nowitem = 5
       }
       // this.changeTag(this.$route.path);
     }

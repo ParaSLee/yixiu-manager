@@ -17,15 +17,16 @@
     </mu-thead>
     <mu-tbody>
       <mu-tr v-for="phonebrand in PhonebrandData" :key="phonebrand._id" >
-        <mu-td>{{ phonebrand.id }}</mu-td>
-        <mu-td>{{ phonebrand.name }}</mu-td>
-        <mu-td>{{ phonebrand.alias }}</mu-td>
-        <mu-td>{{ phonebrand.desc ? phonebrand.desc : '无' }}</mu-td>
         <mu-td>
           <mu-icon-button tooltip="查看详情" tooltipPosition="bottom-right" touch @click.capture="open(phonebrand)" />
             <sicon name="check" scale="2.3" class="checkI"></sicon>
           </mu-icon-button>
+          &nbsp;&nbsp;
+          {{ phonebrand.id }}
         </mu-td>
+        <mu-td>{{ phonebrand.name }}</mu-td>
+        <mu-td>{{ phonebrand.alias }}</mu-td>
+        <mu-td>{{ phonebrand.desc ? phonebrand.desc : '无' }}</mu-td>
       </mu-tr>
     </mu-tbody>
   </mu-table>
