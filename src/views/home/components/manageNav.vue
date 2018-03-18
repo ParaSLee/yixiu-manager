@@ -37,6 +37,10 @@
             url:"/home/questionexamine"
           },
           {
+            name:"手机品牌管理",
+            url:"/home/phonebrand"
+          },
+          {
             name:"退出",
             url:"/signin"
           },

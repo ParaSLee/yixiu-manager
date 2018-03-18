@@ -50,8 +50,17 @@ let filters = {
     //将商户id隐藏
     id = id.replace(id.substr(5, 13), "*****")
     return id;
-  }
+  },
+  copy(obj){
+    //浅拷贝
+    var newobj = {};
+    for ( var attr in obj) {
+      newobj[attr] = obj[attr];
+    }
+    return newobj;
+  },
 }
+
 
 import { getShopListAllNumber } from "../views/common/api"
 
@@ -65,5 +74,6 @@ export default {
     Vue.prototype.arr2id = filters.arr2id
     Vue.prototype.datestr = filters.datestr
     Vue.prototype.idstr = filters.idstr
+    Vue.prototype.copy = filters.copy
   }
 }

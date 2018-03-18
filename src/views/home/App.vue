@@ -24,10 +24,10 @@
 <style scoped>
   .contain-right{
     position: absolute;
-    height: 100%;
+    height: 98%;
     margin-left: 288px;
     background: #fff;
-    min-height: 100%;
+    /*min-height: 100%;*/
     padding: 53px 68px;
     margin-top: 13px;
     border-radius: 5px;

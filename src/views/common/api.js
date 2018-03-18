@@ -1,7 +1,7 @@
 import ajaxLib from '../../lib/ajax';
 const ajax = ajaxLib.ajax;
-const url = 'https://m.yixiutech.com';
-// const url = "https://yixiu.natappvip.cc";
+// const url = 'https://m.yixiutech.com';
+const url = "https://yixiu.natappvip.cc";
 
 
 //根据筛选条件获取商家列表
@@ -98,6 +98,52 @@ export function getQuestionList(data){
 export function updateQuestion(data){
   return new Promise((resolve, reject) => {
     ajax.post(`${url}/question/update`,data).then((res) => {
+      resolve(res);
+    }).then((err) => {
+      reject(err);
+    });
+  });
+}
+
+
+// 获取手机品牌
+export function getPhoneBrand(){
+  return new Promise((resolve, reject) => {
+    ajax.get(`${url}/phone/manufacturer`).then((res) => {
+      resolve(res);
+    }).then((err) => {
+      reject(err);
+    });
+  });
+}
+
+
+// 删除手机品牌
+export function delPhoneBrand(data){
+  return new Promise((resolve, reject) => {
+    ajax.post(`${url}/phone/manufacturer/delete`,data).then((res) => {
+      resolve(res);
+    }).then((err) => {
+      reject(err);
+    });
+  });
+}
+
+// 更新手机品牌
+export function updataPhoneBrand(data){
+  return new Promise((resolve, reject) => {
+    ajax.post(`${url}/phone/manufacturer/update`,data).then((res) => {
+      resolve(res);
+    }).then((err) => {
+      reject(err);
+    });
+  });
+}
+
+// 添加手机品牌
+export function addPhoneBrand(data){
+  return new Promise((resolve, reject) => {
+    ajax.post(`${url}/phone/manufacturer`,data).then((res) => {
       resolve(res);
     }).then((err) => {
       reject(err);
