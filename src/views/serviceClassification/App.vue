@@ -1,7 +1,7 @@
 <template>
 <div>
   <div class="serchBox">
-    <mu-raised-button label="添加品牌"  class="addBtn" @click="opennew"/>
+    <mu-raised-button label="添加类型"  class="addBtn" @click="opennew"/>
   </div>
   
   <mu-circular-progress :size="40" v-if="circleShow" class="circleBox"/>
@@ -10,9 +10,10 @@
     <mu-thead>
       <mu-tr>
         <mu-th>ID</mu-th>
-        <mu-th>手机品牌</mu-th>
-        <mu-th>英文名称</mu-th>
-        <mu-th>描述</mu-th>
+        <mu-th>分类名称</mu-th>
+        <mu-th>所属父类</mu-th>
+        <mu-th>所属分类</mu-th>
+        <mu-th>建立时间</mu-th>
       </mu-tr>
     </mu-thead>
     <mu-tbody>
@@ -25,8 +26,9 @@
           {{ phonebrand.id }}
         </mu-td>
         <mu-td>{{ phonebrand.name }}</mu-td>
-        <mu-td>{{ phonebrand.alias }}</mu-td>
-        <mu-td>{{ phonebrand.desc ? phonebrand.desc : '无' }}</mu-td>
+        <mu-td>{{ phonebrand.parent.name }}</mu-td>
+        <mu-td>{{ type[phonebrand.type] }}</mu-td>
+        <mu-td>{{ phonebrand.time }}</mu-td>
       </mu-tr>
     </mu-tbody>
   </mu-table>
@@ -41,7 +43,7 @@
 </template>
 
 <script>
-  import { getPhoneBrand } from '../common/api'
+  import { getServiceCategory } from '../common/api'
   import Mdialog from "./components/dialog"
   import newdialog from "./components/adddialog"
 
@@ -52,19 +54,14 @@
         circleShow:false,  //数据读取中
         dialog: false,    //弹窗
         newdialog: false,  //新建品牌弹窗
-        PhonebrandData:[
-          // {
-            // name:"", //店铺名
-            // createdAt:"",  建立时间
-            // time:"", 用于显示的时间
-            // qualificationState: "",   是否通过审核  false未审核  0未通过  1通过
-            // _id:"",   传入的ID
-            // id:"",   用于显示的ID
-            // contactNumber:"",   联系方式
-          // }
-        ],
+        PhonebrandData:[],
         //单个shop信息
         signalbrand:{},
+        type:{
+          plate:"平台板块",
+          service:"维修服务",
+          goods:"普通商品"
+        },
       }
     },
     components: {
@@ -73,9 +70,9 @@
     },
     methods: {
       //获取手机品牌内容
-      getphonebrand (){
+      getServiceCategory (){
         this.circleShow = true;
-        getPhoneBrand().then(res => {
+        getServiceCategory().then(res => {
           console.log(res)
           this.listPhonebrandData(res.reverse())
         },(err => {
@@ -110,7 +107,7 @@
       }
     },
     created(){ 
-      this.getphonebrand()
+      this.getServiceCategory()
     }
   }
 </script>

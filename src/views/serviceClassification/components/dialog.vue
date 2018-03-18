@@ -2,7 +2,7 @@
 <div>
   <mu-dialog :open="dialog" @close="close" scrollable>
     <div slot="title" class="titleBox">
-      品牌详情
+      该分类详情
       <mu-flat-button label="修改信息" class="demo-flat-button changebtn blueBtn" v-if="!changebtnShow" @click="confirmchange"/>
       <span class="changebtn" v-else>
         <mu-flat-button label="取消" class="demo-flat-button" @click="closeChange"/>
@@ -11,19 +11,21 @@
       <mu-circular-progress :size="40" v-if="circleShow" class="circleBox changebtn"/>
     </div>
     <p class="dialogBox canchose topItem">
-      <span class="messageTitle">品牌ID：</span> 
+      <span class="messageTitle">ID：</span> 
       {{ phonebrandData._id }}
     </p>
 
     <p class="dialogBox canchose">
-      <span class="messageTitle">手机品牌：</span> 
+      <span class="messageTitle">名称：</span> 
       <span v-if="!changebtnShow">{{ phonebrandData.name }}</span>
       <mu-text-field v-else v-model="newBrandData.name"/>
     </p>
     <p class="dialogBox canchose">
-      <span class="messageTitle">英文名：</span> 
-      <span v-if="!changebtnShow">{{ phonebrandData.alias }}</span>
-      <mu-text-field v-else v-model="newBrandData.alias"/>
+      <span class="messageTitle">所属父类：</span> 
+      <span v-if="!changebtnShow">{{ phonebrandData.parent ? phonebrandData.parent.name : "无" }}</span>
+      <mu-select-field v-else v-model="newBrandData.parent">
+        <mu-menu-item value="5a8258f8d44564e96235068c" title="手机维修"/>
+      </mu-select-field>
     </p>
     <p class="dialogBox canchose">
       <span class="messageTitle">描述：</span> 
@@ -32,7 +34,7 @@
     </p>
     
     <p class="dialogBox">
-      <span class="messageTitle">品牌封面：</span> 
+      <span class="messageTitle">封面：</span> 
       <span v-if="!changebtnShow"> 
         <img :src="phonebrandData.cover" class="cover" @click="lookImg(phonebrandData.cover)">
       </span>
@@ -46,11 +48,21 @@
       </span>
     </p>
 
+    <p class="dialogBox canchose">
+      <span class="messageTitle">所属分类：</span> 
+      <span v-if="!changebtnShow">{{ type[phonebrandData.type] ? type[phonebrandData.type] : "无" }}</span>
+      <mu-select-field v-else v-model="newBrandData.type">
+        <mu-menu-item value="plate" title="平台板块"/>
+        <mu-menu-item value="service" title="维修服务"/>
+        <mu-menu-item value="goods" title="普通商品"/>
+      </mu-select-field>
+    </p>
+
     <p class="dialogBox">
       <span class="messageTitle">品牌添加时间：</span> 
       {{ phonebrandData.time }}
     </p>
-    <mu-flat-button label="删除该品牌" class="demo-flat-button delbtn" @click="confirmdel" secondary/>
+    <mu-flat-button label="删除该分类" class="demo-flat-button delbtn" @click="confirmdel" secondary/>
     <mu-flat-button slot="actions" @click="close" label="关闭"/>
     <seebigphoto v-if="bigImgUrl!==''" :imgurl="bigImgUrl" @closeimg="closeimg"></seebigphoto>
   </mu-dialog>
@@ -67,7 +79,7 @@
 </template>
 
 <script>
-import { delPhoneBrand,updataPhoneBrand } from '../../common/api'
+import { delServiceCategory,updataServiceCategory } from '../../common/api'
 import seebigphoto from "../../common/seeBigPhoto"
 import axios from 'axios'
 import { Uploader,Icon } from 'vant';
@@ -85,10 +97,16 @@ import { Uploader,Icon } from 'vant';
         //保存修改的手机数据
         newBrandData:{
           name:"",
-          alias: "",
+          type: "",
           desc:"",
           cover:"",
           _id:"",
+          parent:""
+        },
+        type:{
+          plate:"平台板块",
+          service:"维修服务",
+          goods:"普通商品"
         },
         bigImgUrl:"",
       }
@@ -139,12 +157,14 @@ import { Uploader,Icon } from 'vant';
         delete this.newBrandData.__v;
 
         console.log(this.newBrandData)
-        updataPhoneBrand(this.newBrandData).then(res => {
+        updataServiceCategory(this.newBrandData).then(res => {
           if (res==="更新成功") {
             this.phonebrandData.name = this.newBrandData.name;
-            this.phonebrandData.alias = this.newBrandData.alias;
+            this.phonebrandData.type = this.newBrandData.type;
             this.phonebrandData.desc = this.newBrandData.desc;
             this.phonebrandData.cover = this.newBrandData.cover;
+            this.phonebrandData.parent._id = this.newBrandData.parent;
+
             this.changebtnShow = false;
             alert("更新成功")
           }else{
@@ -159,6 +179,8 @@ import { Uploader,Icon } from 'vant';
       confirmchange(){
         this.changebtnShow = true;
         this.newBrandData = this.copy(this.phonebrandData);
+        delete this.newBrandData.parent;
+        this.newBrandData.parent = this.phonebrandData.parent._id
         // this.newBrandData.cover = this.phonebrandData.cover,
         // this.newBrandData.desc = "",
       },
@@ -167,10 +189,11 @@ import { Uploader,Icon } from 'vant';
         this.changebtnShow = false;
         this.newBrandData = {
           name:"",
-          alias: "",
+          type: "",
           desc:"",
           coer:"",
-          _id:""
+          _id:"",
+          parent:""
         }
       },
       //判断是否删除
@@ -187,7 +210,7 @@ import { Uploader,Icon } from 'vant';
         let delData = {
           _id: this.phonebrandData._id
         }
-        delPhoneBrand(delData).then(res => {
+        delServiceCategory(delData).then(res => {
           this.circleShow = false;
           alert("删除成功")
           location.reload();

@@ -61,6 +61,7 @@ import { Uploader,Icon } from 'vant';
           alias: "",
           desc:"",
           cover:"",
+          manufacturer:"",
         },
         bigImgUrl:"",
       }
@@ -88,16 +89,17 @@ import { Uploader,Icon } from 'vant';
               delete colorArr[index]
             }
           }
-          this.newBrandData.color = colorArr;
           this.newBrandData.manufacturer = this.brandid;
+          this.newBrandData.color = colorArr;
 
-          console.log(this.newBrandData)
+
+          // console.log(this.newBrandData.manufacturer)
 
 
           addPhoneModel(this.newBrandData).then(res => {
             alert("提交成功！");
-            console.log(res)
-            // location.reload();
+            // console.log(res)
+            location.reload();
           },(err => {
             console.log(err)
           }))

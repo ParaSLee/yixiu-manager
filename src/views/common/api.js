@@ -195,3 +195,96 @@ export function addPhoneModel(data){
     });
   });
 }
+
+
+// 获取服务分类
+export function getServiceCategory(){
+  return new Promise((resolve, reject) => {
+    ajax.get(`${url}/category/phoneRepair`).then((res) => {
+      resolve(res);
+    }).then((err) => {
+      reject(err);
+    });
+  });
+}
+
+
+// 删除服务分类
+export function delServiceCategory(id){
+  return new Promise((resolve, reject) => {
+    ajax.post(`${url}/category/delete`,id).then((res) => {
+      resolve(res);
+    }).then((err) => {
+      reject(err);
+    });
+  });
+}
+
+// 更新服务分类
+export function updataServiceCategory(data){
+  return new Promise((resolve, reject) => {
+    ajax.post(`${url}/category/update`,data).then((res) => {
+      resolve(res);
+    }).then((err) => {
+      reject(err);
+    });
+  });
+}
+
+// 添加服务分类
+export function addServiceCategory(data){
+  return new Promise((resolve, reject) => {
+    ajax.post(`${url}/category`,data).then((res) => {
+      resolve(res);
+    }).then((err) => {
+      reject(err);
+    });
+  });
+}
+
+
+
+// 根据服务分类ID查询服务
+export function getServiceById(id){
+  return new Promise((resolve, reject) => {
+    ajax.post(`${url}/service/shop`,id).then((res) => {
+      resolve(res);
+    }).then((err) => {
+      reject(err);
+    });
+  });
+}
+
+
+// 删除服务
+export function delService(data){
+  return new Promise((resolve, reject) => {
+    ajax.post(`${url}/service/delete`,data).then((res) => {
+      resolve(res);
+    }).then((err) => {
+      reject(err);
+    });
+  });
+}
+
+// 更新服务
+export function updataService(data){
+  return new Promise((resolve, reject) => {
+    ajax.post(`${url}/service/update`,data).then((res) => {
+      resolve(res);
+    }).then((err) => {
+      reject(err);
+    });
+  });
+}
+
+// 添加服务
+export function addService(data){
+  return new Promise((resolve, reject) => {
+    ajax.post(`${url}/service`,data).then((res) => {
+      resolve(res);
+    }).then((err) => {
+      reject(err);
+    });
+  });
+}
