@@ -6,16 +6,12 @@
       {{ brandname }}
     </p>
     <p class="dialogBox canchose">
-      <span class="messageTitle">型号名称：</span> 
-      <mu-text-field v-model="newBrandData.name" hintText="例如：iphone7"/>
+      <span class="messageTitle">服务名称：</span> 
+      <mu-text-field v-model="newBrandData.name" hintText="例如：外屏碎"/>
     </p>
     <p class="dialogBox canchose">
-      <span class="messageTitle">颜色：</span> 
-      <mu-text-field v-model="colors" hintText="例如：黑色 白色" label="请用1个空格隔开不同颜色"/>
-    </p>
-    <p class="dialogBox canchose">
-      <span class="messageTitle">型号别名：</span> 
-      <mu-text-field v-model="newBrandData.alias" hintText="例如：ip7 (选填)"/>
+      <span class="messageTitle">价格：</span> 
+      <mu-text-field v-model="newBrandData.price" hintText="整数，例如：199 "/> 元
     </p>
     <p class="dialogBox canchose">
       <span class="messageTitle">描述：</span> 
@@ -40,7 +36,7 @@
 </template>
 
 <script>
-import { addPhoneModel } from '../../common/api';
+import { addService } from '../../common/api';
 import seebigphoto from "../../common/seeBigPhoto";
 import axios from 'axios';
 import { Uploader,Icon } from 'vant';
@@ -53,14 +49,14 @@ import { Uploader,Icon } from 'vant';
     },
     data(){
       return {
-        colors:"",
         circleShow:false,  //加载动画
         //保存修改的手机数据
         newBrandData:{
           name:"",
-          alias: "",
+          price: "",
           desc:"",
           cover:"",
+          support:[],
         },
         bigImgUrl:"",
       }
@@ -77,24 +73,21 @@ import { Uploader,Icon } from 'vant';
       },
       //提交
       add(){
+        let price = parseInt(this.newBrandData.price)
         if (this.newBrandData.name==="") {
           alert("名称不能为空！");
-        }else if(this.colors===""){
-          alert("颜色不能为空！");
+        }else if(this.newBrandData.price===""){
+          alert("价格不能为空！");
+        }else if(isNaN(price)){
+          alert("价格请输入纯数字");
         }else{
-          let colorArr = this.colors.split(" ");
-          for(let index in colorArr){
-            if (colorArr[index]==="") {
-              delete colorArr[index]
-            }
-          }
-          this.newBrandData.color = colorArr;
-          this.newBrandData.manufacturer = this.brandid;
+          this.newBrandData.price = price;
+          this.newBrandData.category = this.brandid;
 
           console.log(this.newBrandData)
 
 
-          addPhoneModel(this.newBrandData).then(res => {
+          addService(this.newBrandData).then(res => {
             alert("提交成功！");
             console.log(res)
             // location.reload();

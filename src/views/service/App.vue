@@ -1,11 +1,11 @@
 <template>
 <div>
   <div class="serchBox">
-    <mu-select-field label="请选择手机品牌" :maxHeight="300" @change="choseBrand">
+    <mu-select-field label="请选择服务分类" :maxHeight="300" @change="choseBrand">
       <mu-menu-item v-for="item, index in phonebrandname" :key="index" :title="item" :value="index"/>
     </mu-select-field>
     
-    <mu-flat-button :disabled="!addnewbtnshow" label="添加新的型号" class="demo-flat-button addnewbtn" @click="addnewModel"/>
+    <mu-flat-button :disabled="!addnewbtnshow" label="添加服务" class="demo-flat-button addnewbtn" @click="addnewModel"/>
     <span v-if="!addnewbtnshow">选择手机品牌后才可添加该品牌的新型号手机</span>
 
     <!--   谢说的样式类型
@@ -22,8 +22,9 @@
     <mu-thead>
       <mu-tr>
         <mu-th>ID</mu-th>
-        <mu-th>型号名称</mu-th>
-        <mu-th>颜色</mu-th>
+        <mu-th>问题名称</mu-th>
+        <mu-th>所属商家</mu-th>
+        <mu-th>价格</mu-th>
       </mu-tr>
     </mu-thead>
     <mu-tbody>
@@ -36,7 +37,8 @@
           {{ phonebrand.id }}
         </mu-td>
         <mu-td>{{ phonebrand.name }}</mu-td>
-        <mu-td class="colorbox"><span v-for="item in phonebrand.color">{{ item }}</span></mu-td>
+        <mu-td class="colorbox">{{ phonebrand.shop ? phonebrand.shop.name : '所有商家共享' }}</mu-td>
+        <mu-td>{{ phonebrand.price }} 元</mu-td>
       </mu-tr>
     </mu-tbody>
   </mu-table>
@@ -53,7 +55,7 @@
 </template>
 
 <script>
-  import { getPhoneBrand,getPhoneModelById } from '../common/api'
+  import { getServiceCategory,getServiceById } from '../common/api'
   import Mdialog from "./components/dialog"
   import newdialog from "./components/adddialog"
   // import more from "./components/more"
@@ -92,17 +94,19 @@
         this.circleShow = true;
         this.brandid = this.phonebrandid[value];
         this.brandname = this.phonebrandname[value];
-        // console.log(this.brandid)
-        getPhoneModelById(this.phonebrandid[value]).then(res => {
+        let pushData = {
+          category:this.brandid
+        }
+        getServiceById(pushData).then(res => {
           this.listPhoneModelData(res);
         },(err => {
           console.log(err)
         }))
       },
       //获取手机品牌内容
-      getphonebrand (){
+      getServiceCategory (){
         this.circleShow = true;
-        getPhoneBrand().then(res => {
+        getServiceCategory().then(res => {
           for(let index in res){
             this.phonebrandname = this.phonebrandname.concat(res[index].name);
             this.phonebrandid = this.phonebrandid.concat(res[index]._id);
@@ -147,7 +151,7 @@
       // },
     },
     created(){ 
-      this.getphonebrand()
+      this.getServiceCategory()
     }
   }
 </script>
