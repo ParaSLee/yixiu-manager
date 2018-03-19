@@ -23,8 +23,8 @@
     <p class="dialogBox canchose">
       <span class="messageTitle">所属父类：</span> 
       <span v-if="!changebtnShow">{{ phonebrandData.parent ? phonebrandData.parent.name : "无" }}</span>
-      <mu-select-field v-else v-model="newBrandData.parent">
-        <mu-menu-item value="5a8258f8d44564e96235068c" title="手机维修"/>
+      <mu-select-field v-else v-model="newBrandData.parent" :value="newBrandData.parent">
+        <mu-menu-item value="5a82af59eed0097104c20ea6" title="手机维修"/>
       </mu-select-field>
     </p>
     <p class="dialogBox canchose">
@@ -51,10 +51,10 @@
     <p class="dialogBox canchose">
       <span class="messageTitle">所属分类：</span> 
       <span v-if="!changebtnShow">{{ type[phonebrandData.type] ? type[phonebrandData.type] : "无" }}</span>
-      <mu-select-field v-else v-model="newBrandData.type">
-        <mu-menu-item value="plate" title="平台板块"/>
+      <mu-select-field v-else v-model="newBrandData.type" :value="type[newBrandData.type]">
+        <!-- <mu-menu-item value="plate" title="平台板块"/> -->
         <mu-menu-item value="service" title="维修服务"/>
-        <mu-menu-item value="goods" title="普通商品"/>
+        <!-- <mu-menu-item value="goods" title="普通商品"/> -->
       </mu-select-field>
     </p>
 
@@ -181,6 +181,7 @@ import { Uploader,Icon } from 'vant';
         this.newBrandData = this.copy(this.phonebrandData);
         delete this.newBrandData.parent;
         this.newBrandData.parent = this.phonebrandData.parent._id
+        console.log(this.newBrandData)
         // this.newBrandData.cover = this.phonebrandData.cover,
         // this.newBrandData.desc = "",
       },

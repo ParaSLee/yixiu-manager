@@ -288,3 +288,14 @@ export function addService(data){
     });
   });
 }
+
+// 查询所有类型
+export function getALL(){
+  return new Promise((resolve, reject) => {
+    ajax.get(`${url}/category/sys?type=all`).then((res) => {
+      resolve(res);
+    }).then((err) => {
+      reject(err);
+    });
+  });
+}

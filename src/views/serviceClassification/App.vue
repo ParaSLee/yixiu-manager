@@ -26,7 +26,7 @@
           {{ phonebrand.id }}
         </mu-td>
         <mu-td>{{ phonebrand.name }}</mu-td>
-        <mu-td>{{ phonebrand.parent.name }}</mu-td>
+        <!-- <mu-td>{{ phonebrand.parent.name }}</mu-td> -->
         <mu-td>{{ type[phonebrand.type] }}</mu-td>
         <mu-td>{{ phonebrand.time }}</mu-td>
       </mu-tr>
@@ -43,7 +43,7 @@
 </template>
 
 <script>
-  import { getServiceCategory } from '../common/api'
+  import { getServiceCategory,getALL } from '../common/api'
   import Mdialog from "./components/dialog"
   import newdialog from "./components/adddialog"
 

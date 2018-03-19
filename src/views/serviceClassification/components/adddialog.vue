@@ -74,6 +74,13 @@ import { Uploader,Icon } from 'vant';
     methods: {
       //关闭dialog
       close(){
+        this.newBrandData={
+          name:"",
+          type: "",
+          desc:"",
+          cover:"",
+          parent:""
+        },
         this.$emit("close")
       },
       //查看图片大图

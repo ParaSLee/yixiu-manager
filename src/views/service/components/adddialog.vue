@@ -69,6 +69,13 @@ import { Uploader,Icon } from 'vant';
     methods: {
       //关闭dialog
       close(){
+        this.newBrandData={
+          name:"",
+          price: "",
+          desc:"",
+          cover:"",
+          support:[],
+        },
         this.$emit("close")
       },
       //提交
