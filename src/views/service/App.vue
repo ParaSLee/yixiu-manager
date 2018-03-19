@@ -47,7 +47,7 @@
 
   <mdialog @close="close" :phoneModelData="signalbrand" :dialog="dialog"></mdialog>
 
-  <newdialog @close="closenew" :dialog="newdialog" :brandid="brandid" :brandname="brandname"></newdialog>
+  <newdialog @close="closenew" :dialog="newdialog" :brandid="brandid" :brandname="brandname" @updateold="choseBrand"></newdialog>
 
   <!-- <more @close="closemore" :dialog="more" :phonebrandname="phonebrandname"></more> -->
 
@@ -92,8 +92,8 @@
       choseBrand(value){
         this.addnewbtnshow = true;
         this.circleShow = true;
-        this.brandid = this.phonebrandid[value];
-        this.brandname = this.phonebrandname[value];
+        this.brandid = (value===0 || value) ? this.phonebrandid[value] : this.brandid;
+        this.brandname = (value===0 || value) ? this.phonebrandname[value] : this.brandname;
         let pushData = {
           category:this.brandid
         }

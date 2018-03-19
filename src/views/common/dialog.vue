@@ -170,6 +170,11 @@ import axios from 'axios'
         }else{
           this.shop.qualificationState = this.chosevalue;
           this.shop._id = this.shopData._id;
+          if (this.shop.qualificationState=="正常") {
+            this.shop.qualification = true;
+          }else{
+            this.shop.qualification = false;
+          }
           console.log(this.shop)
           changeState(this.shop).then(res => {
             console.log(res)
@@ -183,26 +188,30 @@ import axios from 'axios'
         // changeState()
       },
       enterPhoto(){
-        for(let ind of this.shopData.certificate){
-          if (ind.name=="idcard1") {
-            this.thephoto.idcarda = ind.src
-          }else if(ind.name=="idcard2"){
-            this.thephoto.idcardb = ind.src
-          }else if(ind.name=="license"){
-            this.thephoto.license = ind.src
-          }else if(ind.name=="certificate"){
-            this.thephoto.certificate = ind.src
-          }else if(ind.name=="protocol"){
-            this.thephoto.protocol = ind.src
+        if (this.shopData.certificate) {
+          for(let ind of this.shopData.certificate){
+            if (ind.name=="idcard1") {
+              this.thephoto.idcarda = ind.src
+            }else if(ind.name=="idcard2"){
+              this.thephoto.idcardb = ind.src
+            }else if(ind.name=="license"){
+              this.thephoto.license = ind.src
+            }else if(ind.name=="certificate"){
+              this.thephoto.certificate = ind.src
+            }else if(ind.name=="protocol"){
+              this.thephoto.protocol = ind.src
+            }
           }
         }
+        
       }
     },
-    created(){ 
-      
-      this.enterPhoto();
+    created(){
       this.chosevalue = this.shopData.qualificationState;
       this.shop.qualificationState = this.chosevalue;
+    },
+    updated(){
+      this.enterPhoto();
     }
   }
 </script>

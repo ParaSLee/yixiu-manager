@@ -98,8 +98,9 @@ import { Uploader,Icon } from 'vant';
 
           addPhoneModel(this.newBrandData).then(res => {
             alert("提交成功！");
+            this.$emit("updata")
             // console.log(res)
-            location.reload();
+            // location.reload();
           },(err => {
             console.log(err)
           }))

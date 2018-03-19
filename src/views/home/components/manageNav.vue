@@ -20,10 +20,10 @@
       return {
         nowitem: null,
         items:[
-          {
-            name:"添加商户",
-            url:"/home/adduser"
-          },
+          // {
+          //   name:"添加商户",
+          //   url:"/home/adduser"
+          // },
           {
             name:"商户审核",
             url:"/home/examine"
@@ -74,22 +74,22 @@
       }
     },
     created(){
-      if (this.$route.path === "/home/adduser") {
+      /*if (this.$route.path === "/home/adduser") {
         this.nowitem = 0
-      }else if(this.$route.path === "/home/examine") {
-        this.nowitem = 1
+      }else */if(this.$route.path === "/home/examine") {
+        this.nowitem = 0
       }else if(this.$route.path === "/home/listmanage") {
-        this.nowitem = 2
+        this.nowitem = 1
       }else if(this.$route.path === "/home/questionexamine") {
-        this.nowitem = 3
+        this.nowitem = 2
       }else if(this.$route.path === "/home/phonebrand") {
-        this.nowitem = 4
+        this.nowitem = 3
       }else if(this.$route.path === "/home/phonemodel") {
-        this.nowitem = 5
+        this.nowitem = 4
       }else if(this.$route.path === "/home/serviceClassification") {
-        this.nowitem = 6
+        this.nowitem = 5
       }else if(this.$route.path === "/home/service") {
-        this.nowitem = 7
+        this.nowitem = 6
       }
 
       // this.changeTag(this.$route.path);

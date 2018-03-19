@@ -6,7 +6,7 @@
       <mu-text-field v-model="newBrandData.name"/>
     </p>
     <p class="dialogBox canchose">
-      <span class="messageTitle">(选填)类型：</span> 
+      <span class="messageTitle">类型：</span> 
       <mu-select-field v-model="newBrandData.type">
           <!-- <mu-menu-item value="plate" title="平台板块"/> -->
           <mu-menu-item value="service" title="维修服务"/>
@@ -27,9 +27,9 @@
       <mu-circular-progress :size="40" v-if="circleShow" class="circleBox"/>
     </p>
     <p class="dialogBox canchose">
-      <span class="messageTitle">(选填)父级：</span> 
+      <span class="messageTitle">父级：</span> 
       <mu-select-field v-model="newBrandData.parent">
-          <mu-menu-item value="5a8258f8d44564e96235068c" title="手机维修"/>
+          <mu-menu-item value="5a82af59eed0097104c20ea6" title="手机维修"/>
         </mu-select-field>
     </p>
 
@@ -86,12 +86,21 @@ import { Uploader,Icon } from 'vant';
       },
       //提交
       add(){
-        addServiceCategory(this.newBrandData).then(res => {
-          alert("提交成功！");
-          location.reload();
-        },(err => {
-          console.log(err)
-        }))
+        if (this.newBrandData.name==="") {
+          alert("名称不能为空！");
+        }else if(this.newBrandData.type===""){
+          alert("类型必须选择！");
+        }else if(this.newBrandData.parent===""){
+          alert("父类必须选择！");
+        }else{
+          addServiceCategory(this.newBrandData).then(res => {
+            // alert("提交成功！");
+            location.reload();
+            console.log(res)
+          },(err => {
+            console.log(err)
+          }))
+        }
       },
       //传递照片
       onRead(file,content){

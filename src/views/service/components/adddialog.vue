@@ -90,6 +90,7 @@ import { Uploader,Icon } from 'vant';
           addService(this.newBrandData).then(res => {
             alert("提交成功！");
             console.log(res)
+            this.$emit("updateold")
             // location.reload();
           },(err => {
             console.log(err)
