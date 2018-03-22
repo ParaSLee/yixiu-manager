@@ -11,6 +11,7 @@ import phonebrand from "../phonebrand/App"
 import phonemodel from "../phonemodel/App"
 import service from "../service/App"
 import serviceClassification from "../serviceClassification/App"
+import statistics from "../statistics/App"
 
 export default [{
   path: '/home',
@@ -59,6 +60,11 @@ export default [{
       name: "serviceClassification",
       path: "serviceClassification",
       component: serviceClassification
+    },
+    {
+      name: "statistics",
+      path: "statistics",
+      component: statistics
     }
 
   ]

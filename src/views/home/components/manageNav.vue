@@ -53,6 +53,10 @@
             url:"/home/service"
           },
           {
+            name:"数据统计",
+            url:"/home/statistics"
+          },
+          {
             name:"退出",
             url:"/signin"
           },
