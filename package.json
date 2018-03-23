@@ -20,7 +20,8 @@
     "vue-concise-slider": "^2.4.8",
     "vue-img-loader": "^0.2.1",
     "vue-router": "^3.0.1",
-    "vue-svg-icon": "^1.2.9"
+    "vue-svg-icon": "^1.2.9",
+    "vuejs-datepicker": "^0.9.29"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",

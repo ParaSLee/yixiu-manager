@@ -33,7 +33,7 @@
     border-radius: 5px;
     border-top-right-radius: 0;
     border-bottom-left-radius: 0;
-    /*overflow-y: auto;*/
+    overflow-y: auto;
     /*overflow-x: hidden;*/
     z-index: 100;
   }

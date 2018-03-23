@@ -1,19 +1,26 @@
 <template>
 <div>
   <div class="serchBox">
-    <mu-select-field v-model="serchstate" label="选择问题状态" class="serchstateBox">
-      <mu-menu-item value="全部" title="全部"/>
-      <mu-menu-item value="待审核" title="待审核"/>
-      <mu-menu-item value="正常" title="正常"/>
-      <mu-menu-item value="已采纳" title="已采纳"/>
-      <mu-menu-item value="已关闭" title="已关闭"/>
-    </mu-select-field>
 
-    <mu-text-field hintText="搜索标题" v-model="searchText" style="width:200px;"/>
+    <mu-raised-button :label="city" class="demo-raised-button cityChoseBtn" @click="showCity"/>
 
-    <mu-raised-button label="搜索" @click="toSearch" class="returnBtn" primary/>
+    <cityDialog :dialog="citydialogshow" @changeCity="changeCity"></cityDialog>
+  
+    <div class="stateChoseBox">
+      <datepicker class="choseTime" language="zh" placeholder="选择开始时间" v-model="chosedStartDay" :format="format"></datepicker>
+      <span style="font-size:18px;margin:0 10px;">&nbsp;至</span>
+      <datepicker class="choseTime" language="zh" placeholder="选择结束时间" v-model="chosedEndDay" :format="format"></datepicker>
+    </div>
     
-    <mu-raised-button label="返回全部" @click="returnAll" v-if="returnAllShow" class="returnBtn" primary/>
+
+    <div class="stateChoseBox">
+      <mu-checkbox name="group" nativeValue="已支付" v-model="list" label="已支付" class="demo-checkbox stateChoseItem"/> <br/>
+      <mu-checkbox name="group" nativeValue="未支付" v-model="list" label="未支付" class="demo-checkbox stateChoseItem"/> <br/>
+      <mu-checkbox name="group" nativeValue="已取消" v-model="list" label="已取消" class="demo-checkbox stateChoseItem"/> <br/>
+      <mu-checkbox name="group" nativeValue="已完成" v-model="list" label="已完成" class="demo-checkbox stateChoseItem"/> <br/>
+    </div>
+
+    <mu-raised-button label="查询" @click="toSearch" class="returnBtn" primary/>
   </div>
   
   <mu-circular-progress :size="40" v-if="circleShow" class="circleBox"/>
@@ -21,8 +28,8 @@
   <mu-table enableSelectAll :showCheckbox="false" ref="table" class="listTable" :height="'660px'">
     <mu-thead>
       <mu-tr>
-        <mu-th>问题ID</mu-th>
-        <mu-th>问题标题</mu-th>
+        <mu-th>店铺名</mu-th>
+        <mu-th>订单号</mu-th>
         <mu-th>问题简述</mu-th>
         <mu-th>提问人</mu-th>
         <mu-th>时间</mu-th>
@@ -61,10 +68,18 @@
 <script>
   import { getQuestionList } from '../common/api'
   import Mdialog from "./components/dialog"
+  import cityDialog from "./components/cityChose"
+  import Datepicker from 'vuejs-datepicker';
 
   export default {
     data(){
       return {
+        citydialogshow:false,  //显示选择程序
+        city:"选择城市",  
+        chosedStartDay:"",  //开始日期选择
+        chosedEndDay:"",  //结束日期选择
+        format:"yyyy-MM-dd",  //日期格式
+        list: [],  //选择的列表
         stateText:{
           0:"待审核",
           1:"正常",
@@ -95,9 +110,18 @@
       }
     },
     components: {
-      Mdialog
+      Mdialog,
+      cityDialog,
+      Datepicker
     },
     methods: {
+      showCity(){
+        this.citydialogshow = true;
+      },
+      changeCity(city){
+        this.citydialogshow = false;
+        this.city = `${city.province} : ${city.county} - ${city.area}`;
+      },
       //获取10条问题内容
       getQlist (pickData,type){
         this.circleShow = true;
@@ -222,19 +246,36 @@
       }
     },
     created(){ 
-      this.getQlist(this.findquestion)
+      // this.getQlist(this.findquestion)
     }
   }
 </script>
 
 <style scoped>
+  .choseTime{
+    margin-left: 7px;
+    margin-bottom: 20px;
+    border-bottom: 3px solid #eee;
+    padding-bottom: 3px;
+    padding-left: 5px;
+  }
   .serchBox{
     display: flex;
-    align-items: flex-end;
+    flex-direction: column;
+    align-items: flex-start;
   }
-  .serchstateBox{
-    width: 100px;
+  .stateChoseBox{
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 20px;
+    margin-left: 6px;
+  }
+  .stateChoseItem{
     margin-right: 20px;
+  }
+  .cityChoseBtn{
+    margin-left: 10px;
+    margin-bottom: 20px;
   }
   .listTable{
     margin-top: 30px;
