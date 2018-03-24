@@ -1,7 +1,7 @@
 <template>
 <div>
   <mu-dialog :open="dialog" title="选择城市">
-    <van-area :area-list="areaList" @confirm="emitData"/>
+    <van-area :area-list="areaList" @confirm="emitData" @cancel="close"/>
     <!-- <mu-flat-button label="确定" slot="actions" primary @click="emitData"/> -->
   </mu-dialog>
 </div>
@@ -9,7 +9,7 @@
 
 <script>
 import { Area } from 'vant';
-import areaList from './data/area.json'
+import areaList from '../data/area.json'
 export default {
   
   components:{
@@ -24,6 +24,9 @@ export default {
     }
   },
   methods: {
+    close(){
+      this.$emit("closeCity");
+    },
     emitData (value) {
       console.log(value)
       let choseCity = {

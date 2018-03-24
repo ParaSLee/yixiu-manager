@@ -94,6 +94,8 @@
         this.nowitem = 5
       }else if(this.$route.path === "/home/service") {
         this.nowitem = 6
+      }else if(this.$route.path === "/home/statistics") {
+        this.nowitem = 7
       }
 
       // this.changeTag(this.$route.path);

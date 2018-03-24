@@ -1,344 +1,50 @@
 <template>
 <div>
-  <div class="serchBox">
 
-    <mu-raised-button :label="city" class="demo-raised-button cityChoseBtn" @click="showCity"/>
-
-    <cityDialog :dialog="citydialogshow" @changeCity="changeCity"></cityDialog>
+  <mu-tabs :value="activeTab" @change="handleTabChange" class="mytabs">
+    <mu-tab value="tab1" icon="chrome_reader_mode" title="总体数据"/>
+    <mu-tab value="tab2" icon="account_box" title="商户个人"/>
+  </mu-tabs>
+  <div class="mybland"></div>
+  <dbc v-if="activeTab=='tab1'"></dbc>
+  <dbm v-if="activeTab=='tab2'"></dbm>
   
-    <div class="stateChoseBox">
-      <datepicker class="choseTime" language="zh" placeholder="选择开始时间" v-model="chosedStartDay" :format="format"></datepicker>
-      <span style="font-size:18px;margin:0 10px;">&nbsp;至</span>
-      <datepicker class="choseTime" language="zh" placeholder="选择结束时间" v-model="chosedEndDay" :format="format"></datepicker>
-    </div>
-    
-
-    <div class="stateChoseBox">
-      <mu-checkbox name="group" nativeValue="已支付" v-model="list" label="已支付" class="demo-checkbox stateChoseItem"/> <br/>
-      <mu-checkbox name="group" nativeValue="未支付" v-model="list" label="未支付" class="demo-checkbox stateChoseItem"/> <br/>
-      <mu-checkbox name="group" nativeValue="已取消" v-model="list" label="已取消" class="demo-checkbox stateChoseItem"/> <br/>
-      <mu-checkbox name="group" nativeValue="已完成" v-model="list" label="已完成" class="demo-checkbox stateChoseItem"/> <br/>
-    </div>
-
-    <mu-raised-button label="查询" @click="toSearch" class="returnBtn" primary/>
-  </div>
-  
-  <mu-circular-progress :size="40" v-if="circleShow" class="circleBox"/>
-
-  <mu-table enableSelectAll :showCheckbox="false" ref="table" class="listTable" :height="'660px'">
-    <mu-thead>
-      <mu-tr>
-        <mu-th>店铺名</mu-th>
-        <mu-th>订单号</mu-th>
-        <mu-th>问题简述</mu-th>
-        <mu-th>提问人</mu-th>
-        <mu-th>时间</mu-th>
-        <mu-th>问题状态</mu-th>
-      </mu-tr>
-    </mu-thead>
-    <mu-tbody>
-      <mu-tr v-for="quetion in questionData" :key="quetion._id" >
-        <mu-td>{{ quetion.id }}</mu-td>
-        <mu-td class="texthidden">{{ quetion.title }}</mu-td>
-        <mu-td class="texthidden">{{ quetion.intro }}</mu-td>
-        <mu-td class="texthidden" v-if="quetion.author!=null">{{ quetion.author.name }}</mu-td>
-        <mu-td class="texthidden" v-else>无</mu-td>
-        <mu-td class="texthidden">{{ quetion.time }}</mu-td>
-        <mu-td>
-          <span :class="stateStyle[quetion.state]">{{ stateText[quetion.state] }}</span>
-          <mu-icon-button tooltip="查看详情" tooltipPosition="bottom-right" touch @click.capture="open(quetion)"/>
-            <sicon name="check" scale="2.3" class="checkI"></sicon>
-          </mu-icon-button>
-        </mu-td>
-      </mu-tr>
-    </mu-tbody>
-  </mu-table>
-  <mu-circular-progress :size="40" v-if="circleShow" class="circleBox"/>
-
-
-  <Mdialog @close="close" :questionData="signalquetion" :dialog="dialog"></Mdialog>
-
-  <div class="ManagePagination">
-    <mu-raised-button v-if="nextpage" label="获取更多内容" primary class="demo-raised-button" @click="moreSearch" :disabled="loading"/>
-    <mu-raised-button v-else label="已无法获取更多内容" class="demo-raised-button" disabled/>
-  </div>
 </div>
 </template>
 
 <script>
-  import { getQuestionList } from '../common/api'
-  import Mdialog from "./components/dialog"
-  import cityDialog from "./components/cityChose"
-  import Datepicker from 'vuejs-datepicker';
-
+  import dbc from "./components/dataBaseCity"
+  import dbm from "./components/dataBaseMan"
   export default {
     data(){
       return {
-        citydialogshow:false,  //显示选择程序
-        city:"选择城市",  
-        chosedStartDay:"",  //开始日期选择
-        chosedEndDay:"",  //结束日期选择
-        format:"yyyy-MM-dd",  //日期格式
-        list: [],  //选择的列表
-        stateText:{
-          0:"待审核",
-          1:"正常",
-          2:"已采纳",
-          3:"已关闭"
-        },
-        stateStyle:{
-          0:"wait",
-          1:"normal",
-          2:"chosed",
-          3:"closed"
-        },
-        loading:true,
-        nextpage:true,
-        serchstate:"全部",  // 搜索的状态
-        searchText:"",  // 搜索的文字
-        returnAllShow:false,
-        circleShow:false,  //数据读取中
-        dialog: false,    //弹窗
-        findquestion:{
-          limit:10, //一次获取列表的条数,系统默认为10
-          skip:0 //跳过几个数据,系统默认为0
-        },
-        author:[],
-        questionData:[],
-        //单个quetion信息
-        signalquetion:{},
+        activeTab: 'tab1'
       }
     },
     components: {
-      Mdialog,
-      cityDialog,
-      Datepicker
+      dbc,
+      dbm
     },
     methods: {
-      showCity(){
-        this.citydialogshow = true;
-      },
-      changeCity(city){
-        this.citydialogshow = false;
-        this.city = `${city.province} : ${city.county} - ${city.area}`;
-      },
-      //获取10条问题内容
-      getQlist (pickData,type){
-        this.circleShow = true;
-        getQuestionList(pickData).then(res => {
-          this.listquestionData(res, type)
-        },(err => {
-          console.log(err)
-        }))
-      },
-      //删除Html标签
-      delHTML(info){
-        let reg = /<.*>/g;
-        let reg2 = /&nbsp;/g;
-        let newinfor = info.replace(reg,"");
-        newinfor = newinfor.replace(reg2," ");
-        return newinfor;
-      },
-      //显示问题内容
-      listquestionData (Arr,type){
-        // console.log(Arr)
-        for(let i in Arr){
-          
-          // if (Arr[i].author==null) {
-          //   this.author = this.author.concat("{name:'无'}")
-          // }else{
-          //   this.author = this.author.concat(Arr[i].author);
-          // }
-          Arr[i].time = this.datestr(Arr[i].createdAt,"yyyy.MM.d");
-          Arr[i].id = this.idstr(Arr[i]._id);
-          Arr[i].intro = this.delHTML(Arr[i].info)
-          for(let index in Arr[i].image){
-            Arr[i].info = Arr[i].info.concat(`<img src='${Arr[i].image[index]}'>`)
-          }
-        }
-        console.log(this.author)
-        if (type==="增加") {
-          if (Arr.length < 10) {
-            this.nextpage = false;
-          }
-          this.questionData = this.questionData.concat(Arr);
-          this.returnAllShow = true;
-          this.loading=false;
-        }else{
-          this.questionData = Arr;
-          if (Arr.length < 10) {
-            this.nextpage = false;
-          }
-          this.loading=false;
-        }
-        // this.delquetionList = [];
-        this.circleShow = false;
-      },
-      //返回全部搜索
-      returnAll(){
-        delete this.findquestion.title;
-        delete this.findquestion.state;
-        this.findquestion.limit=10;
-        this.findquestion.skip=0;
-        this.getQlist(this.findquestion);
-        this.returnAllShow = false;
-        this.searchText = "";
-        this.serchstate = "全部";
-      },
-      //获取更多搜索内容
-      moreSearch(){
-        // if (this.serchstate === "全部") {
-        //   delete this.findquestion.state;
-        // }else{
-        //   for(let index in stateText){
-        //     if(stateText[index]==this.serchstate){
-        //       this.findquestion.state = index;
-        //       break;
-        //     }
-        //   }
-        // }
-        // if (this.searchText !== "") {
-        //   this.findquestion.title=this.searchText;
-        // }
-        this.loading = true;
-        this.findquestion.limit+=10;
-        this.findquestion.skip+=10;
-        let type = "增加";
-        this.getQlist(this.findquestion,type)
-      },
-      //搜索
-      toSearch(){
-        if (this.serchstate === "全部") {
-          delete this.findquestion.state;
-        }else{
-          for(let index in this.stateText){
-            if(this.stateText[index]==this.serchstate){
-              this.findquestion.state = parseInt(index);
-              break;
-            }
-          }
-        }
-        if (this.searchText !== "") {
-          this.findquestion.title=this.searchText;
-        }
-
-        this.findquestion.limit=10;
-        this.findquestion.skip=0;
-        // let type = "增加";
-        this.getQlist(this.findquestion)
-        this.loading = true;
-        this.returnAllShow = true;
-        this.nextpage = true;
-        if (this.serchstate === "全部" && this.searchText === "") {
-          this.returnAllShow = false;
-        }
-      },
-      //弹出
-      open (questionData) {
-        this.dialog = true;
-        this.signalquetion = questionData;
-        console.log(this.signalquetion);
-      },
-      //关闭
-      close () {
-        this.dialog = false;
-        this.signalquetion = {};
+      handleTabChange (val) {
+        this.activeTab = val
       }
     },
     created(){ 
-      // this.getQlist(this.findquestion)
+      
     }
   }
 </script>
 
 <style scoped>
-  .choseTime{
-    margin-left: 7px;
-    margin-bottom: 20px;
-    border-bottom: 3px solid #eee;
-    padding-bottom: 3px;
-    padding-left: 5px;
-  }
-  .serchBox{
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-  }
-  .stateChoseBox{
-    display: flex;
-    flex-direction: row;
-    margin-bottom: 20px;
-    margin-left: 6px;
-  }
-  .stateChoseItem{
-    margin-right: 20px;
-  }
-  .cityChoseBtn{
-    margin-left: 10px;
-    margin-bottom: 20px;
-  }
-  .listTable{
-    margin-top: 30px;
-  }
-  .mu-table tbody{
-    line-height: 48px;
-  }
-  .deletequetionBtn{ 
-    margin-top: 30px;
-  }
-  .ManagePagination{
-    display: flex;
-    justify-content: center;
-    margin-top: 30px;
-  }
-  .btnBox{
-    margin-right: 20px;
-  }
-  .circleBox{
-    position: absolute;
-  }
-  .checkI{
-    margin-bottom: -5px;
-    margin-left: -38px;
-  }
-  .normal{
-    color: #17B978;
-  }
-  .wait{
-    color: #EC7700;
-  }
-  .chosed{
-    color: #00B7C2;
-  }
-  .closed{
-    /*color: */
-  }
-  .myinput{
-    position: absolute;
-    display: inline-block;
-    width: 256px;
-    height: 32px;
-    font-size: 16px;
-    background: transparent;
-    color: transparent;
-    outline-color: rgb(224, 224, 224);
-    margin-top: -51px;
-  }
-  .returnBtn{
-    margin-left: 10px;
-    margin-bottom: 20px;
-  }
-  .deletequetionBtn{ 
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 30px;
-  }
-  .texthidden{
-    white-space:nowrap; 
-    overflow: hidden;
-    text-overflow:ellipsis;
-  }
+  @import 'https://fonts.googleapis.com/icon?family=Material+Icons';
 
-  
-
+  .mytabs{
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+  .mybland{
+    margin-top: 60px;
+  }
 </style>

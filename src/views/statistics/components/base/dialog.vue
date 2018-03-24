@@ -88,7 +88,7 @@
 </template>
 
 <script>
-import { updateQuestion } from '../../common/api'
+import { updateQuestion } from '../../../common/api'
 import { Toast } from 'vant';
 
   export default {

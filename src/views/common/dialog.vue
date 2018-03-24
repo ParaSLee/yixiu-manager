@@ -5,6 +5,33 @@
       <span class="messageTitle">商户ID：</span> 
       {{ shopData._id }}
     </p>
+    
+    <p class="dialogBox canchose">
+      <span class="messageTitle">商户名：</span> 
+      {{ shopData.name }}
+    </p>
+    <p class="dialogBox canchose">
+      <span class="messageTitle">商户联系方式：</span> 
+      {{ shopData.contactNumber }}
+    </p>
+    <p class="dialogBox canchose">
+      <span class="messageTitle">商户地址：</span> 
+      {{ shopData.address ? shopData.address : "尚未填写地址" }}
+    </p>
+    <p class="dialogBox">
+      <span class="messageTitle">缴纳押金：</span> 
+      {{ shopData.payment || shopData.payment!=0 ? `${shopData.payment/100} 元` : "尚未缴纳" }}
+    </p>
+    
+    <p class="dialogBox">
+      <span class="messageTitle">商户封面：</span> 
+      <img :src="shopData.cover" class="cover" @click="lookImg(shopData.cover)">
+    </p>
+    
+    <p class="dialogBox">
+      <span class="messageTitle">商户创立时间：</span> 
+      {{ shopData.time }}
+    </p>
     <p class="dialogBox">
       <span class="messageTitle">商户身份证：</span> 
       <span v-if="thephoto.idcarda && thephoto.idcarda.length != 0">
@@ -14,23 +41,6 @@
       <span v-else>
         尚未添加
       </span>
-    </p>
-    <p class="dialogBox canchose">
-      <span class="messageTitle">商户名：</span> 
-      {{ shopData.name }}
-    </p>
-    
-    <p class="dialogBox">
-      <span class="messageTitle">商户封面：</span> 
-      <img :src="shopData.cover" class="cover" @click="lookImg(shopData.cover)">
-    </p>
-    <p class="dialogBox canchose">
-      <span class="messageTitle">商户联系方式：</span> 
-      {{ shopData.contactNumber }}
-    </p>
-    <p class="dialogBox">
-      <span class="messageTitle">商户创立时间：</span> 
-      {{ shopData.time }}
     </p>
     <p class="dialogBox">
       <span class="messageTitle">商户证书：</span> 
@@ -55,10 +65,7 @@
         尚未添加
       </span>
     </p>
-    <p class="dialogBox">
-      <span class="messageTitle">缴纳押金：</span> 
-      {{ shopData.payment/100 }} 元
-    </p>
+    
     <p class="dialogBox checkBox">
       <span class="messageTitle">商户状态：</span> 
       <span v-if="!changestateShow">
