@@ -8,7 +8,8 @@
       <mu-circular-progress :size="40" v-if="circleShow" class="circleBox"/>
     </div> 
     <div style="overflow:hidden">
-      <div class="userInfoBox" v-for="user in shopData">
+      <div class="userInfoBox" v-for="(user,index) in shopData" @click="choseTage(index)"
+        :class="index == nowitem ? 'chosedTag' : ''">
         <div>店铺名：{{ user?user.name:"" }}</div>
         <div>ID：{{ user?user.id:"" }}</div>
         <div>封面： <img :src="user.cover?user.cover:''"></div>
@@ -23,6 +24,7 @@
     </div>
 
     <mu-flat-button slot="actions" @click="close" primary label="关闭"/>
+    <mu-flat-button slot="actions" @click="get" primary label="确定"/>
   </mu-dialog>
 </div>
 </template>
@@ -35,21 +37,32 @@
     },
     data(){
       return {
+        nowitem: -1,
         loading:true,
         searchName:"",
         findshopLish:{
           // name: "",
           limit:10,//一次获取列表的条数,系统默认为10
-          skip:0//跳过几个数据,系统默认为0
+          skip:0,//跳过几个数据,系统默认为0
+          qualificationState:"正常"
         },
         circleShow:false,
         shopData:[],
         nextpage:true,
+        user:{
+          name:"",
+          id:""
+        }
       }
     },
     components: {
     },
     methods: {
+      choseTage(index) {
+        this.nowitem = index;
+        this.user.name=this.shopData[this.nowitem].name;
+        this.user.id=this.shopData[this.nowitem]._id;
+      },
       //获取10条商家内容
       getShopList (pickData,type){
         getShopListSort(pickData).then(res => {
@@ -83,6 +96,10 @@
       //关闭dialog
       close(){
         this.$emit("closeuser")
+      },
+      get(){
+        let user = this.copy(this.user);
+        this.$emit("getuser",user)
       },
       search(){
         if (this.searchName !== "") {
@@ -134,6 +151,16 @@
     border-color: rgb(63, 81, 181);
     color: rgb(108, 122, 196);
   }
+  .chosedTag{
+    background: rgb(235, 247, 253);
+    border-color: rgb(186, 227, 249);
+    color: rgb(0, 164, 223);
+  }
+  .chosedTag:hover{
+    background: rgb(235, 247, 253);
+    border-color: rgb(186, 227, 249);
+    color: rgb(0, 164, 223);
+  }
   .userInfoBox div{
     margin-bottom: 5px;
     display: flex;
@@ -150,6 +177,8 @@
   }
   .notice{
     font-size: 12px;
-    color: #F27370;
+    color: #23B1A5;
+    margin-left: 10px;
   }
+  
 </style>

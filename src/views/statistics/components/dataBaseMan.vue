@@ -2,9 +2,9 @@
 <div>
   <div class="serchBox">
 
-    <mu-raised-button :label="user" class="demo-raised-button userChoseBtn" @click="showuser"/>
+    <mu-raised-button :label="user.name" class="demo-raised-button userChoseBtn" @click="showuser"/>
 
-    <userDialog :dialog="userdialogshow" @changeuser="changeuser" @closeuser="closeuser"></userDialog>
+    <userDialog :dialog="userdialogshow" @getuser="getuser" @closeuser="closeuser"></userDialog>
   
     <div class="stateChoseBox">
       <datepicker class="choseTime" language="zh" placeholder="选择开始时间" v-model="chosedStartDay" :format="format"></datepicker>
@@ -77,7 +77,10 @@
     data(){
       return {
         userdialogshow:false,  //显示选择程序
-        user:"选择商户",  
+        user:{
+          name:"选择商户",
+          id:"",
+        },  
         chosedStartDay:"",  //开始日期选择
         chosedEndDay:"",  //结束日期选择
         format:"yyyy-MM-dd",  //日期格式
@@ -123,9 +126,9 @@
       closeuser(){
         this.userdialogshow = false;
       },
-      changeuser(user){
+      getuser(user){
         this.userdialogshow = false;
-        this.user = `${user.province} : ${user.county} - ${user.area}`;
+        this.user = user;
       },
       //获取10条问题内容
       getQlist (pickData,type){
