@@ -55,6 +55,10 @@
         尚未添加
       </span>
     </p>
+    <p class="dialogBox">
+      <span class="messageTitle">缴纳押金：</span> 
+      {{ shopData.payment/100 }} 元
+    </p>
     <p class="dialogBox checkBox">
       <span class="messageTitle">商户状态：</span> 
       <span v-if="!changestateShow">
