@@ -187,7 +187,11 @@ import { Uploader,Icon } from 'vant';
         this.changebtnShow = true;
         this.newBrandData = this.copy(this.phoneModelData);
         for(let index in this.phoneModelData.color){
-          this.newcolor = this.newcolor.concat(`${this.phoneModelData.color[index]} `)
+          if (index == this.phoneModelData.color.length-1) {
+            this.newcolor = this.newcolor.concat(`${this.phoneModelData.color[index]}`)
+          }else{
+            this.newcolor = this.newcolor.concat(`${this.phoneModelData.color[index]} `)
+          }
         }
       },
       // 关闭修改型号
