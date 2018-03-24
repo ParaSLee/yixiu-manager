@@ -28,21 +28,16 @@
   <mu-table enableSelectAll :showCheckbox="false" ref="table" class="listTable" :height="'660px'">
     <mu-thead>
       <mu-tr>
-        <mu-th>店铺名</mu-th>
         <mu-th>订单号</mu-th>
-        <mu-th>问题简述</mu-th>
-        <mu-th>提问人</mu-th>
         <mu-th>时间</mu-th>
-        <mu-th>问题状态</mu-th>
+        <mu-th>金额</mu-th>
+        <mu-th>订单状态</mu-th>
       </mu-tr>
     </mu-thead>
     <mu-tbody>
       <mu-tr v-for="quetion in questionData" :key="quetion._id" >
         <mu-td>{{ quetion.id }}</mu-td>
-        <mu-td class="texthidden">{{ quetion.title }}</mu-td>
         <mu-td class="texthidden">{{ quetion.intro }}</mu-td>
-        <mu-td class="texthidden" v-if="quetion.author!=null">{{ quetion.author.name }}</mu-td>
-        <mu-td class="texthidden" v-else>无</mu-td>
         <mu-td class="texthidden">{{ quetion.time }}</mu-td>
         <mu-td>
           <span :class="stateStyle[quetion.state]">{{ stateText[quetion.state] }}</span>
