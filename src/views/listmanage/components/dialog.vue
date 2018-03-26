@@ -27,11 +27,11 @@
       <div class="dialogBland2"></div>
       <p class="dialogBox">
         <span class="messageTitle">用户昵称：</span> 
-        {{ signalorderData.user.name }}
+        {{ signalorderData.user ? signalorderData.user.name :"无" }}
       </p>
       <p class="dialogBox">
         <span class="messageTitle">店铺名称：</span> 
-        {{ signalorderData.shop.name }}
+        {{ signalorderData.user ? signalorderData.shop.name :"无" }}
       </p>
       <div class="dialogBland2 bottomline"></div>
       <div class="dialogBland2"></div>
@@ -58,15 +58,15 @@
       </p>
       <p class="dialogBox">
         <span class="messageTitle">用户昵称：</span> 
-        {{ signalorderData.user.name }}
+        {{ signalorderData.user ? signalorderData.user.name : "无" }}
       </p>
       <p class="dialogBox canchose">
         <span class="messageTitle">用户电话：</span> 
-        {{ signalorderData.user.mobile }}
+        {{ signalorderData.user ? signalorderData.user.mobile : "无" }}
       </p>
       <p class="dialogBox canchose">
         <span class="messageTitle">用户邮箱：</span> 
-        {{ signalorderData.user.email }}
+        {{ signalorderData.user ? signalorderData.user.email : "无" }}
       </p>
       <div class="dialogBland"></div>
       <div class="dialogBland"></div>
@@ -77,15 +77,15 @@
       <div class="dialogBland"></div>
       <p class="dialogBox canchose">
         <span class="messageTitle">店铺ID：</span> 
-        {{ signalorderData.shop._id }}
+        {{ signalorderData.shop ? signalorderData.shop._id : "无" }}
       </p>
       <p class="dialogBox">
         <span class="messageTitle">店铺名称：</span> 
-        {{ signalorderData.shop.name }}
+        {{ signalorderData.shop ? signalorderData.shop.name : "无" }}
       </p>
       <p class="dialogBox canchose">
         <span class="messageTitle">店铺联系方式：</span> 
-        {{ signalorderData.shop.contactNumber }}
+        {{ signalorderData.shop ? signalorderData.shop.contactNumber : "无" }}
       </p>
       <div class="dialogBland"></div>
     </div>
@@ -98,8 +98,8 @@
       </p>
       <p class="dialogBox">
         <span class="messageTitle">手机属性：</span> 
-        {{ signalorderData.phoneModel.name }} &nbsp; 
-        {{ signalorderData.phoneModel.color[0] }} &nbsp;
+        {{ signalorderData.phoneModel ? signalorderData.phoneModel.name : "" }} &nbsp; 
+        {{ signalorderData.phoneModel ? signalorderData.phoneModel.color[0] : "" }} &nbsp;
       </p>
       <div class="dialogBox">
         <span class="messageTitle">服务内容：</span> 
