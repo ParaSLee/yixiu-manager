@@ -130,6 +130,8 @@ import axios from 'axios'
     methods: {
       //关闭dialog
       close(){
+        this.changestateShow = false;
+        this.chosevalue = -1;
         this.$emit("close")
       },
       //查看图片大图
