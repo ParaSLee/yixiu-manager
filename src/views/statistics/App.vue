@@ -7,7 +7,7 @@
     <mu-tab value="tab3" icon="account_box" title="商户个人"/>
   </mu-tabs>
   <div class="mybland"></div>
-  <dbc v-if="activeTab=='tab1'"></dbc>
+  <sbc v-if="activeTab=='tab1'"></sbc>
   <dbc v-if="activeTab=='tab2'"></dbc>
   <dbm v-if="activeTab=='tab3'"></dbm>
   
@@ -15,6 +15,7 @@
 </template>
 
 <script>
+  import sbc from "./components/shopBaseCity"
   import dbc from "./components/dataBaseCity"
   import dbm from "./components/dataBaseMan"
   export default {
@@ -24,6 +25,7 @@
       }
     },
     components: {
+      sbc,
       dbc,
       dbm
     },
