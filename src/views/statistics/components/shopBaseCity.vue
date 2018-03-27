@@ -7,11 +7,30 @@
     <cityDialog :dialog="citydialogshow" @changeCity="changeCity" @closeCity="closeCity"></cityDialog>
   
     <mu-raised-button label="查询" @click="toSearch" class="returnBtn" primary :disabled="!findshopAllData.province"/>
+    <div class="switchbtn">
+      <div class="switchbtnBox">
+        <mu-paper>
+          <mu-bottom-nav :value="bottomNav" @change="handleChange">
+            <mu-bottom-nav-item value="数据" title="数据" icon="filter_9_plus"/>
+            <mu-bottom-nav-item value="图表" title="图表" icon="pie_chart"/>
+            <mu-bottom-nav-item value="列表" title="列表" icon="assignment"/>
+          </mu-bottom-nav>
+        </mu-paper>
+      </div>
+    </div>
+
     <span class="noshop" v-if="noshopshow">该地区尚未有店铺注册！</span>
+
+
   </div>
   
   <mu-circular-progress :size="40" v-if="circleShow" class="circleBox"/>
 
+
+  <SBCdata :AllShopData="AllShopData" v-if="bottomNav=='数据'"></SBCdata>
+  <SBCchart :AllShopData="AllShopData" v-if="bottomNav=='图表'"></SBCchart>
+  <SBCtable :AllShopData="AllShopData" v-if="bottomNav=='列表'"></SBCtable>
+<!-- 
   <mu-table enableSelectAll :showCheckbox="false" ref="table" class="listTable" :height="'660px'">
     <mu-thead>
       <mu-tr>
@@ -39,11 +58,7 @@
 
 
   <Mdialog @close="close" :questionData="signalShop" :dialog="dialog"></Mdialog>
-
- <!--  <div class="ManagePagination">
-    <mu-raised-button v-if="nextpage" label="获取更多内容" primary class="demo-raised-button" @click="moreSearch" :disabled="loading"/>
-    <mu-raised-button v-else label="已无法获取更多内容" class="demo-raised-button" disabled/>
-  </div> -->
+ -->
 </div>
 </template>
 
@@ -52,35 +67,43 @@
   import { getshopAllData } from '../../common/api'
   import Mdialog from "./base/dialog"
   import cityDialog from "./base/cityChose"
+  import SBCtable from "./base/SBCtable"
+  import SBCchart from "./base/SBCchart"
+  import SBCdata from "./base/SBCdata"
   import Datepicker from 'vuejs-datepicker';
   
 
   export default {
     data(){
       return {
-        citydialogshow:false,  //显示选择程序
+        citydialogshow:false,  //显示选择城市
         city:"选择城市",  
-        chosedStartDay:"",  //开始日期选择
-        chosedEndDay:"",  //结束日期选择
-        format:"yyyy-MM-dd",  //日期格式
-        loading:true,
-        nextpage:true,
+        // chosedStartDay:"",  //开始日期选择
+        // chosedEndDay:"",  //结束日期选择
+        // format:"yyyy-MM-dd",  //日期格式
+        // loading:true,
+        // nextpage:true,
         circleShow:false,  //数据读取中
-        dialog: false,    //弹窗
+        // dialog: false,    //弹窗
         findshopAllData:{
           detail:true, //是否显示店铺详情
-          pay:true, //是否缴纳保证金
+          // pay:true, //是否缴纳保证金
           qualification:true //审核是否通过
         },
         AllShopData:[],
-        signalShop:{},
+        // signalShop:{},
         noshopshow:false, //该地区没有店铺时
+        bottomNav: '数据',
+        bottomNavColor: '数据'
       }
     },
     components: {
       Mdialog,
       cityDialog,
-      Datepicker
+      Datepicker,
+      SBCtable,
+      SBCchart,
+      SBCdata
     },
     methods: {
       showCity(){
@@ -140,13 +163,13 @@
         return money;
       },
       //获取更多搜索内容
-      moreSearch(){
+      /*moreSearch(){
         this.loading = true;
         this.findshopAllData.limit+=10;
         this.findshopAllData.skip+=10;
         let type = "增加";
         this.getQlist(this.findshopAllData,type)
-      },
+      },*/
       //搜索
       toSearch(){
         this.getQlist(this.findshopAllData)
@@ -155,7 +178,7 @@
         //this.nextpage = true;
       },
       //弹出
-      open (AllShopData) {
+      /*open (AllShopData) {
         this.dialog = true;
         this.signalShop = AllShopData;
         console.log(this.signalShop);
@@ -164,6 +187,9 @@
       close () {
         this.dialog = false;
         this.signalShop = {};
+      },*/
+      handleChange (val) {
+        this.bottomNav = val
       }
     }
   }
@@ -262,6 +288,13 @@
   .enterDetail{
     margin-left: -20px;
   }
-  
+  .switchbtn{
+    position: absolute;
+    /*width: 100%;*/
+    right: 7%;
+  }
+  .switchbtnBox{
+    float: right;
+  }
 
 </style>

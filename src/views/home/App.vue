@@ -36,5 +36,8 @@
     overflow-y: auto;
     /*overflow-x: hidden;*/
     z-index: 100;
+    min-width:100%;
+    box-sizing:border-box;
+    border-right: 288px solid transparent;
   }
 </style>
