@@ -2,7 +2,7 @@
 <div>
   <div class="serchBox">
     <p style="color:rgb(185, 185, 185);margin-bottom:10px;">商户名和用户手机号至少填一个,但是不能同时填入</p>
-    <mu-text-field hintText="根据商户名搜索" v-model="searchShop" :disabled="searchUser!=''"/>
+    <mu-text-field hintText="根据商户ID搜索" v-model="searchShop" :disabled="searchUser!=''"/>
 
     <mu-text-field hintText="根据用户手机号搜索" v-model="searchUser" :disabled="searchShop!=''"/>
 
@@ -213,7 +213,7 @@
         this.findorderList.limit=10;
         this.findorderList.skip=0;
         if (this.searchShop!=="") {
-          this.findorderList.shopName = this.searchShop.replace(/\s/g, "");
+          this.findorderList.shop = this.searchShop.replace(/\s/g, "");
           this.getOrderList(this.findorderList)
         }else if(this.searchUser!==""){
           this.findorderList.phone = this.searchUser.replace(/\s/g, "");
