@@ -90,6 +90,7 @@ import { Uploader,Icon } from 'vant';
         }else{
           this.newBrandData.price = price;
           this.newBrandData.category = this.brandid;
+          // this.newBrandData.shop = "all"
 
           console.log(this.newBrandData)
 

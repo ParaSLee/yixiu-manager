@@ -1,23 +1,23 @@
 <template>
 <div>
-  <mu-dialog :open="dialog" title="问题详情" @close="close" scrollable>   
+  <mu-dialog :open="dialog" title="商铺详情" @close="close" scrollable>   
   
     <mu-tabs :value="activeTab" @change="handleTabChange">
-      <mu-tab value="tab1" title="问题信息"/>
-      <mu-tab value="tab2" title="用户信息"/>
-      <mu-tab value="tab3" title="问题详情"/>
-      <mu-tab value="tab4" title="状态修改"/>
+      <mu-tab value="tab1" title="商铺信息"/>
+      <mu-tab value="tab2" title="证件详情"/>
+      <mu-tab value="tab3" title="订单信息"/>
+      <mu-tab value="tab4" title="其他信息"/>
     </mu-tabs>
 
     <div v-if="activeTab === 'tab1'">
       <div class="dialogBland"></div>
       <p class="dialogBox canchose">
-        <span class="messageTitle">问题ID：</span> 
+        <span class="messageTitle">商铺ID：</span> 
         {{ questionData._id }}
       </p>
       <p class="dialogBox">
-        <span class="messageTitle">问题标题：</span> 
-        {{ questionData.title }}
+        <span class="messageTitle">商铺名：</span> 
+        {{ questionData.name }}
       </p>
       <p class="dialogBox">
         <span class="messageTitle">创建时间：</span> 
@@ -25,62 +25,77 @@
       </p>
       <div class="dialogBland2 bottomline"></div>
       <div class="dialogBland2"></div>
-      <div class="dialogBox">
-        <span class="messageTitle">问题简介：</span> 
-        <div v-html="questionData.desc" class="Textdesc"></div>
+      <div class="dialogBox canchose">
+        <span class="messageTitle">联系方式：</span> 
+        {{ questionData.contactNumber }}
+      </div>
+      <div class="dialogBox canchose">
+        <span class="messageTitle">商铺地址：</span> 
+        {{ questionData.address }}
       </div>
     </div>
 
 
     <div v-if="activeTab === 'tab2'">
       <div class="dialogBland"></div>
-      <p class="dialogBox canchose">
-        <span class="messageTitle">用户ID：</span> 
-        {{ questionData.author._id }}
+      <p class="dialogBox">
+        <span class="messageTitle">缴纳押金：</span> 
+        {{ questionData.payment || questionData.payment!=0 ? `${questionData.payment/100} 元` : "尚未缴纳" }}
       </p>
       <p class="dialogBox">
-        <span class="messageTitle">用户昵称：</span> 
-        {{ questionData.author.name }}
+        <span class="messageTitle">商户身份证：</span> 
+        <span v-if="thephoto.idcarda && thephoto.idcarda.length != 0">
+          <img :src="thephoto.idcarda" class="beforeImg" @click="lookImg(thephoto.idcarda)">
+          <img :src="thephoto.idcardb" class="beforeImg" @click="lookImg(thephoto.idcardb)">
+        </span>
+        <span v-else>
+          尚未添加
+        </span>
       </p>
-      <p class="dialogBox canchose">
-        <span class="messageTitle">用户电话：</span> 
-        {{ questionData.author.mobile }}
+      <p class="dialogBox">
+        <span class="messageTitle">商户证书：</span> 
+        <!-- <span>
+          <van-uploader :after-read="onRead" accept="image/gif, image/jpeg" multiple>
+            <van-icon name="photograph" />
+          </van-uploader>
+        </span> -->
+        <span v-if="thephoto.certificate && thephoto.certificate.length != 0">
+          <img :src="thephoto.certificate" class="beforeImg" @click="lookImg(thephoto.certificate)">
+        </span>
+        <span v-else>
+          尚未添加
+        </span>
       </p>
-      <p class="dialogBox canchose">
-        <span class="messageTitle">用户邮箱：</span> 
-        {{ questionData.author.email }}
+      <p class="dialogBox">
+        <span class="messageTitle">营业执照：</span> 
+        <span v-if="thephoto.certificate && thephoto.certificate.length != 0">
+          <img :src="thephoto.certificate" class="beforeImg" @click="lookImg(thephoto.certificate)">
+        </span>
+        <span v-else>
+          尚未添加
+        </span>
       </p>
-      <div class="dialogBland"></div>
-      <div class="dialogBland"></div>
     </div>
-
+     <seebigphoto v-if="bigImgUrl!==''" :imgurl="bigImgUrl" @closeimg="closeimg"></seebigphoto>
 
     <div v-if="activeTab === 'tab3'">
       <div class="dialogBland"></div>
-      <div class="contentBox">
-        <div v-html="questionData.info" class="Qcontent"></div>
-        <div class="dialogBland"></div>
-      </div>
-      
+      <p class="dialogBox">
+        <span class="messageTitle">订单总数：</span> 
+        {{ questionData.orderlist?questionData.orderlist.length : "0" }} 个
+      </p>
+      <p class="dialogBox">
+        <span class="messageTitle">总金额：</span> 
+        {{ questionData.allmoney?questionData.allmoney: "0" }} 元
+      </p>
     </div>
 
     <div v-if="activeTab === 'tab4'">
       <div class="dialogBland"></div>
-      <span v-if="!changestateShow">
-        <span class="messageTitle">问题状态：</span> 
-        <span :class="stateStyle[questionData.state]">{{stateText[questionData.state]}}</span>
-        <mu-flat-button label="修改状态" class="demo-flat-button changestateBtn" @click="chosestate" />
-      </span>
-      <span v-else class="changestateBox">
-        <mu-radio label="待审核" name="group" nativeValue="0" v-model="chosevalue" class="demo-radio"/>
-        <mu-radio label="正常" name="group" nativeValue="1" v-model="chosevalue" class="demo-radio"/>
-        <mu-radio label="已采纳" name="group" nativeValue="2" v-model="chosevalue" class="demo-radio"/>
-        <mu-radio label="已关闭" name="group" nativeValue="3" v-model="chosevalue" class="demo-radio"/>
-        
-        <mu-raised-button label="取消" class="demo-raised-button" @click="closechosestate" />
-        <mu-raised-button label="更新" class="demo-raised-button" @click="changestate" primary/>
-        <mu-circular-progress :size="40" v-if="circleShow" class="circleBox"/>
-      </span>
+      <p class="dialogBox">
+        <span class="messageTitle">营业时间：</span> 
+        {{ questionData.businessHours[0] }}
+      </p>
     </div>
     <mu-flat-button slot="actions" @click="close" primary label="关闭"/>
   </mu-dialog>
@@ -90,6 +105,7 @@
 <script>
 import { updateQuestion } from '../../../common/api'
 import { Toast } from 'vant';
+import seebigphoto from "../../../common/seeBigPhoto"
 
   export default {
     props:{
@@ -98,21 +114,18 @@ import { Toast } from 'vant';
     },
     data(){
       return {
+        bigImgUrl:"",
+        thephoto:{
+          idcarda:"",
+          idcardb:"",
+          license:"",
+          certificate:"",
+          protocol:"",
+          bigImgUrl:"",
+        },
         circleShow:false,
         chosevalue:-1,
         changestateShow:false,
-        stateText:{
-          0:"待审核",
-          1:"正常",
-          2:"已采纳",
-          3:"已关闭"
-        },
-        stateStyle:{
-          0:"wait",
-          1:"normal",
-          2:"chosed",
-          3:"closed"
-        },
         activeTab: 'tab1',
         question:{
           state: 0,
@@ -121,42 +134,45 @@ import { Toast } from 'vant';
       }
     },
     components: {
+      seebigphoto
     },
     methods: {
+      //查看图片大图
+      lookImg(url){
+        this.bigImgUrl = url
+      },
+      //关闭大图查看
+      closeimg(){
+        this.bigImgUrl = ""
+      },
       //关闭dialog
       close(){
         // this.questionData = [];
         this.$emit("close")
       },
-      //改变状态
-      chosestate(){
-        this.chosevalue = parseInt(this.questionData.state);
-        this.changestateShow = true;
-      },
-      //关闭更改状态
-      closechosestate(){
-        this.changestateShow = false;
-        this.chosevalue = -1;
-      },
-      //更新
-      changestate(){
-        this.circleShow = true;
-        this.question.state = parseInt(this.chosevalue);
-        this.question._id = this.questionData._id;
-
-        updateQuestion(this.question).then(res => {
-          this.circleShow = false;
-          this.questionData.state = res.state;
-          this.closechosestate();
-        },(err => {
-          console.log(err)
-        }))
-      },
       handleTabChange (val) {
         this.activeTab = val
+      },
+      enterPhoto(){
+        if (this.questionData.certificate) {
+          for(let ind of this.questionData.certificate){
+            if (ind.name=="idcard1") {
+              this.thephoto.idcarda = ind.src
+            }else if(ind.name=="idcard2"){
+              this.thephoto.idcardb = ind.src
+            }else if(ind.name=="license"){
+              this.thephoto.license = ind.src
+            }else if(ind.name=="certificate"){
+              this.thephoto.certificate = ind.src
+            }else if(ind.name=="protocol"){
+              this.thephoto.protocol = ind.src
+            }
+          }
+        }
       }
     },
-    created(){
+    updated(){
+      this.enterPhoto();
     }
   }
 </script>

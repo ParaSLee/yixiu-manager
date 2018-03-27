@@ -6,7 +6,8 @@
 
     <cityDialog :dialog="citydialogshow" @changeCity="changeCity" @closeCity="closeCity"></cityDialog>
   
-    <mu-raised-button label="查询" @click="toSearch" class="returnBtn" primary disabled/>
+    <mu-raised-button label="查询" @click="toSearch" class="returnBtn" primary :disabled="!findshopAllData.province"/>
+    <span class="noshop" v-if="noshopshow">该地区尚未有店铺注册！</span>
   </div>
   
   <mu-circular-progress :size="40" v-if="circleShow" class="circleBox"/>
@@ -15,40 +16,40 @@
     <mu-thead>
       <mu-tr>
         <mu-th>店铺名</mu-th>
-        <mu-th>时间</mu-th>
-        <mu-th>金额</mu-th>
+        <mu-th>建立时间</mu-th>
+        <mu-th>联系方式</mu-th>
+        <mu-th>交易金额</mu-th>
       </mu-tr>
     </mu-thead>
     <mu-tbody>
-      <mu-tr v-for="quetion in questionData" :key="quetion._id" >
-        <mu-td>{{ quetion.id }}</mu-td>
-        <mu-td class="texthidden">{{ quetion.title }}</mu-td>
-        <mu-td class="texthidden">{{ quetion.time }}</mu-td>
-        <mu-td class="texthidden">{{ quetion.time }}</mu-td>
-        <mu-td>
-          <span :class="stateStyle[quetion.state]">{{ stateText[quetion.state] }}</span>
-          <mu-icon-button tooltip="查看详情" tooltipPosition="bottom-right" touch @click.capture="open(quetion)"/>
+      <mu-tr v-for="quetion in AllShopData" :key="quetion._id" >
+        <mu-td class="texthidden">
+          <mu-icon-button tooltip="查看详情" tooltipPosition="bottom-right" touch @click.capture="open(quetion)" class="enterDetail"/>
             <sicon name="check" scale="2.3" class="checkI"></sicon>
           </mu-icon-button>
+          &nbsp;{{ quetion.name }}
         </mu-td>
+        <mu-td class="texthidden">{{ quetion.time }}</mu-td>
+        <mu-td class="texthidden">{{ quetion.contactNumber }}</mu-td>
+        <mu-td class="texthidden">{{ quetion.allmoney }} 元</mu-td>
       </mu-tr>
     </mu-tbody>
   </mu-table>
   <mu-circular-progress :size="40" v-if="circleShow" class="circleBox"/>
 
 
-  <Mdialog @close="close" :questionData="signalquetion" :dialog="dialog"></Mdialog>
+  <Mdialog @close="close" :questionData="signalShop" :dialog="dialog"></Mdialog>
 
-  <div class="ManagePagination">
+ <!--  <div class="ManagePagination">
     <mu-raised-button v-if="nextpage" label="获取更多内容" primary class="demo-raised-button" @click="moreSearch" :disabled="loading"/>
     <mu-raised-button v-else label="已无法获取更多内容" class="demo-raised-button" disabled/>
-  </div>
+  </div> -->
 </div>
 </template>
 
 <script>
   
-  import { getQuestionList } from '../../common/api'
+  import { getshopAllData } from '../../common/api'
   import Mdialog from "./base/dialog"
   import cityDialog from "./base/cityChose"
   import Datepicker from 'vuejs-datepicker';
@@ -62,34 +63,18 @@
         chosedStartDay:"",  //开始日期选择
         chosedEndDay:"",  //结束日期选择
         format:"yyyy-MM-dd",  //日期格式
-        list: [],  //选择的列表
-        stateText:{
-          0:"待审核",
-          1:"正常",
-          2:"已采纳",
-          3:"已关闭"
-        },
-        stateStyle:{
-          0:"wait",
-          1:"normal",
-          2:"chosed",
-          3:"closed"
-        },
         loading:true,
         nextpage:true,
-        serchstate:"全部",  // 搜索的状态
-        searchText:"",  // 搜索的文字
-        returnAllShow:false,
         circleShow:false,  //数据读取中
         dialog: false,    //弹窗
-        findquestion:{
-          limit:10, //一次获取列表的条数,系统默认为10
-          skip:0 //跳过几个数据,系统默认为0
+        findshopAllData:{
+          detail:true, //是否显示店铺详情
+          pay:true, //是否缴纳保证金
+          qualification:true //审核是否通过
         },
-        author:[],
-        questionData:[],
-        //单个quetion信息
-        signalquetion:{},
+        AllShopData:[],
+        signalShop:{},
+        noshopshow:false, //该地区没有店铺时
       }
     },
     components: {
@@ -105,134 +90,81 @@
         this.citydialogshow = false;
       },
       changeCity(city){
-        this.citydialogshow = false;
-        this.city = `${city.province} : ${city.county} - ${city.area}`;
+        if (city.province=="选择省份") {
+        }else if (city.county=="选择城市" && city.area=="选择地区") {
+          this.findshopAllData.province = city.province;
+          this.city = `${city.province}`;
+        }else if(city.area=="选择地区"){
+          this.findshopAllData.province = city.province;
+          this.findshopAllData.city = city.county;
+          this.city = `${city.province} : ${city.county}`;
+        }else{
+          this.findshopAllData.province = city.province;
+          this.findshopAllData.city = city.county;
+          this.findshopAllData.district = city.area;
+          this.city = `${city.province} : ${city.county} - ${city.area}`;
+        }
+          this.citydialogshow = false;
       },
       //获取10条问题内容
       getQlist (pickData,type){
         this.circleShow = true;
-        getQuestionList(pickData).then(res => {
-          this.listquestionData(res, type)
+        getshopAllData(pickData).then(res => {
+          this.listAllShopData(res, type)
         },(err => {
           console.log(err)
         }))
       },
-      //删除Html标签
-      delHTML(info){
-        let reg = /<.*>/g;
-        let reg2 = /&nbsp;/g;
-        let newinfor = info.replace(reg,"");
-        newinfor = newinfor.replace(reg2," ");
-        return newinfor;
-      },
       //显示问题内容
-      listquestionData (Arr,type){
-        // console.log(Arr)
-        for(let i in Arr){
-          
-          // if (Arr[i].author==null) {
-          //   this.author = this.author.concat("{name:'无'}")
-          // }else{
-          //   this.author = this.author.concat(Arr[i].author);
-          // }
-          Arr[i].time = this.datestr(Arr[i].createdAt,"yyyy.MM.d");
-          Arr[i].id = this.idstr(Arr[i]._id);
-          Arr[i].intro = this.delHTML(Arr[i].info)
-          for(let index in Arr[i].image){
-            Arr[i].info = Arr[i].info.concat(`<img src='${Arr[i].image[index]}'>`)
-          }
-        }
-        console.log(this.author)
-        if (type==="增加") {
-          if (Arr.length < 10) {
-            this.nextpage = false;
-          }
-          this.questionData = this.questionData.concat(Arr);
-          this.returnAllShow = true;
-          this.loading=false;
+      listAllShopData (Arr,type){ 
+        if (Arr.shopCount === 0) {
+          this.circleShow = false;
+          this.noshopshow = true;
         }else{
-          this.questionData = Arr;
-          if (Arr.length < 10) {
-            this.nextpage = false;
+          this.AllShopData = Arr.shoplist;
+          for(let i in Arr.shoplist){
+            this.AllShopData[i].time = this.datestr(Arr.shoplist[i].createdAt,"yyyy.MM.d");
+            this.AllShopData[i].id = this.idstr(Arr.shoplist[i]._id);
+            this.AllShopData[i].allmoney = this.OrderAllMoney(Arr.shoplist[i].orderlist)
           }
-          this.loading=false;
+          this.circleShow = false;
         }
-        // this.delquetionList = [];
-        this.circleShow = false;
       },
-      //返回全部搜索
-      returnAll(){
-        delete this.findquestion.title;
-        delete this.findquestion.state;
-        this.findquestion.limit=10;
-        this.findquestion.skip=0;
-        this.getQlist(this.findquestion);
-        this.returnAllShow = false;
-        this.searchText = "";
-        this.serchstate = "全部";
+      OrderAllMoney(Arr){
+        let money = 0;
+        for(let i in Arr){
+          if (Arr.state!="10"&&Arr.state!="100"&&Arr.state!="101"&&Arr.state!="102") {
+            money += parseInt(Arr[i].price);
+          }
+        }
+        return money;
       },
       //获取更多搜索内容
       moreSearch(){
-        // if (this.serchstate === "全部") {
-        //   delete this.findquestion.state;
-        // }else{
-        //   for(let index in stateText){
-        //     if(stateText[index]==this.serchstate){
-        //       this.findquestion.state = index;
-        //       break;
-        //     }
-        //   }
-        // }
-        // if (this.searchText !== "") {
-        //   this.findquestion.title=this.searchText;
-        // }
         this.loading = true;
-        this.findquestion.limit+=10;
-        this.findquestion.skip+=10;
+        this.findshopAllData.limit+=10;
+        this.findshopAllData.skip+=10;
         let type = "增加";
-        this.getQlist(this.findquestion,type)
+        this.getQlist(this.findshopAllData,type)
       },
       //搜索
       toSearch(){
-        if (this.serchstate === "全部") {
-          delete this.findquestion.state;
-        }else{
-          for(let index in this.stateText){
-            if(this.stateText[index]==this.serchstate){
-              this.findquestion.state = parseInt(index);
-              break;
-            }
-          }
-        }
-        if (this.searchText !== "") {
-          this.findquestion.title=this.searchText;
-        }
-
-        this.findquestion.limit=10;
-        this.findquestion.skip=0;
-        // let type = "增加";
-        this.getQlist(this.findquestion)
+        this.getQlist(this.findshopAllData)
         this.loading = true;
-        this.returnAllShow = true;
-        this.nextpage = true;
-        if (this.serchstate === "全部" && this.searchText === "") {
-          this.returnAllShow = false;
-        }
+        this.noshopshow = false;
+        //this.nextpage = true;
       },
       //弹出
-      open (questionData) {
+      open (AllShopData) {
         this.dialog = true;
-        this.signalquetion = questionData;
-        console.log(this.signalquetion);
+        this.signalShop = AllShopData;
+        console.log(this.signalShop);
       },
       //关闭
       close () {
         this.dialog = false;
-        this.signalquetion = {};
+        this.signalShop = {};
       }
-    },
-    created(){ 
-      // this.getQlist(this.findquestion)
     }
   }
 </script>
@@ -314,6 +246,9 @@
     margin-left: 10px;
     margin-bottom: 20px;
   }
+  .noshop{
+    color:#F27370;
+  }
   .deletequetionBtn{ 
     display: flex;
     justify-content: flex-end;
@@ -324,7 +259,9 @@
     overflow: hidden;
     text-overflow:ellipsis;
   }
-
+  .enterDetail{
+    margin-left: -20px;
+  }
   
 
 </style>

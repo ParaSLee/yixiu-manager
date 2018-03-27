@@ -45,7 +45,7 @@
   
   <mu-circular-progress :size="40" v-if="circleShow" class="circleBox"/>
 
-  <mdialog @close="close" :phoneModelData="signalbrand" :dialog="dialog"></mdialog>
+  <mdialog @close="close" :phoneModelData="signalbrand" :dialog="dialog" @updateold="choseBrand"></mdialog>
 
   <newdialog @close="closenew" :dialog="newdialog" :brandid="brandid" :brandname="brandname" @updateold="choseBrand"></newdialog>
 

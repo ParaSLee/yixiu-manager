@@ -210,7 +210,10 @@ import { Uploader,Icon } from 'vant';
         delService(delData).then(res => {
           this.circleShow = false;
           alert("删除成功")
-          location.reload();
+          this.$emit("updateold")
+          this.closedel();
+          this.close();
+          // location.reload();
         },(err => {
           console.log(err)
         }))

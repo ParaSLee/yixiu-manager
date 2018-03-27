@@ -6,7 +6,7 @@ const ajax = axios.create({
   headers: {
     'Content-Type': 'application/json'
   },
-  timeout: 25000 // 请求超时时间
+  timeout: 60000 // 请求超时时间
 })
 // 注册请求拦截器
 ajax.interceptors.request.use(config => {

@@ -216,7 +216,6 @@ import axios from 'axios'
             }
           }
         }
-        
       }
     },
     created(){

@@ -28,7 +28,6 @@ export default {
       this.$emit("closeCity");
     },
     emitData (value) {
-      console.log(value)
       let choseCity = {
         province:value[0].name,
         county:value[1].name,
