@@ -187,9 +187,10 @@
         if (this.serchstate === "全部") {
           delete this.findquestion.state;
         }else{
+          this.findquestion.state = [];
           for(let index in this.stateText){
             if(this.stateText[index]==this.serchstate){
-              this.findquestion.state = parseInt(index);
+              this.findquestion.state[0] = parseInt(index);
               break;
             }
           }
