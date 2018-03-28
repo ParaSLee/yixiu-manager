@@ -193,6 +193,7 @@
               break;
             }
           }
+          console.log(this.findquestion)
         }
         if (this.searchText !== "") {
           this.findquestion.title=this.searchText;

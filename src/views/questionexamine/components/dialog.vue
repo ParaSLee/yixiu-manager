@@ -36,19 +36,19 @@
       <div class="dialogBland"></div>
       <p class="dialogBox canchose">
         <span class="messageTitle">用户ID：</span> 
-        {{ questionData.author._id }}
+        {{ questionData.author?questionData.author._id:"" }}
       </p>
       <p class="dialogBox">
         <span class="messageTitle">用户昵称：</span> 
-        {{ questionData.author.name }}
+        {{ questionData.author?questionData.author.name:"" }}
       </p>
       <p class="dialogBox canchose">
         <span class="messageTitle">用户电话：</span> 
-        {{ questionData.author.mobile }}
+        {{ questionData.author?questionData.author.mobile :""}}
       </p>
       <p class="dialogBox canchose">
         <span class="messageTitle">用户邮箱：</span> 
-        {{ questionData.author.email }}
+        {{ questionData.author?questionData.author.email :""}}
       </p>
       <div class="dialogBland"></div>
       <div class="dialogBland"></div>
