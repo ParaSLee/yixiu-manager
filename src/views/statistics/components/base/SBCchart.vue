@@ -14,7 +14,7 @@
 
   export default {
     props:{
-      AllShopData:Object
+      AllShopData:[Object,Array]
     },
     data(){
       return {

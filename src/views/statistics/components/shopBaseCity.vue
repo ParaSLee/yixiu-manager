@@ -27,7 +27,7 @@
   <mu-circular-progress :size="40" v-if="circleShow" class="circleBox"/>
 
 
-  <SBCdata :AllShopData="AllShopData" v-if="bottomNav=='数据'"></SBCdata>
+  <SBCdata :AllShopData="areaShopData" v-if="bottomNav=='数据'"></SBCdata>
   <SBCchart :AllShopData="AllShopData" v-if="bottomNav=='图表'"></SBCchart>
   <SBCtable :AllShopData="AllShopData" v-if="bottomNav=='列表'"></SBCtable>
 <!-- 
@@ -94,7 +94,8 @@
         // signalShop:{},
         noshopshow:false, //该地区没有店铺时
         bottomNav: '数据',
-        bottomNavColor: '数据'
+        bottomNavColor: '数据',
+        areaShopData:{}, //存储全部信息
       }
     },
     components: {
@@ -133,6 +134,9 @@
       getQlist (pickData,type){
         this.circleShow = true;
         getshopAllData(pickData).then(res => {
+          if (type!="全部") {
+            this.areaShopData = res;
+          }
           this.listAllShopData(res, type)
         },(err => {
           console.log(err)
