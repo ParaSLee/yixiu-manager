@@ -317,7 +317,8 @@
     width: 100%;
     height: 100%;
     margin-left: -68px;
-    background: rgba(187, 187, 187,0.8);
+    /*background: rgba(187, 187, 187,0.8);*/
+    background-image: linear-gradient(90deg, #fdfbfb 0%, #ebedee 100%);
     box-sizing: border-box;
     border-right: 288px;
     font-size: 60px;
