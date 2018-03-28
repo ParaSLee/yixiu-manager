@@ -26,10 +26,14 @@
   
   <mu-circular-progress :size="40" v-if="circleShow" class="circleBox"/>
 
+  <div class="cover" v-if="!showDataAsy">
+    没有数据
+  </div>
 
   <SBCdata :AllShopData="areaShopData" v-if="bottomNav=='数据'"></SBCdata>
   <SBCchart :AllShopData="AllShopData" v-if="bottomNav=='图表'"></SBCchart>
   <SBCtable :AllShopData="AllShopData" v-if="bottomNav=='列表'"></SBCtable>
+
 <!-- 
   <mu-table enableSelectAll :showCheckbox="false" ref="table" class="listTable" :height="'660px'">
     <mu-thead>
@@ -78,6 +82,7 @@
       return {
         citydialogshow:false,  //显示选择城市
         city:"选择城市",  
+        showDataAsy: false,
         // chosedStartDay:"",  //开始日期选择
         // chosedEndDay:"",  //结束日期选择
         // format:"yyyy-MM-dd",  //日期格式
@@ -147,6 +152,7 @@
         if (Arr.shopCount === 0) {
           this.circleShow = false;
           this.noshopshow = true;
+          this.showDataAsy = false;
         }else{
           this.AllShopData = Arr.shoplist;
           for(let i in Arr.shoplist){
@@ -155,6 +161,7 @@
             this.AllShopData[i].allmoney = this.OrderAllMoney(Arr.shoplist[i].orderlist)
           }
           this.circleShow = false;
+          this.showDataAsy = true;
         }
       },
       OrderAllMoney(Arr){
@@ -244,6 +251,8 @@
   }
   .circleBox{
     position: absolute;
+    margin-top: -55px;
+    margin-left: 120px;
   }
   .checkI{
     margin-bottom: -5px;
@@ -277,6 +286,10 @@
     margin-bottom: 20px;
   }
   .noshop{
+    position: absolute;
+    /*top: 0;*/
+    margin-top: 60px;
+    margin-left: 180px;
     color:#F27370;
   }
   .deletequetionBtn{ 
@@ -294,11 +307,22 @@
   }
   .switchbtn{
     position: absolute;
-    /*width: 100%;*/
     right: 7%;
   }
   .switchbtnBox{
     float: right;
+  }
+  .cover{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    margin-left: -68px;
+    background: rgba(187, 187, 187,0.8);
+    box-sizing: border-box;
+    border-right: 288px;
+    font-size: 60px;
+    text-align: center;
+    padding-top: 360px;
   }
 
 </style>

@@ -36,7 +36,7 @@
         <mu-td>{{ order.name }}</mu-td>
         <mu-td>{{ order.remark }}</mu-td>
         <mu-td>
-          {{ order.stateW }}
+          <span :class="stateStyle[order.stateW]">{{ order.stateW }}</span>
           <mu-icon-button tooltip="查看详情" tooltipPosition="bottom-right" touch @click.capture="open(order)" />
             <sicon name="check" scale="2.3" class="checkI"></sicon>
           </mu-icon-button>
@@ -105,6 +105,13 @@
             // _id:"",   订单id
           // }
         ],
+        stateStyle:{
+          "已付款":"aleardy",
+          "待付款":"wait",
+          "已完成":"over",
+          "维修中":"doing",
+          "已取消":"quit"
+        },
         //单个order信息
         signalOrder:{},
         // delshopList:[]//存储要删除Shop的ID
@@ -214,7 +221,7 @@
         this.findorderList.limit=10;
         this.findorderList.skip=0;
         if (this.searchShop!=="") {
-          // this.findorderList.shopName = this.searchShop.replace(/\s/g, "");
+          this.findorderList.shopName = this.searchShop.replace(/\s/g, "");
           this.getOrderList(this.findorderList)
         }else if(this.searchUser!==""){
           this.findorderList.phone = this.searchUser.replace(/\s/g, "");
@@ -330,5 +337,19 @@
     justify-content: flex-end;
     margin-top: 30px;
   }
-
+  .aleardy{
+    color: #17B978;
+  }
+  .wait{
+    color: #EC7700;
+  }
+  .over{
+    color: #1989AC;
+  }
+  .doing{
+    color: #76A665;
+  }
+  .quit{
+    color: #BBBBBB;
+  }
 </style>

@@ -5,22 +5,34 @@
     <span>元</span>
   </div>
 
+  <div class="middleLine"></div>
+
   <div class="moneyBox">
     <div class="moneyItem">
-      交易总额：{{ AllShopData.turnover ?  AllShopData.turnover : "0" }} 元
+      交易总额：<span>{{ AllShopData.turnover ?  AllShopData.turnover : "0" }} </span>元
     </div>
     <div class="line"></div>
     <div class="moneyItem">
-      折扣后交易总额：{{ AllShopData.turnoverAfter ?  AllShopData.turnoverAfter : "0" }} 元
+      折扣后交易总额：<span>{{ AllShopData.turnoverAfter ?  AllShopData.turnoverAfter : "0" }} </span>元
+    </div>
+  </div>
+
+  <div class="middleLine"></div>
+
+  <div class="moneyBox moneyBox2">
+    <div class="moneyItem">
+      店铺数量：<span>{{ AllShopData.shopCount ?  AllShopData.shopCount : "0" }} </span>个
     </div>
   </div>
   
-  <div>
-    订单总量：{{ AllShopData.orderCount ?  AllShopData.orderCount : "0" }} 个
+  <div class="middleLine"></div>
+  
+  <div class="moneyBox moneyBox2">
+    <div class="moneyItem">
+      订单总量：<span>{{ AllShopData.orderCount ?  AllShopData.orderCount : "0" }} </span>个
+    </div>
   </div>
-  <div>
-    店铺数量：{{ AllShopData.shopCount ?  AllShopData.shopCount : "0" }} 个
-  </div>
+  
 </div>
 </template>
 
@@ -120,13 +132,15 @@
     display: inline-block;
     width: 1px;
     height: 50px;
-    background: #333;
+    background: #B8B0B0;
     margin-bottom: -15px;
   }
   .moneyBox{
     padding-top: 5px;
     padding-bottom: 5px;
-    /*overflow: hidden;*/
+  }
+  .moneyBox2{
+    text-align: center;
   }
   .moneyItem{
     display: inline-block;
@@ -134,5 +148,15 @@
     height: 50px;
     text-align: center;
     font-size: 30px;
+  }
+  .moneyItem span{
+    font-family: 'HelveticaNeue';
+  }
+  .middleLine{
+    width: 100%;
+    height: 1px;
+    background: #E2DED3;
+    margin-bottom: 20px;
+    margin-top: 20px
   }
 </style>
