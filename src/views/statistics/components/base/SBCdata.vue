@@ -1,7 +1,7 @@
 <template>
 <div class="data-contain">
   <div class="allmoney">
-    {{ AllShopData.turnover ?  AllShopData.turnover : "0" }}
+    <span class="allmoneyColor">{{ AllShopData.turnover ? moneyA : "0" }}</span>
     <span>元</span>
   </div>
 
@@ -9,11 +9,11 @@
 
   <div class="moneyBox">
     <div class="moneyItem">
-      交易总额：<span>{{ AllShopData.turnover ?  AllShopData.turnover : "0" }} </span>元
+      交易总额：<span>{{ AllShopData.turnover ? moneyA : "0" }} </span>元
     </div>
     <div class="line"></div>
     <div class="moneyItem">
-      折扣后交易总额：<span>{{ AllShopData.turnoverAfter ?  AllShopData.turnoverAfter : "0" }} </span>元
+      折扣后交易总额：<span>{{ AllShopData.turnoverAfter ?  moneyB : "0" }} </span>元
     </div>
   </div>
 
@@ -37,11 +37,6 @@
 </template>
 
 <script>
-  
-  import { getshopAllData } from '../../../common/api'
-  import Mdialog from "./dialog"
-  import cityDialog from "./cityChose"
-  import Datepicker from 'vuejs-datepicker';
 
   export default {
     props:{
@@ -49,62 +44,36 @@
     },
     data(){
       return {
+        moneyA:"",
+        moneyB:"",
         dialog: false,    //弹窗
         findshopAllData:{
           detail:true, //是否显示店铺详情
           // pay:true, //是否缴纳保证金
           qualification:true //审核是否通过
         },
-        // AllShopData:[],
         signalShop:{},
       }
     },
-    components: {
-      Mdialog,
-      cityDialog,
-      Datepicker
-    },
     methods: {
-      //显示问题内容
-      /*listAllShopData (Arr){ 
-        if (Arr.shopCount === 0) {
-          this.circleShow = false;
-          this.noshopshow = true;
+      changeMoneyData(money){
+        if (money<100) {
+          return (money/100);
         }else{
-          this.AllShopData = Arr.shoplist;
-          for(let i in Arr.shoplist){
-            this.AllShopData[i].time = this.datestr(Arr.shoplist[i].createdAt,"yyyy.MM.d");
-            this.AllShopData[i].id = this.idstr(Arr.shoplist[i]._id);
-            this.AllShopData[i].allmoney = this.OrderAllMoney(Arr.shoplist[i].orderlist)
+          let Allmoney = this.AllShopData.turnover.toString();
+          let Intmoney = Allmoney.substr(0,Allmoney.length-2)
+          let decimal = Allmoney.substr(Allmoney.length-2)
+          for (var i = 0; i < Math.floor((Intmoney.length-(1+i))/3); i++)
+          {
+            Intmoney = Intmoney.substring(0,Intmoney.length-(4*i+3))+','+Intmoney.substring(Intmoney.length-(4*i+3));
           }
-          this.circleShow = false;
+          return (Intmoney+"."+decimal)
         }
-      },
-      OrderAllMoney(Arr){
-        let money = 0;
-        for(let i in Arr){
-          if (Arr.state!="10"&&Arr.state!="100"&&Arr.state!="101"&&Arr.state!="102") {
-            money += parseInt(Arr[i].price);
-          }
-        }
-        return money;
-      },*/
-      //弹出
-      open (AllShopData) {
-        this.dialog = true;
-        this.signalShop = AllShopData;
-        console.log(this.signalShop);
-      },
-      //关闭
-      close () {
-        this.dialog = false;
-        this.signalShop = {};
-      },
-    },
-    updata(){
-      if (this.AllShopData) {
-        this.listAllShopData(this.AllShopData)
       }
+    },
+    updated(){
+      this.moneyA = this.changeMoneyData(this.AllShopData.turnover);
+      this.moneyB = this.changeMoneyData(this.AllShopData.turnoverAfter);
     }
   }
 </script>
@@ -121,8 +90,14 @@
   .allmoney{
     text-align: center;
     font-size: 50px;
-    color: #333;
     font-family:'HelveticaNeue';
+  }
+  .allmoney .allmoneyColor{
+    background: -webkit-linear-gradient(120deg, #fa709a 0%, #fee140 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent; 
+    font-family:'HelveticaNeue';
+    font-size: 50px;
   }
   .allmoney span{
     font-family:'Source-Han-Ligh110f7f0e581c2cb';

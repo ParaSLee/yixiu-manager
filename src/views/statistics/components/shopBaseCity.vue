@@ -31,38 +31,8 @@
   </div>
 
   <SBCdata :AllShopData="areaShopData" v-if="bottomNav=='数据'"></SBCdata>
-  <SBCchart :AllShopData="AllShopData" v-if="bottomNav=='图表'"></SBCchart>
+  <SBCchart :AllShopData="AllShopData" :allcountyData="allcountyData" v-if="bottomNav=='图表'"></SBCchart>
   <SBCtable :AllShopData="AllShopData" v-if="bottomNav=='列表'"></SBCtable>
-
-<!-- 
-  <mu-table enableSelectAll :showCheckbox="false" ref="table" class="listTable" :height="'660px'">
-    <mu-thead>
-      <mu-tr>
-        <mu-th>店铺名</mu-th>
-        <mu-th>建立时间</mu-th>
-        <mu-th>联系方式</mu-th>
-        <mu-th>交易金额</mu-th>
-      </mu-tr>
-    </mu-thead>
-    <mu-tbody>
-      <mu-tr v-for="quetion in AllShopData" :key="quetion._id" >
-        <mu-td class="texthidden">
-          <mu-icon-button tooltip="查看详情" tooltipPosition="bottom-right" touch @click.capture="open(quetion)" class="enterDetail"/>
-            <sicon name="check" scale="2.3" class="checkI"></sicon>
-          </mu-icon-button>
-          &nbsp;{{ quetion.name }}
-        </mu-td>
-        <mu-td class="texthidden">{{ quetion.time }}</mu-td>
-        <mu-td class="texthidden">{{ quetion.contactNumber }}</mu-td>
-        <mu-td class="texthidden">{{ quetion.allmoney }} 元</mu-td>
-      </mu-tr>
-    </mu-tbody>
-  </mu-table>
-  <mu-circular-progress :size="40" v-if="circleShow" class="circleBox"/>
-
-
-  <Mdialog @close="close" :questionData="signalShop" :dialog="dialog"></Mdialog>
- -->
 </div>
 </template>
 
@@ -83,13 +53,7 @@
         citydialogshow:false,  //显示选择城市
         city:"选择城市",  
         showDataAsy: false,
-        // chosedStartDay:"",  //开始日期选择
-        // chosedEndDay:"",  //结束日期选择
-        // format:"yyyy-MM-dd",  //日期格式
-        // loading:true,
-        // nextpage:true,
         circleShow:false,  //数据读取中
-        // dialog: false,    //弹窗
         findshopAllData:{
           detail:true, //是否显示店铺详情
           // pay:true, //是否缴纳保证金
@@ -101,6 +65,7 @@
         bottomNav: '数据',
         bottomNavColor: '数据',
         areaShopData:{}, //存储全部信息
+        allcountyData:{},
       }
     },
     components: {
@@ -134,6 +99,18 @@
           this.city = `${city.province} : ${city.county} - ${city.area}`;
         }
           this.citydialogshow = false;
+      },
+      getAllData (){
+        let a = {
+          pay:true,//是否缴纳了保证金
+          qualification:true,//资质认证是否通过
+        }
+        getshopAllData(a).then(res => {
+          this.allcountyData = res;
+          console.log(res)
+        },(err => {
+          console.log(err)
+        }))
       },
       //获取10条问题内容
       getQlist (pickData,type){
@@ -171,37 +148,21 @@
             money += parseInt(Arr[i].price);
           }
         }
+        money = money/100;
         return money;
       },
-      //获取更多搜索内容
-      /*moreSearch(){
-        this.loading = true;
-        this.findshopAllData.limit+=10;
-        this.findshopAllData.skip+=10;
-        let type = "增加";
-        this.getQlist(this.findshopAllData,type)
-      },*/
       //搜索
       toSearch(){
         this.getQlist(this.findshopAllData)
         this.loading = true;
         this.noshopshow = false;
-        //this.nextpage = true;
       },
-      //弹出
-      /*open (AllShopData) {
-        this.dialog = true;
-        this.signalShop = AllShopData;
-        console.log(this.signalShop);
-      },
-      //关闭
-      close () {
-        this.dialog = false;
-        this.signalShop = {};
-      },*/
       handleChange (val) {
         this.bottomNav = val
-      }
+      },
+    },
+    created(){
+      this.getAllData();
     }
   }
 </script>
@@ -268,7 +229,6 @@
     color: #00B7C2;
   }
   .closed{
-    /*color: */
   }
   .myinput{
     position: absolute;
@@ -317,7 +277,6 @@
     width: 100%;
     height: 100%;
     margin-left: -68px;
-    /*background: rgba(187, 187, 187,0.8);*/
     background-image: linear-gradient(90deg, #fdfbfb 0%, #ebedee 100%);
     box-sizing: border-box;
     border-right: 288px;
@@ -325,5 +284,4 @@
     text-align: center;
     padding-top: 360px;
   }
-
 </style>
