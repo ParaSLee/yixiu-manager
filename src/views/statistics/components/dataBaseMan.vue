@@ -11,19 +11,47 @@
       <span style="font-size:18px;margin:0 10px;">&nbsp;至</span>
       <datepicker class="choseTime" language="zh" placeholder="选择结束时间" v-model="chosedEndDay" :format="format"></datepicker>
     </div>
+    <span class="tips" v-if="showTimetip">如果未选择时间节点，则搜索所有时间内的订单</span>
+
     
 
-    <div class="stateChoseBox">
+<!--     <div class="stateChoseBox">
       <mu-checkbox name="group" nativeValue="已支付" v-model="list" label="已支付" class="demo-checkbox stateChoseItem"/> <br/>
       <mu-checkbox name="group" nativeValue="未支付" v-model="list" label="未支付" class="demo-checkbox stateChoseItem"/> <br/>
       <mu-checkbox name="group" nativeValue="已取消" v-model="list" label="已取消" class="demo-checkbox stateChoseItem"/> <br/>
       <mu-checkbox name="group" nativeValue="已完成" v-model="list" label="已完成" class="demo-checkbox stateChoseItem"/> <br/>
+    </div> -->
+
+    <mu-raised-button label="查询" @click="toSearch" class="returnBtn" primary :disabled="user.name==='选择商户'"/>
+
+    <div class="switchbtn">
+      <div class="switchbtnBox">
+        <mu-paper>
+          <mu-bottom-nav :value="bottomNav" @change="handleChange">
+            <mu-bottom-nav-item value="数据" title="数据" icon="filter_9_plus"/>
+            <mu-bottom-nav-item value="图表" title="图表" icon="pie_chart"/>
+            <mu-bottom-nav-item value="列表" title="列表" icon="assignment"/>
+          </mu-bottom-nav>
+        </mu-paper>
+      </div>
     </div>
 
-    <mu-raised-button label="查询" @click="toSearch" class="returnBtn" primary disabled/>
+    
+
+    <span class="noshop" v-if="noshopshow">没有订单数据！</span>
   </div>
+
+  <div class="cover" v-if="!showDataAsy">
+    没有数据
+  </div>
+
+  <DBMdata :AllShopData="areaShopData" v-if="bottomNav=='数据'"></DBMdata>
+  <DBMchart :AllShopData="AllShopData" :allcountyData="allcountyData" v-if="bottomNav=='图表'"></DBMchart>
+  <DBMtable :AllShopData="AllShopData" v-if="bottomNav=='列表'"></DBMtable>
+
   
-  <mu-circular-progress :size="40" v-if="circleShow" class="circleBox"/>
+  
+  <!-- <mu-circular-progress :size="40" v-if="circleShow" class="circleBox"/>
 
   <mu-table enableSelectAll :showCheckbox="false" ref="table" class="listTable" :height="'660px'">
     <mu-thead>
@@ -56,16 +84,19 @@
   <div class="ManagePagination">
     <mu-raised-button v-if="nextpage" label="获取更多内容" primary class="demo-raised-button" @click="moreSearch" :disabled="loading"/>
     <mu-raised-button v-else label="已无法获取更多内容" class="demo-raised-button" disabled/>
-  </div>
+  </div> -->
 </div>
 </template>
 
 <script>
   
-  import { getQuestionList } from '../../common/api'
-  import Mdialog from "./base/dialog"
+  import { getshopAllData } from '../../common/api'
+  // import Mdialog from "./base/dialog"
   import userDialog from "./base/userChose"
   import Datepicker from 'vuejs-datepicker';
+  import DBMtable from "./base/DBMtable"
+  import DBMchart from "./base/DBMchart"
+  import DBMdata from "./base/DBMdata"
   
 
   export default {
@@ -75,44 +106,56 @@
         user:{
           name:"选择商户",
           id:"",
-        },  
+        }, 
         chosedStartDay:"",  //开始日期选择
         chosedEndDay:"",  //结束日期选择
         format:"yyyy-MM-dd",  //日期格式
-        list: [],  //选择的列表
-        stateText:{
-          0:"待审核",
-          1:"正常",
-          2:"已采纳",
-          3:"已关闭"
-        },
-        stateStyle:{
-          0:"wait",
-          1:"normal",
-          2:"chosed",
-          3:"closed"
-        },
-        loading:true,
-        nextpage:true,
-        serchstate:"全部",  // 搜索的状态
-        searchText:"",  // 搜索的文字
-        returnAllShow:false,
+        // list: [],  //选择的列表
+        showDataAsy: false,
+        showTimetip: true,
+        // stateText:{
+        //   0:"待审核",
+        //   1:"正常",
+        //   2:"已采纳",
+        //   3:"已关闭"
+        // },
+        // stateStyle:{
+        //   0:"wait",
+        //   1:"normal",
+        //   2:"chosed",
+        //   3:"closed"
+        // },
+        // loading:true,
+        // nextpage:true,
+        // serchstate:"全部",  // 搜索的状态
+        // searchText:"",  // 搜索的文字
+        // returnAllShow:false,
         circleShow:false,  //数据读取中
-        dialog: false,    //弹窗
+        // dialog: false,    //弹窗
         findquestion:{
           limit:10, //一次获取列表的条数,系统默认为10
           skip:0 //跳过几个数据,系统默认为0
         },
-        author:[],
-        questionData:[],
+        AllShopData:[],
+        // signalShop:{},
+        noshopshow:false, //该地区没有店铺时
+        bottomNav: '数据',
+        bottomNavColor: '数据',
+        areaShopData:{}, //存储全部信息
+        allcountyData:{},
+        // author:[],
+        // questionData:[],
         //单个quetion信息
-        signalquetion:{},
+        // signalquetion:{},
       }
     },
     components: {
-      Mdialog,
+      // Mdialog,
       userDialog,
-      Datepicker
+      Datepicker,
+      DBMtable,
+      DBMchart,
+      DBMdata
     },
     methods: {
       showuser(){
@@ -178,75 +221,57 @@
         this.circleShow = false;
       },
       //返回全部搜索
-      returnAll(){
-        delete this.findquestion.title;
-        delete this.findquestion.state;
-        this.findquestion.limit=10;
-        this.findquestion.skip=0;
-        this.getQlist(this.findquestion);
-        this.returnAllShow = false;
-        this.searchText = "";
-        this.serchstate = "全部";
-      },
+      // returnAll(){
+      //   delete this.findquestion.title;
+      //   delete this.findquestion.state;
+      //   this.findquestion.limit=10;
+      //   this.findquestion.skip=0;
+      //   this.getQlist(this.findquestion);
+      //   this.returnAllShow = false;
+      //   this.searchText = "";
+      //   this.serchstate = "全部";
+      // },
       //获取更多搜索内容
-      moreSearch(){
-        // if (this.serchstate === "全部") {
-        //   delete this.findquestion.state;
-        // }else{
-        //   for(let index in stateText){
-        //     if(stateText[index]==this.serchstate){
-        //       this.findquestion.state = index;
-        //       break;
-        //     }
-        //   }
-        // }
-        // if (this.searchText !== "") {
-        //   this.findquestion.title=this.searchText;
-        // }
-        this.loading = true;
-        this.findquestion.limit+=10;
-        this.findquestion.skip+=10;
-        let type = "增加";
-        this.getQlist(this.findquestion,type)
-      },
+      // moreSearch(){
+      //   // if (this.serchstate === "全部") {
+      //   //   delete this.findquestion.state;
+      //   // }else{
+      //   //   for(let index in stateText){
+      //   //     if(stateText[index]==this.serchstate){
+      //   //       this.findquestion.state = index;
+      //   //       break;
+      //   //     }
+      //   //   }
+      //   // }
+      //   // if (this.searchText !== "") {
+      //   //   this.findquestion.title=this.searchText;
+      //   // }
+      //   this.loading = true;
+      //   this.findquestion.limit+=10;
+      //   this.findquestion.skip+=10;
+      //   let type = "增加";
+      //   this.getQlist(this.findquestion,type)
+      // },
       //搜索
       toSearch(){
-        if (this.serchstate === "全部") {
-          delete this.findquestion.state;
-        }else{
-          for(let index in this.stateText){
-            if(this.stateText[index]==this.serchstate){
-              this.findquestion.state = parseInt(index);
-              break;
-            }
-          }
-        }
-        if (this.searchText !== "") {
-          this.findquestion.title=this.searchText;
-        }
-
-        this.findquestion.limit=10;
-        this.findquestion.skip=0;
-        // let type = "增加";
-        this.getQlist(this.findquestion)
-        this.loading = true;
-        this.returnAllShow = true;
-        this.nextpage = true;
-        if (this.serchstate === "全部" && this.searchText === "") {
-          this.returnAllShow = false;
-        }
+        this.getQlist(this.user.id)
+        // this.loading = true;
+        this.noshopshow = false;
+      },
+      handleChange (val) {
+        this.bottomNav = val
       },
       //弹出
-      open (questionData) {
-        this.dialog = true;
-        this.signalquetion = questionData;
-        console.log(this.signalquetion);
-      },
-      //关闭
-      close () {
-        this.dialog = false;
-        this.signalquetion = {};
-      }
+      // open (questionData) {
+      //   this.dialog = true;
+      //   this.signalquetion = questionData;
+      //   console.log(this.signalquetion);
+      // },
+      // //关闭
+      // close () {
+      //   this.dialog = false;
+      //   this.signalquetion = {};
+      // }
     },
     created(){ 
       // this.getQlist(this.findquestion)
@@ -270,12 +295,17 @@
   .stateChoseBox{
     display: flex;
     flex-direction: row;
-    margin-bottom: 20px;
     margin-left: 6px;
   }
-  .stateChoseItem{
-    margin-right: 20px;
+  .tips{
+    margin-left: 20px;
+    font-size: 14px;
+    margin-bottom: 20px;
+    color: rgb(126, 87, 194);
   }
+  /*.stateChoseItem{
+    margin-right: 20px;
+  }*/
   .userChoseBtn{
     margin-left: 10px;
     margin-bottom: 20px;
@@ -340,5 +370,25 @@
     white-space:nowrap; 
     overflow: hidden;
     text-overflow:ellipsis;
+  }
+  .switchbtn{
+    position: absolute;
+    right: 7%;
+  }
+  .switchbtnBox{
+    float: right;
+  }
+  .cover{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    margin-left: -68px;
+    background-image: linear-gradient(90deg, rgba(253, 251, 251,0.8) 0%, rgba(235, 237, 238,0.9) 100%);
+    box-sizing: border-box;
+    border-right: 288px;
+    font-size: 60px;
+    text-align: center;
+    padding-top: 360px;
+    z-index: 10;
   }
 </style>

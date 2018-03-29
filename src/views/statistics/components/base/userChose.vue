@@ -98,8 +98,12 @@
         this.$emit("closeuser")
       },
       get(){
-        let user = this.copy(this.user);
-        this.$emit("getuser",user)
+        if (this.user.id == "") {
+          this.close()
+        }else{
+          let user = this.copy(this.user);
+          this.$emit("getuser",user)
+        }
       },
       search(){
         if (this.searchName !== "") {
@@ -177,7 +181,7 @@
   }
   .notice{
     font-size: 12px;
-    color: #23B1A5;
+    color: rgb(126, 87, 194);
     margin-left: 10px;
   }
   

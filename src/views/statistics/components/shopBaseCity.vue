@@ -20,8 +20,6 @@
     </div>
 
     <span class="noshop" v-if="noshopshow">该地区尚未有店铺注册！</span>
-
-
   </div>
   
   <mu-circular-progress :size="40" v-if="circleShow" class="circleBox"/>
@@ -39,7 +37,7 @@
 <script>
   
   import { getshopAllData } from '../../common/api'
-  import Mdialog from "./base/dialog"
+  // import Mdialog from "./base/dialog"
   import cityDialog from "./base/cityChose"
   import SBCtable from "./base/SBCtable"
   import SBCchart from "./base/SBCchart"
@@ -69,7 +67,7 @@
       }
     },
     components: {
-      Mdialog,
+      // Mdialog,
       cityDialog,
       Datepicker,
       SBCtable,
@@ -157,7 +155,7 @@
       //搜索
       toSearch(){
         this.getQlist(this.findshopAllData)
-        this.loading = true;
+        // this.loading = true;
         this.noshopshow = false;
       },
       handleChange (val) {
@@ -287,11 +285,12 @@
     width: 100%;
     height: 100%;
     margin-left: -68px;
-    background-image: linear-gradient(90deg, #fdfbfb 0%, #ebedee 100%);
+    background-image: linear-gradient(90deg, rgba(253, 251, 251,0.8) 0%, rgba(235, 237, 238,0.9) 100%);
     box-sizing: border-box;
     border-right: 288px;
     font-size: 60px;
     text-align: center;
     padding-top: 360px;
+    z-index: 10;
   }
 </style>
