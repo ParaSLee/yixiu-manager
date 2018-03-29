@@ -166,8 +166,6 @@
     },
     created(){
       let allnum = sessionStorage.getItem('allDataNum');
-      console.log(allnum)
-      console.log(parseInt(allnum)%5 !== 0)
       if (allnum && ( parseInt(allnum)%5 !== 0) ) {
         allnum = parseInt(allnum)+1;
         sessionStorage.setItem('allDataNum', allnum);
