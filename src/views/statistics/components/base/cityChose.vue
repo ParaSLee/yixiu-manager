@@ -1,38 +1,61 @@
 <template>
 <div>
-  <mu-dialog :open="dialog" title="选择城市">
-    <van-area :area-list="areaList" @confirm="emitData" @cancel="close"/>
-    <!-- <mu-flat-button label="确定" slot="actions" primary @click="emitData"/> -->
+  <mu-dialog :open="dialog" title="选择城市" @close="close">
+    <v-distpicker @province="onprovince" @city="oncity" @area="onarea"></v-distpicker>
+
+    <!-- <van-area :area-list="areaList" @confirm="emitData" @cancel="close"/> -->
+    <mu-flat-button label="取消" slot="actions" primary @click="close"/>
+    <mu-flat-button label="确定" slot="actions" primary @click="emitData"/>
   </mu-dialog>
 </div>
 </template>
 
 <script>
-import { Area } from 'vant';
-import areaList from '../data/area.json'
+// import { Area } from 'vant';
+// import areaList from '../data/area.json'
+import VDistpicker from 'v-distpicker'
+
 export default {
-  
   components:{
-    [Area.name]:Area,
+    VDistpicker,
+    // [Area.name]:Area,
   },
   props:{
     dialog:[Boolean,String]
   },
   data () {
     return {
-      areaList,
+      // areaList,
+      select:{
+        province:"",
+        city:"",
+        area:""
+      }
     }
   },
   methods: {
     close(){
       this.$emit("closeCity");
     },
-    emitData (value) {
+    onprovince(data){
+      this.select.province = data.value;
+    },
+    oncity(data){
+      this.select.city = data.value;
+    },
+    onarea(data) {
+      this.select.area = data.value;
+    },
+    emitData () {
       let choseCity = {
-        province:value[0].name,
-        county:value[1].name,
-        area:value[2].name,
+        province:this.select.province,
+        county:this.select.city,
+        area:this.select.area,
       }
+      this.select.province = "";
+      this.select.city = "";
+      this.select.area = "";
+      console.log(choseCity)
       this.$emit("changeCity",choseCity);
     }
   }

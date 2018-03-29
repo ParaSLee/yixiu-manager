@@ -84,11 +84,11 @@
         this.citydialogshow = false;
       },
       changeCity(city){
-        if (city.province=="选择省份") {
-        }else if (city.county=="选择城市" && city.area=="选择地区") {
+        if (city.province=="") {
+        }else if (city.county=="" && city.area=="") {
           this.findshopAllData.province = city.province;
           this.city = `${city.province}`;
-        }else if(city.area=="选择地区"){
+        }else if(city.area==""){
           this.findshopAllData.province = city.province;
           this.findshopAllData.city = city.county;
           this.city = `${city.province} : ${city.county}`;
@@ -107,6 +107,9 @@
         }
         getshopAllData(a).then(res => {
           this.allcountyData = res;
+          let newres = JSON.stringify(res);
+          sessionStorage.setItem('allData', newres);
+          sessionStorage.setItem('allDataNum', 1);
           console.log(res)
         },(err => {
           console.log(err)
@@ -162,7 +165,16 @@
       },
     },
     created(){
-      this.getAllData();
+      let allnum = sessionStorage.getItem('allDataNum');
+      console.log(allnum)
+      console.log(parseInt(allnum)%5 !== 0)
+      if (allnum && ( parseInt(allnum)%5 !== 0) ) {
+        allnum = parseInt(allnum)+1;
+        sessionStorage.setItem('allDataNum', allnum);
+        this.allcountyData = JSON.parse(sessionStorage.getItem('allData'));
+      }else{
+        this.getAllData();
+      }
     }
   }
 </script>
