@@ -1,7 +1,7 @@
 <template>
 <div class="data-contain">
   <div class="allmoney">
-    <span class="allmoneyColor">{{ AllShopData.turnover ? moneyA : "0" }}</span>
+    <span class="allmoneyColor">{{ AllShopData.moneyA ? AllShopData.moneyA : "0" }}</span>
     <span>元</span>
   </div>
 
@@ -9,11 +9,11 @@
 
   <div class="moneyBox">
     <div class="moneyItem">
-      交易总额：<span>{{ AllShopData.turnover ? moneyA : "0" }} </span>元
+      交易总额：<span>{{ AllShopData.moneyA ? AllShopData.moneyA : "0" }} </span>元
     </div>
     <div class="line"></div>
     <div class="moneyItem">
-      折扣后交易总额：<span>{{ AllShopData.turnoverAfter ?  moneyB : "0" }} </span>元
+      折扣后交易总额：<span>{{ AllShopData.moneyB ?  AllShopData.moneyB : "0" }} </span>元
     </div>
   </div>
 
@@ -44,8 +44,6 @@
     },
     data(){
       return {
-        moneyA:"",
-        moneyB:"",
         dialog: false,    //弹窗
         findshopAllData:{
           detail:true, //是否显示店铺详情
@@ -56,24 +54,6 @@
       }
     },
     methods: {
-      changeMoneyData(money){
-        if (money<100) {
-          return (money/100);
-        }else{
-          let Allmoney = this.AllShopData.turnover.toString();
-          let Intmoney = Allmoney.substr(0,Allmoney.length-2)
-          let decimal = Allmoney.substr(Allmoney.length-2)
-          for (var i = 0; i < Math.floor((Intmoney.length-(1+i))/3); i++)
-          {
-            Intmoney = Intmoney.substring(0,Intmoney.length-(4*i+3))+','+Intmoney.substring(Intmoney.length-(4*i+3));
-          }
-          return (Intmoney+"."+decimal)
-        }
-      }
-    },
-    updated(){
-      this.moneyA = this.changeMoneyData(this.AllShopData.turnover);
-      this.moneyB = this.changeMoneyData(this.AllShopData.turnoverAfter);
     }
   }
 </script>

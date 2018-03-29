@@ -3,7 +3,6 @@
   <mu-dialog :open="dialog" title="选择城市" @close="close">
     <v-distpicker @province="onprovince" @city="oncity" @area="onarea"></v-distpicker>
 
-    <!-- <van-area :area-list="areaList" @confirm="emitData" @cancel="close"/> -->
     <mu-flat-button label="取消" slot="actions" primary @click="close"/>
     <mu-flat-button label="确定" slot="actions" primary @click="emitData"/>
   </mu-dialog>
@@ -11,14 +10,11 @@
 </template>
 
 <script>
-// import { Area } from 'vant';
-// import areaList from '../data/area.json'
 import VDistpicker from 'v-distpicker'
 
 export default {
   components:{
     VDistpicker,
-    // [Area.name]:Area,
   },
   props:{
     dialog:[Boolean,String]
@@ -55,7 +51,7 @@ export default {
       this.select.province = "";
       this.select.city = "";
       this.select.area = "";
-      console.log(choseCity)
+      // console.log(choseCity)
       this.$emit("changeCity",choseCity);
     }
   }

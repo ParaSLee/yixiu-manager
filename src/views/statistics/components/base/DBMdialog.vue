@@ -1,23 +1,23 @@
 <template>
 <div>
-  <mu-dialog :open="dialog" title="商铺详情" @close="close" scrollable>   
+  <mu-dialog :open="dialog" title="订单详情" @close="close" scrollable>   
   
     <mu-tabs :value="activeTab" @change="handleTabChange">
-      <mu-tab value="tab1" title="商铺信息"/>
-      <mu-tab value="tab2" title="证件详情"/>
-      <mu-tab value="tab3" title="订单信息"/>
+      <mu-tab value="tab1" title="基本信息"/>
+      <mu-tab value="tab2" title="用户信息"/>
+      <mu-tab value="tab3" title="店铺信息"/>
       <mu-tab value="tab4" title="其他信息"/>
     </mu-tabs>
 
     <div v-if="activeTab === 'tab1'">
       <div class="dialogBland"></div>
       <p class="dialogBox canchose">
-        <span class="messageTitle">商铺ID：</span> 
+        <span class="messageTitle">订单ID：</span> 
         {{ questionData._id }}
       </p>
       <p class="dialogBox">
-        <span class="messageTitle">商铺名：</span> 
-        {{ questionData.name }}
+        <span class="messageTitle">订单状态：</span> 
+        {{ questionData.stateW }}
       </p>
       <p class="dialogBox">
         <span class="messageTitle">创建时间：</span> 
@@ -25,76 +25,97 @@
       </p>
       <div class="dialogBland2 bottomline"></div>
       <div class="dialogBland2"></div>
-      <div class="dialogBox canchose">
-        <span class="messageTitle">联系方式：</span> 
-        {{ questionData.contactNumber }}
-      </div>
-      <div class="dialogBox canchose">
-        <span class="messageTitle">商铺地址：</span> 
-        {{ questionData.address }}
-      </div>
+      <p class="dialogBox">
+        <span class="messageTitle">用户昵称：</span> 
+        {{ questionData.user ? questionData.user.name :"无" }}
+      </p>
+      <p class="dialogBox">
+        <span class="messageTitle">店铺名称：</span> 
+        {{ questionData.user ? questionData.shop.name :"无" }}
+      </p>
+      <div class="dialogBland2 bottomline"></div>
+      <div class="dialogBland2"></div>
+      <p class="dialogBox">
+        <span class="messageTitle">总金额：</span> 
+        {{ questionData.price/100 }} 元
+      </p>
+      <p class="dialogBox">
+        <span class="messageTitle">实付金额：</span> 
+        {{ questionData.payment/100 }} 元
+      </p>
+      <p class="dialogBox">
+        <span class="messageTitle">交易方式：</span> 
+        {{ questionData.paymentTypeW }}
+      </p>
     </div>
 
 
     <div v-if="activeTab === 'tab2'">
       <div class="dialogBland"></div>
-      <p class="dialogBox">
-        <span class="messageTitle">缴纳押金：</span> 
-        {{ questionData.payment || questionData.payment!=0 ? `${questionData.payment/100} 元` : "尚未缴纳" }}
+      <p class="dialogBox canchose">
+        <span class="messageTitle">用户ID：</span> 
+        {{ questionData.user._id }}
       </p>
       <p class="dialogBox">
-        <span class="messageTitle">商户身份证：</span> 
-        <span v-if="thephoto.idcarda && thephoto.idcarda.length != 0">
-          <img :src="thephoto.idcarda" class="beforeImg" @click="lookImg(thephoto.idcarda)">
-          <img :src="thephoto.idcardb" class="beforeImg" @click="lookImg(thephoto.idcardb)">
-        </span>
-        <span v-else>
-          尚未添加
-        </span>
+        <span class="messageTitle">用户昵称：</span> 
+        {{ questionData.user ? questionData.user.name : "无" }}
       </p>
-      <p class="dialogBox">
-        <span class="messageTitle">商户证书：</span> 
-        <!-- <span>
-          <van-uploader :after-read="onRead" accept="image/gif, image/jpeg" multiple>
-            <van-icon name="photograph" />
-          </van-uploader>
-        </span> -->
-        <span v-if="thephoto.certificate && thephoto.certificate.length != 0">
-          <img :src="thephoto.certificate" class="beforeImg" @click="lookImg(thephoto.certificate)">
-        </span>
-        <span v-else>
-          尚未添加
-        </span>
+      <p class="dialogBox canchose">
+        <span class="messageTitle">用户电话：</span> 
+        {{ questionData.user ? questionData.user.mobile : "无" }}
       </p>
-      <p class="dialogBox">
-        <span class="messageTitle">营业执照：</span> 
-        <span v-if="thephoto.certificate && thephoto.certificate.length != 0">
-          <img :src="thephoto.certificate" class="beforeImg" @click="lookImg(thephoto.certificate)">
-        </span>
-        <span v-else>
-          尚未添加
-        </span>
+      <p class="dialogBox canchose">
+        <span class="messageTitle">用户邮箱：</span> 
+        {{ questionData.user ? questionData.user.email : "无" }}
       </p>
+      <div class="dialogBland"></div>
+      <div class="dialogBland"></div>
     </div>
-     <seebigphoto v-if="bigImgUrl!==''" :imgurl="bigImgUrl" @closeimg="closeimg"></seebigphoto>
+
 
     <div v-if="activeTab === 'tab3'">
       <div class="dialogBland"></div>
-      <p class="dialogBox">
-        <span class="messageTitle">订单总数：</span> 
-        {{ questionData.orderlist?questionData.orderlist.length : "0" }} 个
+      <p class="dialogBox canchose">
+        <span class="messageTitle">店铺ID：</span> 
+        {{ questionData.shop ? questionData.shop._id : "无" }}
       </p>
       <p class="dialogBox">
-        <span class="messageTitle">总金额：</span> 
-        {{ questionData.allmoney?questionData.allmoney: "0" }} 元
+        <span class="messageTitle">店铺名称：</span> 
+        {{ questionData.shop ? questionData.shop.name : "无" }}
       </p>
+      <p class="dialogBox canchose">
+        <span class="messageTitle">店铺联系方式：</span> 
+        {{ questionData.shop ? questionData.shop.contactNumber : "无" }}
+      </p>
+      <div class="dialogBland"></div>
     </div>
 
     <div v-if="activeTab === 'tab4'">
       <div class="dialogBland"></div>
       <p class="dialogBox">
-        <span class="messageTitle">营业时间：</span> 
-        {{ questionData.businessHours?questionData.businessHours[0]:"无" }}
+        <span class="messageTitle">服务方式：</span> 
+        {{ questionData.serviceWayW }}
+      </p>
+      <p class="dialogBox">
+        <span class="messageTitle">手机属性：</span> 
+        {{ questionData.phoneModel ? questionData.phoneModel.name : "" }} &nbsp; 
+        {{ questionData.phoneModel ? questionData.phoneModel.color[0] : "" }} &nbsp;
+      </p>
+      <div class="dialogBox">
+        <span class="messageTitle">服务内容：</span> 
+        <div class="divflexBox">
+          <div v-for="serviceOrder in questionData.service" class="divflex">
+            <span class="messageTitle">名称：{{ serviceOrder.name }}</span> 
+            <span class="messageTitle">金额：{{ serviceOrder.price }} 元</span> 
+          </div>
+        </div>
+        
+      </div>
+      <div class="dialogBland2 bottomline"></div>
+      <div class="dialogBland2"></div>
+      <p class="dialogBox">
+        <span class="messageTitle">备注：</span> 
+        {{ questionData.remark }}
       </p>
     </div>
     <mu-flat-button slot="actions" @click="close" primary label="关闭"/>
@@ -246,12 +267,19 @@ import seebigphoto from "../../../common/seeBigPhoto"
     max-width: 240px;
     max-height: 240px;
   }
-  .divflex{
+  .divflexBox{
     width: 80%;
+    display: flex;
+    flex-direction:row;
+    flex-wrap:wrap;
+  }
+  .divflex{
+    width: 30%;
     display: flex;
     flex-direction:column;
     justify-content: flex-start;
     align-items: center;
+    margin-bottom: 10px;
   }
   .divflex span{
     width: 100%;

@@ -11,107 +11,79 @@
       <span style="font-size:18px;margin:0 10px;">&nbsp;至</span>
       <datepicker class="choseTime" language="zh" placeholder="选择结束时间" v-model="chosedEndDay" :format="format"></datepicker>
     </div>
-    
+    <span class="tips" v-if="showTimetip">如果未选择时间节点，则搜索所有时间内的订单</span>
 
-    <div class="stateChoseBox">
-      <mu-checkbox name="group" nativeValue="已支付" v-model="list" label="已支付" class="demo-checkbox stateChoseItem"/> <br/>
-      <mu-checkbox name="group" nativeValue="未支付" v-model="list" label="未支付" class="demo-checkbox stateChoseItem"/> <br/>
-      <mu-checkbox name="group" nativeValue="已取消" v-model="list" label="已取消" class="demo-checkbox stateChoseItem"/> <br/>
-      <mu-checkbox name="group" nativeValue="已完成" v-model="list" label="已完成" class="demo-checkbox stateChoseItem"/> <br/>
+    <mu-raised-button label="查询" @click="toSearch" class="returnBtn" primary :disabled="city==='选择城市'"/>
+
+    <div class="switchbtn">
+      <div class="switchbtnBox">
+        <mu-paper>
+          <mu-bottom-nav :value="bottomNav" @change="handleChange">
+            <mu-bottom-nav-item value="数据" title="数据" icon="filter_9_plus"/>
+            <mu-bottom-nav-item value="图表" title="图表" icon="pie_chart"/>
+            <mu-bottom-nav-item value="列表" title="列表" icon="assignment"/>
+          </mu-bottom-nav>
+        </mu-paper>
+      </div>
     </div>
 
-    <mu-raised-button label="查询" @click="toSearch" class="returnBtn" primary disabled/>
+    <span class="noshop" v-if="noshopshow">没有订单数据！</span>
   </div>
-  
-  <mu-circular-progress :size="40" v-if="circleShow" class="circleBox"/>
 
-  <mu-table enableSelectAll :showCheckbox="false" ref="table" class="listTable" :height="'660px'">
-    <mu-thead>
-      <mu-tr>
-        <mu-th>店铺名</mu-th>
-        <mu-th>订单号</mu-th>
-        <mu-th>时间</mu-th>
-        <mu-th>订单状态</mu-th>
-        <mu-th>金额</mu-th>
-      </mu-tr>
-    </mu-thead>
-    <mu-tbody>
-      <mu-tr v-for="quetion in questionData" :key="quetion._id" >
-        <mu-td>{{ quetion.id }}</mu-td>
-        <mu-td class="texthidden">{{ quetion.title }}</mu-td>
-        <mu-td class="texthidden">{{ quetion.time }}</mu-td>
-        <mu-td class="texthidden">{{ quetion.time }}</mu-td>
-        <mu-td>
-          <span :class="stateStyle[quetion.state]">{{ stateText[quetion.state] }}</span>
-          <mu-icon-button tooltip="查看详情" tooltipPosition="bottom-right" touch @click.capture="open(quetion)"/>
-            <sicon name="check" scale="2.3" class="checkI"></sicon>
-          </mu-icon-button>
-        </mu-td>
-      </mu-tr>
-    </mu-tbody>
-  </mu-table>
-  <mu-circular-progress :size="40" v-if="circleShow" class="circleBox"/>
-
-
-  <Mdialog @close="close" :questionData="signalquetion" :dialog="dialog"></Mdialog>
-
-  <div class="ManagePagination">
-    <mu-raised-button v-if="nextpage" label="获取更多内容" primary class="demo-raised-button" @click="moreSearch" :disabled="loading"/>
-    <mu-raised-button v-else label="已无法获取更多内容" class="demo-raised-button" disabled/>
+  <div class="cover" v-if="!showDataAsy">
+    没有数据
   </div>
+
+  <DBCdata :AllShopData="shopData" v-if="bottomNav=='数据'"></DBCdata>
+  <DBCchart :AllShopData="AllShopData" :allcountyData="allcountyData" v-if="bottomNav=='图表'"></DBCchart>
+  <DBCtable :AllShopData="AllShopData" :loading="loading" :nextpage="nextpage" @moreSearch="moreSearch" @changeState="changeState" v-if="bottomNav=='列表'"></DBCtable>
+
 </div>
 </template>
 
 <script>
   
-  import { getQuestionList } from '../../common/api'
-  import Mdialog from "./base/dialog"
+  import { getshopAllData, getAllOrderListData } from '../../common/api'
   import cityDialog from "./base/cityChose"
   import Datepicker from 'vuejs-datepicker';
+  import DBCtable from "./base/DBCtable"
+  import DBCchart from "./base/DBCchart"
+  import DBCdata from "./base/DBCdata"
   
 
   export default {
     data(){
       return {
-        citydialogshow:false,  //显示选择程序
+        citydialogshow:false,  //显示选择城市
         city:"选择城市",  
+
         chosedStartDay:"",  //开始日期选择
         chosedEndDay:"",  //结束日期选择
         format:"yyyy-MM-dd",  //日期格式
-        list: [],  //选择的列表
-        stateText:{
-          0:"待审核",
-          1:"正常",
-          2:"已采纳",
-          3:"已关闭"
-        },
-        stateStyle:{
-          0:"wait",
-          1:"normal",
-          2:"chosed",
-          3:"closed"
-        },
+        showDataAsy: false,
+        showTimetip: true,
         loading:true,
         nextpage:true,
-        serchstate:"全部",  // 搜索的状态
-        searchText:"",  // 搜索的文字
-        returnAllShow:false,
         circleShow:false,  //数据读取中
-        dialog: false,    //弹窗
         findquestion:{
+          shop:"",
           limit:10, //一次获取列表的条数,系统默认为10
           skip:0 //跳过几个数据,系统默认为0
         },
-        author:[],
-        questionData:[],
-        //单个quetion信息
-        signalquetion:{},
+        AllShopData:[],
+        noshopshow:false, //该地区没有店铺时
+        bottomNav: '数据',
+        bottomNavColor: '数据',
+        shopData:{}, //存储全部信息
+        allcountyData:{},
       }
     },
     components: {
-      Mdialog,
       cityDialog,
-      Datepicker
+      Datepicker,
+      DBCtable,
+      DBCchart,
+      DBCdata
     },
     methods: {
       showCity(){
@@ -121,134 +93,185 @@
         this.citydialogshow = false;
       },
       changeCity(city){
-        this.citydialogshow = false;
-        this.city = `${city.province} : ${city.county} - ${city.area}`;
+        if (city.province=="") {
+        }else if (city.county=="" && city.area=="") {
+          this.findshopAllData.province = city.province;
+          this.city = `${city.province}`;
+        }else if(city.area==""){
+          this.findshopAllData.province = city.province;
+          this.findshopAllData.city = city.county;
+          this.city = `${city.province} : ${city.county}`;
+        }else{
+          this.findshopAllData.province = city.province;
+          this.findshopAllData.city = city.county;
+          this.findshopAllData.district = city.area;
+          this.city = `${city.province} : ${city.county} - ${city.area}`;
+        }
+          this.citydialogshow = false;
       },
-      //获取10条问题内容
-      getQlist (pickData,type){
+      //获取该商家所有数据
+      getAll(id){
         this.circleShow = true;
-        getQuestionList(pickData).then(res => {
-          this.listquestionData(res, type)
+        let a = {
+          _id:id
+        }
+        getshopAllData(a).then(res => {
+          // console.log(res);
+          this.listquestionData(res);
         },(err => {
           console.log(err)
         }))
       },
-      //删除Html标签
-      delHTML(info){
-        let reg = /<.*>/g;
-        let reg2 = /&nbsp;/g;
-        let newinfor = info.replace(reg,"");
-        newinfor = newinfor.replace(reg2," ");
-        return newinfor;
+      getList(type){
+        this.findquestion.shop=this.user.id;
+        getAllOrderListData(this.findquestion).then(res => {
+          this.listOrderData(res,type);
+        },(err => {
+          console.log(err)
+        }))
       },
-      //显示问题内容
-      listquestionData (Arr,type){
-        // console.log(Arr)
-        for(let i in Arr){
-          
-          // if (Arr[i].author==null) {
-          //   this.author = this.author.concat("{name:'无'}")
-          // }else{
-          //   this.author = this.author.concat(Arr[i].author);
-          // }
-          Arr[i].time = this.datestr(Arr[i].createdAt,"yyyy.MM.d");
-          Arr[i].id = this.idstr(Arr[i]._id);
-          Arr[i].intro = this.delHTML(Arr[i].info)
-          for(let index in Arr[i].image){
-            Arr[i].info = Arr[i].info.concat(`<img src='${Arr[i].image[index]}'>`)
+      changeMoneyData(money){
+        if (money<100) {
+          return (money/100);
+        }else{
+          let Allmoney = money.toString();
+          let Intmoney = Allmoney.substr(0,Allmoney.length-2)
+          let decimal = Allmoney.substr(Allmoney.length-2)
+          for (var i = 0; i < Math.floor((Intmoney.length-(1+i))/3); i++)
+          {
+            Intmoney = Intmoney.substring(0,Intmoney.length-(4*i+3))+','+Intmoney.substring(Intmoney.length-(4*i+3));
           }
+          return (Intmoney+"."+decimal)
         }
-        console.log(this.author)
+      },
+      //显示总数据内容
+      listquestionData (Arr){
+        console.log(Arr);
+        this.shopData = Arr;
+        this.shopData.moneyA = this.changeMoneyData(Arr.turnover);
+        this.shopData.moneyB = this.changeMoneyData(Arr.turnoverAfter);
+        this.getList();
+      },
+      //填入获取到的内容
+      inputArr(Arr){
+        Arr.time = this.datestr(Arr.createdAt,"yyyy.MM.d");
+        Arr.id = this.idstr(Arr._id);
+        Arr.allmoney = this.changeMoneyData(Arr.price);
+
+        if (Arr.paymentType===0) {
+          Arr.paymentTypeW = "在线支付";
+        }else if (Arr.paymentType===1){
+          Arr.paymentTypeW = "线下支付";
+        }else if (Arr.paymentType===2){
+          Arr.paymentTypeW = "修好后支付";
+        }
+
+        if(this.searchShop!=""){
+          Arr.name = Arr.user.name;
+        }else if(this.searchUser!=""){
+          Arr.name = 123;
+        }
+
+        if (Arr.serviceWay=="1") {
+          Arr.serviceWayW = "上门服务";
+        }else if (Arr.serviceWay=="2"){
+          Arr.serviceWayW = "自行到店";
+        }else{
+          Arr.serviceWayW = "其他";
+        }
+
+        switch(Arr.state){
+          case 10:
+            Arr.stateW="待付款";
+            break;
+          case 11:
+            Arr.stateW="已付款";
+            break;
+          case 12:
+            Arr.stateW="维修中";
+            break;
+          case 13:
+            Arr.stateW="已完成";
+            break;
+          case 14:
+            Arr.stateW="待评价";
+            break;
+          case 15:
+            Arr.stateW="评价完成";
+            break;
+          case 100:
+            Arr.stateW="已取消";
+            break;
+          case 101:
+            Arr.stateW="已关闭";
+            break;
+          case 102:
+            Arr.stateW="退款中";
+            break;
+        }
+      },
+      listOrderData (Arr,type){
+        console.log(Arr)
+        for(let i in Arr){
+          this.inputArr(Arr[i])
+        }
         if (type==="增加") {
           if (Arr.length < 10) {
             this.nextpage = false;
           }
-          this.questionData = this.questionData.concat(Arr);
-          this.returnAllShow = true;
-          this.loading=false;
+          this.AllShopData = this.AllShopData.concat(Arr);
         }else{
-          this.questionData = Arr;
+          this.AllShopData = Arr;
           if (Arr.length < 10) {
             this.nextpage = false;
           }
-          this.loading=false;
         }
-        // this.delquetionList = [];
+
+        this.showDataAsy = true;
+        this.loading=false;
         this.circleShow = false;
-      },
-      //返回全部搜索
-      returnAll(){
-        delete this.findquestion.title;
-        delete this.findquestion.state;
-        this.findquestion.limit=10;
-        this.findquestion.skip=0;
-        this.getQlist(this.findquestion);
-        this.returnAllShow = false;
-        this.searchText = "";
-        this.serchstate = "全部";
-      },
-      //获取更多搜索内容
-      moreSearch(){
-        // if (this.serchstate === "全部") {
-        //   delete this.findquestion.state;
-        // }else{
-        //   for(let index in stateText){
-        //     if(stateText[index]==this.serchstate){
-        //       this.findquestion.state = index;
-        //       break;
-        //     }
-        //   }
-        // }
-        // if (this.searchText !== "") {
-        //   this.findquestion.title=this.searchText;
-        // }
-        this.loading = true;
-        this.findquestion.limit+=10;
-        this.findquestion.skip+=10;
-        let type = "增加";
-        this.getQlist(this.findquestion,type)
       },
       //搜索
       toSearch(){
-        if (this.serchstate === "全部") {
-          delete this.findquestion.state;
-        }else{
-          for(let index in this.stateText){
-            if(this.stateText[index]==this.serchstate){
-              this.findquestion.state = parseInt(index);
-              break;
-            }
+        this.noshopshow = false;
+        delete this.findquestion.state;
+        this.findquestion.limit = 10;
+        this.findquestion.skip = 0;
+
+        this.getAll(this.user.id)
+      },
+      moreSearch(){
+        this.findquestion.limit +=10;
+        this.findquestion.skip +=10; 
+        this.getList("增加")
+      },
+      changeState(state){
+        this.findquestion.state = []
+        for(let i in state){
+          if (state[i]=="全部") {
+            delete this.findquestion.state;
+          }else if (state[i]=="已付款") {
+            this.findquestion.state = this.findquestion.state.concat(11);
+          }else if (state[i]=="待付款") {
+            this.findquestion.state = 10;
+            // this.findquestion.state = this.findquestion.state.concat(10);
+          }else if (state[i]=="已完成") {
+            this.findquestion.state = this.findquestion.state.concat(13);
+            this.findquestion.state = this.findquestion.state.concat(14);
+            this.findquestion.state = this.findquestion.state.concat(15);
+          }else if (state[i]=="已取消") {
+            this.findquestion.state = this.findquestion.state.concat(100);
+            this.findquestion.state = this.findquestion.state.concat(101);
+            this.findquestion.state = this.findquestion.state.concat(102);
+          }else if(state[i]=="维修中"){
+            this.findquestion.state = this.findquestion.state.concat(12);
           }
         }
-        if (this.searchText !== "") {
-          this.findquestion.title=this.searchText;
-        }
-
-        this.findquestion.limit=10;
-        this.findquestion.skip=0;
-        // let type = "增加";
-        this.getQlist(this.findquestion)
-        this.loading = true;
-        this.returnAllShow = true;
-        this.nextpage = true;
-        if (this.serchstate === "全部" && this.searchText === "") {
-          this.returnAllShow = false;
-        }
+        this.getList();
       },
-      //弹出
-      open (questionData) {
-        this.dialog = true;
-        this.signalquetion = questionData;
-        console.log(this.signalquetion);
+      handleChange (val) {
+        this.bottomNav = val
       },
-      //关闭
-      close () {
-        this.dialog = false;
-        this.signalquetion = {};
-      }
-    },
-    created(){ 
-      // this.getQlist(this.findquestion)
     }
   }
 </script>
@@ -269,13 +292,18 @@
   .stateChoseBox{
     display: flex;
     flex-direction: row;
-    margin-bottom: 20px;
     margin-left: 6px;
   }
-  .stateChoseItem{
-    margin-right: 20px;
+  .tips{
+    margin-left: 20px;
+    font-size: 14px;
+    margin-bottom: 20px;
+    color: rgb(126, 87, 194);
   }
-  .cityChoseBtn{
+  /*.stateChoseItem{
+    margin-right: 20px;
+  }*/
+  .userChoseBtn{
     margin-left: 10px;
     margin-bottom: 20px;
   }
@@ -340,7 +368,28 @@
     overflow: hidden;
     text-overflow:ellipsis;
   }
-
-  
-
+  .switchbtn{
+    position: absolute;
+    right: 7%;
+  }
+  .switchbtnBox{
+    float: right;
+  }
+  .cover{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    margin-left: -68px;
+    background-image: linear-gradient(90deg, rgba(253, 251, 251,0.8) 0%, rgba(235, 237, 238,0.9) 100%);
+    box-sizing: border-box;
+    border-right: 288px;
+    font-size: 60px;
+    text-align: center;
+    padding-top: 360px;
+    z-index: 10;
+  }
+  .cityChoseBtn{
+    margin-left: 10px;
+    margin-bottom: 20px;
+  }
 </style>

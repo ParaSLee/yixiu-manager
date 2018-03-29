@@ -46,7 +46,7 @@
 </template>
 
 <script>
-  import Mdialog from "./DBMdialog"
+  import Mdialog from "./DBCdialog"
 
   export default {
     props:{

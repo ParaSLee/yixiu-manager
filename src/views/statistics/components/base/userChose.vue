@@ -90,7 +90,7 @@
           }
           this.loading=false;
         }
-        console.log(this.shopData)
+        // console.log(this.shopData)
         this.circleShow = false;
       },
       //关闭dialog

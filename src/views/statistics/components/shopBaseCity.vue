@@ -37,7 +37,6 @@
 <script>
   
   import { getshopAllData } from '../../common/api'
-  // import Mdialog from "./base/dialog"
   import cityDialog from "./base/cityChose"
   import SBCtable from "./base/SBCtable"
   import SBCchart from "./base/SBCchart"
@@ -119,11 +118,27 @@
         getshopAllData(pickData).then(res => {
           if (type!="全部") {
             this.areaShopData = res;
+            this.areaShopData.moneyA = this.changeMoneyData(res.turnover);
+            this.areaShopData.moneyB = this.changeMoneyData(res.turnoverAfter);
           }
           this.listAllShopData(res, type)
         },(err => {
           console.log(err)
         }))
+      },
+      changeMoneyData(money){
+        if (money<100) {
+          return (money/100);
+        }else{
+          let Allmoney = money.toString();
+          let Intmoney = Allmoney.substr(0,Allmoney.length-2)
+          let decimal = Allmoney.substr(Allmoney.length-2)
+          for (var i = 0; i < Math.floor((Intmoney.length-(1+i))/3); i++)
+          {
+            Intmoney = Intmoney.substring(0,Intmoney.length-(4*i+3))+','+Intmoney.substring(Intmoney.length-(4*i+3));
+          }
+          return (Intmoney+"."+decimal)
+        }
       },
       //显示问题内容
       listAllShopData (Arr,type){ 

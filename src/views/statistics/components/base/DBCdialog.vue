@@ -13,39 +13,39 @@
       <div class="dialogBland"></div>
       <p class="dialogBox canchose">
         <span class="messageTitle">订单ID：</span> 
-        {{ signalorderData._id }}
+        {{ questionData._id }}
       </p>
       <p class="dialogBox">
         <span class="messageTitle">订单状态：</span> 
-        {{ signalorderData.stateW }}
+        {{ questionData.stateW }}
       </p>
       <p class="dialogBox">
         <span class="messageTitle">创建时间：</span> 
-        {{ signalorderData.time }}
+        {{ questionData.time }}
       </p>
       <div class="dialogBland2 bottomline"></div>
       <div class="dialogBland2"></div>
       <p class="dialogBox">
         <span class="messageTitle">用户昵称：</span> 
-        {{ signalorderData.user?signalorderData.user.name:"" }}
+        {{ questionData.user ? questionData.user.name :"无" }}
       </p>
       <p class="dialogBox">
         <span class="messageTitle">店铺名称：</span> 
-        {{ signalorderData.shop?signalorderData.shop.name:"" }}
+        {{ questionData.user ? questionData.shop.name :"无" }}
       </p>
       <div class="dialogBland2 bottomline"></div>
       <div class="dialogBland2"></div>
       <p class="dialogBox">
         <span class="messageTitle">总金额：</span> 
-        {{ signalorderData.price/100 }} 元
+        {{ questionData.price/100 }} 元
       </p>
       <p class="dialogBox">
         <span class="messageTitle">实付金额：</span> 
-        {{ signalorderData.payment/100 }} 元
+        {{ questionData.payment/100 }} 元
       </p>
       <p class="dialogBox">
         <span class="messageTitle">交易方式：</span> 
-        {{ signalorderData.paymentTypeW }}
+        {{ questionData.paymentTypeW }}
       </p>
     </div>
 
@@ -54,19 +54,19 @@
       <div class="dialogBland"></div>
       <p class="dialogBox canchose">
         <span class="messageTitle">用户ID：</span> 
-        {{ signalorderData.user._id }}
+        {{ questionData.user._id }}
       </p>
       <p class="dialogBox">
         <span class="messageTitle">用户昵称：</span> 
-        {{ signalorderData.user.name }}
+        {{ questionData.user ? questionData.user.name : "无" }}
       </p>
       <p class="dialogBox canchose">
         <span class="messageTitle">用户电话：</span> 
-        {{ signalorderData.user.mobile }}
+        {{ questionData.user ? questionData.user.mobile : "无" }}
       </p>
       <p class="dialogBox canchose">
         <span class="messageTitle">用户邮箱：</span> 
-        {{ signalorderData.user.email }}
+        {{ questionData.user ? questionData.user.email : "无" }}
       </p>
       <div class="dialogBland"></div>
       <div class="dialogBland"></div>
@@ -77,15 +77,15 @@
       <div class="dialogBland"></div>
       <p class="dialogBox canchose">
         <span class="messageTitle">店铺ID：</span> 
-        {{ signalorderData.shop._id }}
+        {{ questionData.shop ? questionData.shop._id : "无" }}
       </p>
       <p class="dialogBox">
         <span class="messageTitle">店铺名称：</span> 
-        {{ signalorderData.shop.name }}
+        {{ questionData.shop ? questionData.shop.name : "无" }}
       </p>
       <p class="dialogBox canchose">
         <span class="messageTitle">店铺联系方式：</span> 
-        {{ signalorderData.shop.contactNumber }}
+        {{ questionData.shop ? questionData.shop.contactNumber : "无" }}
       </p>
       <div class="dialogBland"></div>
     </div>
@@ -94,25 +94,28 @@
       <div class="dialogBland"></div>
       <p class="dialogBox">
         <span class="messageTitle">服务方式：</span> 
-        {{ signalorderData.serviceWayW }}
+        {{ questionData.serviceWayW }}
       </p>
       <p class="dialogBox">
         <span class="messageTitle">手机属性：</span> 
-        {{ signalorderData.phoneModel ? signalorderData.phoneModel.name : "" }} &nbsp; 
-        {{ signalorderData.phoneModel ? signalorderData.phoneModel.color[0] : "" }} &nbsp;
+        {{ questionData.phoneModel ? questionData.phoneModel.name : "" }} &nbsp; 
+        {{ questionData.phoneModel ? questionData.phoneModel.color[0] : "" }} &nbsp;
       </p>
       <div class="dialogBox">
         <span class="messageTitle">服务内容：</span> 
-        <div v-for="serviceOrder in signalorderData.service" class="divflex">
-          <span class="messageTitle">名称：{{ serviceOrder ? serviceOrder.name : "" }}</span> 
-          <span class="messageTitle">金额：{{ serviceOrder ? serviceOrder.price : "" }} 元</span> 
+        <div class="divflexBox">
+          <div v-for="serviceOrder in questionData.service" class="divflex">
+            <span class="messageTitle">名称：{{ serviceOrder.name }}</span> 
+            <span class="messageTitle">金额：{{ serviceOrder.price }} 元</span> 
+          </div>
         </div>
+        
       </div>
       <div class="dialogBland2 bottomline"></div>
       <div class="dialogBland2"></div>
       <p class="dialogBox">
         <span class="messageTitle">备注：</span> 
-        {{ signalorderData.remark }}
+        {{ questionData.remark }}
       </p>
     </div>
     <mu-flat-button slot="actions" @click="close" primary label="关闭"/>
@@ -121,27 +124,76 @@
 </template>
 
 <script>
+import { updateQuestion } from '../../../common/api'
+import { Toast } from 'vant';
+import seebigphoto from "../../../common/seeBigPhoto"
+
   export default {
     props:{
-      signalorderData:Object,
+      questionData:Object,
       dialog:Boolean
     },
     data(){
       return {
-        activeTab: 'tab1'
+        bigImgUrl:"",
+        thephoto:{
+          idcarda:"",
+          idcardb:"",
+          license:"",
+          certificate:"",
+          protocol:"",
+          bigImgUrl:"",
+        },
+        circleShow:false,
+        chosevalue:-1,
+        changestateShow:false,
+        activeTab: 'tab1',
+        question:{
+          state: 0,
+          _id:"",
+        }
       }
     },
     components: {
+      seebigphoto
     },
     methods: {
+      //查看图片大图
+      lookImg(url){
+        this.bigImgUrl = url
+      },
+      //关闭大图查看
+      closeimg(){
+        this.bigImgUrl = ""
+      },
       //关闭dialog
       close(){
-        // this.signalorderData = [];
+        // this.questionData = [];
         this.$emit("close")
       },
       handleTabChange (val) {
         this.activeTab = val
+      },
+      enterPhoto(){
+        if (this.questionData.certificate) {
+          for(let ind of this.questionData.certificate){
+            if (ind.name=="idcard1") {
+              this.thephoto.idcarda = ind.src
+            }else if(ind.name=="idcard2"){
+              this.thephoto.idcardb = ind.src
+            }else if(ind.name=="license"){
+              this.thephoto.license = ind.src
+            }else if(ind.name=="certificate"){
+              this.thephoto.certificate = ind.src
+            }else if(ind.name=="protocol"){
+              this.thephoto.protocol = ind.src
+            }
+          }
+        }
       }
+    },
+    updated(){
+      this.enterPhoto();
     }
   }
 </script>
@@ -158,7 +210,22 @@
     padding-bottom: 5px;
     display: flex;
     align-items: center;
-
+  }
+  .Textdesc >>> img{
+    max-width: 200px;
+    max-height: 200px;
+  }
+  .contentBox{
+    border: 4px dotted #E4EDDB;
+    padding: 10px;
+    font-size: 18px;
+    color: #000;
+  }
+  .Qcontent >>> img{
+    display: block;
+    margin: 20px auto;
+    max-width: 100%;
+    max-height: 300px;
   }
   .messageTitle{
     display: inline-block;
@@ -200,12 +267,19 @@
     max-width: 240px;
     max-height: 240px;
   }
-  .divflex{
+  .divflexBox{
     width: 80%;
+    display: flex;
+    flex-direction:row;
+    flex-wrap:wrap;
+  }
+  .divflex{
+    width: 30%;
     display: flex;
     flex-direction:column;
     justify-content: flex-start;
     align-items: center;
+    margin-bottom: 10px;
   }
   .divflex span{
     width: 100%;
@@ -222,5 +296,17 @@
   .bottomline{
     width: 80%;
     border-bottom: 1px solid rgba(153, 153, 153,0.7);
+  }
+  .normal{
+    color: #17B978;
+  }
+  .wait{
+    color: #EC7700;
+  }
+  .chosed{
+    color: #00B7C2;
+  }
+  .closed{
+    /*color: */
   }
 </style>
