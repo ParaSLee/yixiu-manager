@@ -33,6 +33,10 @@
   <div class="cover" v-if="!showDataAsy">
     没有数据
   </div>
+  <div class="cover loadingBox" v-else-if="!circleShow">
+    <mu-circular-progress :size="90" color="red"/>
+    数据获取中...
+  </div>
 
   <DBMdata :AllShopData="shopData" v-if="bottomNav=='数据'"></DBMdata>
   <DBMchart :AllShopData="AllShopData" :allcountyData="allcountyData" v-if="bottomNav=='图表'"></DBMchart>
@@ -62,44 +66,22 @@
         chosedStartDay:"",  //开始日期选择
         chosedEndDay:"",  //结束日期选择
         format:"yyyy-MM-dd",  //日期格式
-        // list: [],  //选择的列表
         showDataAsy: false,
         showTimetip: true,
-        // stateText:{
-        //   0:"待审核",
-        //   1:"正常",
-        //   2:"已采纳",
-        //   3:"已关闭"
-        // },
-        // stateStyle:{
-        //   0:"wait",
-        //   1:"normal",
-        //   2:"chosed",
-        //   3:"closed"
-        // },
         loading:true,
         nextpage:true,
-        // serchstate:"全部",  // 搜索的状态
-        // searchText:"",  // 搜索的文字
-        // returnAllShow:false,
         circleShow:false,  //数据读取中
-        // dialog: false,    //弹窗
         findquestion:{
           shop:"",
           limit:10, //一次获取列表的条数,系统默认为10
           skip:0 //跳过几个数据,系统默认为0
         },
         AllShopData:[],
-        // signalShop:{},
         noshopshow:false, //该地区没有店铺时
         bottomNav: '数据',
         bottomNavColor: '数据',
         shopData:{}, //存储全部信息
         allcountyData:{},
-        // author:[],
-        // questionData:[],
-        //单个quetion信息
-        // signalquetion:{},
       }
     },
     components: {
@@ -127,7 +109,6 @@
           _id:id
         }
         getshopAllData(a).then(res => {
-          // console.log(res);
           this.listquestionData(res);
         },(err => {
           console.log(err)
@@ -157,7 +138,7 @@
       },
       //显示总数据内容
       listquestionData (Arr){
-        console.log(Arr);
+        // console.log(Arr);
         this.shopData = Arr;
         this.shopData.moneyA = this.changeMoneyData(Arr.turnover);
         this.shopData.moneyB = this.changeMoneyData(Arr.turnoverAfter);
@@ -222,7 +203,7 @@
         }
       },
       listOrderData (Arr,type){
-        console.log(Arr)
+        // console.log(Arr)
         for(let i in Arr){
           this.inputArr(Arr[i])
         }
@@ -237,17 +218,25 @@
             this.nextpage = false;
           }
         }
+        if (this.AllShopData.length == 0) {
+          this.noshopshow = true;
+        }
+        setTimeout(()=>{
+          this.circleShow = true;
+        },0)
 
         this.showDataAsy = true;
         this.loading=false;
-        this.circleShow = false;
       },
       //搜索
       toSearch(){
-        this.noshopshow = false;
         delete this.findquestion.state;
         this.findquestion.limit = 10;
         this.findquestion.skip = 0;
+
+        this.noshopshow = false;
+        this.circleShow = false;
+        this.showDataAsy = true;
 
         this.getAll(this.user.id)
       },
@@ -257,26 +246,19 @@
         this.getList("增加")
       },
       changeState(state){
-        this.findquestion.state = []
-        for(let i in state){
-          if (state[i]=="全部") {
-            delete this.findquestion.state;
-          }else if (state[i]=="已付款") {
-            this.findquestion.state = this.findquestion.state.concat(11);
-          }else if (state[i]=="待付款") {
-            this.findquestion.state = 10;
-            // this.findquestion.state = this.findquestion.state.concat(10);
-          }else if (state[i]=="已完成") {
-            this.findquestion.state = this.findquestion.state.concat(13);
-            this.findquestion.state = this.findquestion.state.concat(14);
-            this.findquestion.state = this.findquestion.state.concat(15);
-          }else if (state[i]=="已取消") {
-            this.findquestion.state = this.findquestion.state.concat(100);
-            this.findquestion.state = this.findquestion.state.concat(101);
-            this.findquestion.state = this.findquestion.state.concat(102);
-          }else if(state[i]=="维修中"){
-            this.findquestion.state = this.findquestion.state.concat(12);
-          }
+        this.findquestion.state = 0;
+        if (state=="全部") {
+          delete this.findquestion.state;
+        }else if (state=="已付款") {
+          this.findquestion.state = 11;
+        }else if (state=="待付款") {
+          this.findquestion.state = 10;
+        }else if (state=="已完成") {
+          this.findquestion.state = 13;
+        }else if (state=="已取消") {
+          this.findquestion.state = 100;
+        }else if(state=="维修中"){
+          this.findquestion.state = 12;
         }
         this.getList();
       },
@@ -311,73 +293,13 @@
     margin-bottom: 20px;
     color: rgb(126, 87, 194);
   }
-  /*.stateChoseItem{
-    margin-right: 20px;
-  }*/
   .userChoseBtn{
     margin-left: 10px;
     margin-bottom: 20px;
   }
-  .listTable{
-    margin-top: 30px;
-  }
-  .mu-table tbody{
-    line-height: 48px;
-  }
-  .deletequetionBtn{ 
-    margin-top: 30px;
-  }
-  .ManagePagination{
-    display: flex;
-    justify-content: center;
-    margin-top: 30px;
-  }
-  .btnBox{
-    margin-right: 20px;
-  }
-  .circleBox{
-    position: absolute;
-  }
-  .checkI{
-    margin-bottom: -5px;
-    margin-left: -38px;
-  }
-  .normal{
-    color: #17B978;
-  }
-  .wait{
-    color: #EC7700;
-  }
-  .chosed{
-    color: #00B7C2;
-  }
-  .closed{
-    /*color: */
-  }
-  .myinput{
-    position: absolute;
-    display: inline-block;
-    width: 256px;
-    height: 32px;
-    font-size: 16px;
-    background: transparent;
-    color: transparent;
-    outline-color: rgb(224, 224, 224);
-    margin-top: -51px;
-  }
   .returnBtn{
     margin-left: 10px;
     margin-bottom: 20px;
-  }
-  .deletequetionBtn{ 
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 30px;
-  }
-  .texthidden{
-    white-space:nowrap; 
-    overflow: hidden;
-    text-overflow:ellipsis;
   }
   .switchbtn{
     position: absolute;
@@ -398,5 +320,11 @@
     text-align: center;
     padding-top: 360px;
     z-index: 10;
+  }
+  .loadingBox{
+    padding-top: 270px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 </style>

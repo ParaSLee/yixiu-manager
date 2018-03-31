@@ -54,19 +54,23 @@
       <div class="dialogBland"></div>
       <p class="dialogBox canchose">
         <span class="messageTitle">用户ID：</span> 
-        {{ questionData.user._id }}
+        {{ questionData.user ? questionData.user._id : "" }}
       </p>
       <p class="dialogBox">
         <span class="messageTitle">用户昵称：</span> 
-        {{ questionData.user ? questionData.user.name : "无" }}
+        {{ questionData.user ? questionData.user.name : "未填写" }}
+      </p>
+      <p class="dialogBox canchose">
+        <span class="messageTitle">用户地址：</span> 
+        {{ questionData.address ? questionData.address : "未填写" }}
       </p>
       <p class="dialogBox canchose">
         <span class="messageTitle">用户电话：</span> 
-        {{ questionData.user ? questionData.user.mobile : "无" }}
+        {{ questionData.user ? questionData.user.mobile : "未填写" }}
       </p>
       <p class="dialogBox canchose">
         <span class="messageTitle">用户邮箱：</span> 
-        {{ questionData.user ? questionData.user.email : "无" }}
+        {{ questionData.user ? questionData.user.email : "未填写" }}
       </p>
       <div class="dialogBland"></div>
       <div class="dialogBland"></div>
@@ -94,7 +98,7 @@
       <div class="dialogBland"></div>
       <p class="dialogBox">
         <span class="messageTitle">服务方式：</span> 
-        {{ questionData.serviceWayW }}
+        {{ questionData.serviceWay }}
       </p>
       <p class="dialogBox">
         <span class="messageTitle">手机属性：</span> 

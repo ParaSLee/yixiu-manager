@@ -311,3 +311,13 @@ export function getshopAllData(data){
     });
   });
 }
+
+export function getshopareaData(data){
+  return new Promise((resolve, reject) => {
+    ajax.post(`${url}/stats/area`,data).then((res) => {
+      resolve(res);
+    }).then((err) => {
+      reject(err);
+    });
+  });
+}

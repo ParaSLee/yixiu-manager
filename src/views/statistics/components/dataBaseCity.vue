@@ -33,17 +33,21 @@
   <div class="cover" v-if="!showDataAsy">
     没有数据
   </div>
+  <div class="cover loadingBox" v-else-if="!circleShow">
+    <mu-circular-progress :size="90" color="red"/>
+    数据获取中...
+  </div>
 
-  <DBCdata :AllShopData="shopData" v-if="bottomNav=='数据'"></DBCdata>
+  <DBCdata :AllShopData="areaShopData" v-if="bottomNav=='数据'"></DBCdata>
   <DBCchart :AllShopData="AllShopData" :allcountyData="allcountyData" v-if="bottomNav=='图表'"></DBCchart>
-  <DBCtable :AllShopData="AllShopData" :loading="loading" :nextpage="nextpage" @moreSearch="moreSearch" @changeState="changeState" v-if="bottomNav=='列表'"></DBCtable>
+  <DBCtable :AllShopData="AllOrderData" v-if="bottomNav=='列表'"></DBCtable>
 
 </div>
 </template>
 
 <script>
   
-  import { getshopAllData, getAllOrderListData } from '../../common/api'
+  import { getshopAllData, getAllOrderListData,getshopareaData } from '../../common/api'
   import cityDialog from "./base/cityChose"
   import Datepicker from 'vuejs-datepicker';
   import DBCtable from "./base/DBCtable"
@@ -56,25 +60,23 @@
       return {
         citydialogshow:false,  //显示选择城市
         city:"选择城市",  
-
         chosedStartDay:"",  //开始日期选择
         chosedEndDay:"",  //结束日期选择
         format:"yyyy-MM-dd",  //日期格式
         showDataAsy: false,
         showTimetip: true,
-        loading:true,
-        nextpage:true,
         circleShow:false,  //数据读取中
-        findquestion:{
-          shop:"",
-          limit:10, //一次获取列表的条数,系统默认为10
-          skip:0 //跳过几个数据,系统默认为0
+        findshopAllData:{
+          detail:true, //是否显示店铺详情
+          pay:true, //是否缴纳保证金
+          qualification:true //审核是否通过
         },
         AllShopData:[],
+        AllOrderData:[],
         noshopshow:false, //该地区没有店铺时
         bottomNav: '数据',
         bottomNavColor: '数据',
-        shopData:{}, //存储全部信息
+        areaShopData:{}, //存储全部信息
         allcountyData:{},
       }
     },
@@ -107,25 +109,16 @@
           this.findshopAllData.district = city.area;
           this.city = `${city.province} : ${city.county} - ${city.area}`;
         }
-          this.citydialogshow = false;
+        this.citydialogshow = false;
       },
-      //获取该商家所有数据
-      getAll(id){
-        this.circleShow = true;
-        let a = {
-          _id:id
-        }
-        getshopAllData(a).then(res => {
-          // console.log(res);
-          this.listquestionData(res);
-        },(err => {
-          console.log(err)
-        }))
-      },
-      getList(type){
-        this.findquestion.shop=this.user.id;
-        getAllOrderListData(this.findquestion).then(res => {
-          this.listOrderData(res,type);
+      getQlist (pickData,type){
+        getshopAllData(pickData).then(res => {
+          if (type!="全部") {
+            this.areaShopData = res;
+            this.areaShopData.moneyA = this.changeMoneyData(res.turnover);
+            this.areaShopData.moneyB = this.changeMoneyData(res.turnoverAfter);
+          }
+          this.listAllShopData(res, type)
         },(err => {
           console.log(err)
         }))
@@ -143,14 +136,6 @@
           }
           return (Intmoney+"."+decimal)
         }
-      },
-      //显示总数据内容
-      listquestionData (Arr){
-        console.log(Arr);
-        this.shopData = Arr;
-        this.shopData.moneyA = this.changeMoneyData(Arr.turnover);
-        this.shopData.moneyB = this.changeMoneyData(Arr.turnoverAfter);
-        this.getList();
       },
       //填入获取到的内容
       inputArr(Arr){
@@ -210,64 +195,40 @@
             break;
         }
       },
-      listOrderData (Arr,type){
+      //显示问题内容
+      listAllShopData (Arr,type){ 
         console.log(Arr)
-        for(let i in Arr){
-          this.inputArr(Arr[i])
-        }
-        if (type==="增加") {
-          if (Arr.length < 10) {
-            this.nextpage = false;
-          }
-          this.AllShopData = this.AllShopData.concat(Arr);
+        if (Arr.shopCount === 0) {
+          this.noshopshow = true;
+          this.showDataAsy = false;
         }else{
-          this.AllShopData = Arr;
-          if (Arr.length < 10) {
-            this.nextpage = false;
-          }
-        }
+          this.AllShopData = Arr.shoplist;
 
-        this.showDataAsy = true;
-        this.loading=false;
-        this.circleShow = false;
+          for(let i of Arr.shoplist){
+            for(let j of i.orderlist){
+              this.inputArr(j)
+              j.father = {
+                _id:i._id,
+                name:i.name,
+                address:i.address,
+                contactNumber:i.contactNumber
+              }
+            }
+            this.AllOrderData = this.AllOrderData.concat(i.orderlist)
+          }
+          this.showDataAsy = true;
+        }
+        // console.log(this.AllOrderData)
+        setTimeout(()=>{
+          this.circleShow = true;
+        },0)
       },
       //搜索
       toSearch(){
+        this.getQlist(this.findshopAllData)
         this.noshopshow = false;
-        delete this.findquestion.state;
-        this.findquestion.limit = 10;
-        this.findquestion.skip = 0;
-
-        this.getAll(this.user.id)
-      },
-      moreSearch(){
-        this.findquestion.limit +=10;
-        this.findquestion.skip +=10; 
-        this.getList("增加")
-      },
-      changeState(state){
-        this.findquestion.state = []
-        for(let i in state){
-          if (state[i]=="全部") {
-            delete this.findquestion.state;
-          }else if (state[i]=="已付款") {
-            this.findquestion.state = this.findquestion.state.concat(11);
-          }else if (state[i]=="待付款") {
-            this.findquestion.state = 10;
-            // this.findquestion.state = this.findquestion.state.concat(10);
-          }else if (state[i]=="已完成") {
-            this.findquestion.state = this.findquestion.state.concat(13);
-            this.findquestion.state = this.findquestion.state.concat(14);
-            this.findquestion.state = this.findquestion.state.concat(15);
-          }else if (state[i]=="已取消") {
-            this.findquestion.state = this.findquestion.state.concat(100);
-            this.findquestion.state = this.findquestion.state.concat(101);
-            this.findquestion.state = this.findquestion.state.concat(102);
-          }else if(state[i]=="维修中"){
-            this.findquestion.state = this.findquestion.state.concat(12);
-          }
-        }
-        this.getList();
+        this.circleShow = false;
+        this.showDataAsy = true;
       },
       handleChange (val) {
         this.bottomNav = val
@@ -300,73 +261,9 @@
     margin-bottom: 20px;
     color: rgb(126, 87, 194);
   }
-  /*.stateChoseItem{
-    margin-right: 20px;
-  }*/
-  .userChoseBtn{
-    margin-left: 10px;
-    margin-bottom: 20px;
-  }
-  .listTable{
-    margin-top: 30px;
-  }
-  .mu-table tbody{
-    line-height: 48px;
-  }
-  .deletequetionBtn{ 
-    margin-top: 30px;
-  }
-  .ManagePagination{
-    display: flex;
-    justify-content: center;
-    margin-top: 30px;
-  }
-  .btnBox{
-    margin-right: 20px;
-  }
-  .circleBox{
-    position: absolute;
-  }
-  .checkI{
-    margin-bottom: -5px;
-    margin-left: -38px;
-  }
-  .normal{
-    color: #17B978;
-  }
-  .wait{
-    color: #EC7700;
-  }
-  .chosed{
-    color: #00B7C2;
-  }
-  .closed{
-    /*color: */
-  }
-  .myinput{
-    position: absolute;
-    display: inline-block;
-    width: 256px;
-    height: 32px;
-    font-size: 16px;
-    background: transparent;
-    color: transparent;
-    outline-color: rgb(224, 224, 224);
-    margin-top: -51px;
-  }
   .returnBtn{
     margin-left: 10px;
     margin-bottom: 20px;
-  }
-  .deletequetionBtn{ 
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 30px;
-  }
-  .texthidden{
-    white-space:nowrap; 
-    overflow: hidden;
-    text-overflow:ellipsis;
   }
   .switchbtn{
     position: absolute;
@@ -391,5 +288,11 @@
   .cityChoseBtn{
     margin-left: 10px;
     margin-bottom: 20px;
+  }
+  .loadingBox{
+    padding-top: 270px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
 </style>

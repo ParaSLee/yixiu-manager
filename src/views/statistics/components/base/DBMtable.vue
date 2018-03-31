@@ -1,12 +1,12 @@
 <template>
 <div>
-  <div class="stateChoseBox" @change="changeList">
-    <mu-checkbox name="group" nativeValue="全部" v-model="list" label="全部" class="demo-checkbox stateChoseItem" disabled /> <br/>
-    <mu-checkbox name="group" nativeValue="待付款" v-model="list" label="待付款" class="demo-checkbox stateChoseItem"/> <br/>
-    <mu-checkbox name="group" nativeValue="已付款" v-model="list" label="已付款" class="demo-checkbox stateChoseItem"/> <br/>
-    <mu-checkbox name="group" nativeValue="维修中" v-model="list" label="维修中" class="demo-checkbox stateChoseItem"/> <br/>
-    <mu-checkbox name="group" nativeValue="已完成" v-model="list" label="已完成" class="demo-checkbox stateChoseItem"/> <br/>
-    <mu-checkbox name="group" nativeValue="已取消" v-model="list" label="已取消" class="demo-checkbox stateChoseItem"/> <br/>
+  <div class="stateChoseBox">
+    <mu-radio name="group" nativeValue="全部" v-model="list" label="全部" class="demo-radio stateChoseItem"/> <br/>
+    <mu-radio name="group" nativeValue="待付款" v-model="list" label="待付款" class="demo-radio stateChoseItem"/> <br/>
+    <mu-radio name="group" nativeValue="已付款" v-model="list" label="已付款" class="demo-radio stateChoseItem"/> <br/>
+    <mu-radio name="group" nativeValue="维修中" v-model="list" label="维修中" class="demo-radio stateChoseItem"/> <br/>
+    <mu-radio name="group" nativeValue="已完成" v-model="list" label="已完成" class="demo-radio stateChoseItem"/> <br/>
+    <mu-radio name="group" nativeValue="已取消" v-model="list" label="已取消" class="demo-radio stateChoseItem"/> <br/>
     <mu-flat-button label="订单状态查询" class="demo-flat-button stateBtn" primary @click="changeState"/>
   </div>
   <mu-table enableSelectAll :showCheckbox="false" ref="table" class="listTable" :height="'660px'">
@@ -56,7 +56,7 @@
     },
     data(){
       return {
-        list: ["全部"],  //选择的列表
+        list: "全部",  //选择的列表
         dialog: false,    //弹窗
         signalShop:{},
         stateStyle:{
@@ -72,17 +72,6 @@
       Mdialog,
     },
     methods: {
-      changeList(value){
-        setTimeout(() => {
-          // console.log(this.list)
-          if (this.list[0]=="全部") {
-            this.list.shift();
-          }else if(this.list.length == 5 || !this.list[0]){
-            this.list = [];
-            this.list[0] = "全部";
-          }
-        },1)
-      },
       //弹出
       open (AllShopData) {
         this.dialog = true;

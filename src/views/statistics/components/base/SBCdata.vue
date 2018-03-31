@@ -25,13 +25,13 @@
     </div>
   </div>
   
-  <div class="middleLine"></div>
+  <!-- <div class="middleLine"></div> -->
   
-  <div class="moneyBox moneyBox2">
+  <!-- <div class="moneyBox moneyBox2">
     <div class="moneyItem">
       订单总量：<span>{{ AllShopData.orderCount ?  AllShopData.orderCount : "0" }} </span>个
     </div>
-  </div>
+  </div> -->
   
 </div>
 </template>

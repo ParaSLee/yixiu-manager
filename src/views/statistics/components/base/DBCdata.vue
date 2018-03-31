@@ -17,6 +17,14 @@
     </div>
   </div>
   
+  <!-- <div class="middleLine"></div> -->
+
+  <!-- <div class="moneyBox moneyBox2">
+    <div class="moneyItem">
+      店铺数量：<span>{{ AllShopData.shopCount ?  AllShopData.shopCount : "0" }} </span>个
+    </div>
+  </div> -->
+  
   <div class="middleLine"></div>
   
   <div class="moneyBox moneyBox2">

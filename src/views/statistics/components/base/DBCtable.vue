@@ -1,18 +1,9 @@
 <template>
 <div>
-  <div class="stateChoseBox" @change="changeList">
-    <mu-checkbox name="group" nativeValue="全部" v-model="list" label="全部" class="demo-checkbox stateChoseItem" disabled /> <br/>
-    <mu-checkbox name="group" nativeValue="待付款" v-model="list" label="待付款" class="demo-checkbox stateChoseItem"/> <br/>
-    <mu-checkbox name="group" nativeValue="已付款" v-model="list" label="已付款" class="demo-checkbox stateChoseItem"/> <br/>
-    <mu-checkbox name="group" nativeValue="维修中" v-model="list" label="维修中" class="demo-checkbox stateChoseItem"/> <br/>
-    <mu-checkbox name="group" nativeValue="已完成" v-model="list" label="已完成" class="demo-checkbox stateChoseItem"/> <br/>
-    <mu-checkbox name="group" nativeValue="已取消" v-model="list" label="已取消" class="demo-checkbox stateChoseItem"/> <br/>
-    <mu-flat-button label="订单状态查询" class="demo-flat-button stateBtn" primary @click="changeState"/>
-  </div>
   <mu-table enableSelectAll :showCheckbox="false" ref="table" class="listTable" :height="'660px'">
     <mu-thead>
       <mu-tr>
-        <mu-th>客人昵称</mu-th>
+        <mu-th>店铺名</mu-th>
         <mu-th>建立时间</mu-th>
         <mu-th>客人联系方式</mu-th>
         <mu-th>交易金额</mu-th>
@@ -25,20 +16,15 @@
           <mu-icon-button tooltip="查看详情" tooltipPosition="bottom-right" touch @click.capture="open(quetion)" class="enterDetail"/>
             <sicon name="check" scale="2.3" class="checkI"></sicon>
           </mu-icon-button>
-          &nbsp;{{ quetion.name }}
+          &nbsp;{{ quetion.father ? quetion.father.name : "" }}
         </mu-td>
         <mu-td class="texthidden">{{ quetion.time }}</mu-td>
         <mu-td class="texthidden">{{ quetion.phone }}</mu-td>
-        <mu-td class="texthidden">{{ quetion.allmoney }} 元</mu-td>
+        <mu-td class="texthidden">{{ quetion.payment/100 }} 元</mu-td>
         <mu-td class="texthidden" :class="stateStyle[quetion.stateW]">{{ quetion.stateW }}</mu-td>
       </mu-tr>
     </mu-tbody>
   </mu-table>
-
-  <div class="ManagePagination">
-    <mu-raised-button v-if="nextpage" label="点击加载更多" class="demo-raised-button" @click="moreSearch" :disabled="loading" primary/>
-    <mu-raised-button v-else label="已无法获取更多内容" class="demo-raised-button" disabled/>
-  </div>
 
   <Mdialog @close="close" :questionData="signalShop" :dialog="dialog"></Mdialog>
 
@@ -72,17 +58,6 @@
       Mdialog,
     },
     methods: {
-      changeList(value){
-        setTimeout(() => {
-          // console.log(this.list)
-          if (this.list[0]=="全部") {
-            this.list.shift();
-          }else if(this.list.length == 5 || !this.list[0]){
-            this.list = [];
-            this.list[0] = "全部";
-          }
-        },1)
-      },
       //弹出
       open (AllShopData) {
         this.dialog = true;
@@ -93,12 +68,6 @@
       close () {
         this.dialog = false;
         this.signalShop = {};
-      },
-      moreSearch(){
-        this.$emit("moreSearch")
-      },
-      changeState(){
-        this.$emit("changeState",this.list)
       }
     }
   }
@@ -133,18 +102,6 @@
   .enterDetail{
     margin-left: -20px;
   }
-  .stateChoseBox{
-    display: flex;
-    flex-direction: row;
-    margin-bottom: 20px;
-    margin-left: 6px;
-  }
-  .stateBtn{
-    margin-top: -5px;
-  }
-  .stateChoseItem{
-    margin-right: 20px;
-  }
   .aleardy{
     color: #17B978;
   }
@@ -160,10 +117,4 @@
   .quit{
     color: #BBBBBB;
   }
-  .ManagePagination{
-    display: flex;
-    justify-content: center;
-    margin-top: 30px;
-  }
-
 </style>

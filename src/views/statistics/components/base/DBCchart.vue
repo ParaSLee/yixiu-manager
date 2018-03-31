@@ -1,6 +1,6 @@
 <template>
 <div class="charts-contain">
-  <div id="main" style="width: 600px;height:400px;"></div>
+  暂不支持
 </div>
 </template>
 
@@ -27,11 +27,6 @@
     },
     methods: {
       
-    },
-    updata(){
-      if (this.AllShopData) {
-        this.listAllShopData(this.AllShopData)
-      }
     }
   }
 </script>
@@ -39,5 +34,8 @@
 <style scoped>
   .charts-contain{
     width: 100%;
+    font-size: 50px;
+    text-align: center;
+    padding-top: 100px;
   }
 </style>

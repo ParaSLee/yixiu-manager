@@ -63,7 +63,7 @@
       open (AllShopData) {
         this.dialog = true;
         this.signalShop = AllShopData;
-        console.log(this.signalShop);
+        // console.log(this.signalShop);
       },
       //关闭
       close () {

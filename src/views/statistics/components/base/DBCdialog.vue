@@ -25,13 +25,13 @@
       </p>
       <div class="dialogBland2 bottomline"></div>
       <div class="dialogBland2"></div>
-      <p class="dialogBox">
+      <!-- <p class="dialogBox">
         <span class="messageTitle">用户昵称：</span> 
         {{ questionData.user ? questionData.user.name :"无" }}
-      </p>
+      </p> -->
       <p class="dialogBox">
         <span class="messageTitle">店铺名称：</span> 
-        {{ questionData.user ? questionData.shop.name :"无" }}
+        {{ questionData.father ? questionData.father.name :"无" }}
       </p>
       <div class="dialogBland2 bottomline"></div>
       <div class="dialogBland2"></div>
@@ -54,21 +54,25 @@
       <div class="dialogBland"></div>
       <p class="dialogBox canchose">
         <span class="messageTitle">用户ID：</span> 
-        {{ questionData.user._id }}
+        {{ questionData.user ? questionData.user : "未填写" }}
       </p>
-      <p class="dialogBox">
-        <span class="messageTitle">用户昵称：</span> 
-        {{ questionData.user ? questionData.user.name : "无" }}
+      <p class="dialogBox canchose">
+        <span class="messageTitle">用户地址：</span> 
+        {{ questionData.address ? questionData.address : "未填写" }}
       </p>
       <p class="dialogBox canchose">
         <span class="messageTitle">用户电话：</span> 
-        {{ questionData.user ? questionData.user.mobile : "无" }}
+        {{ questionData.phone ? questionData.phone : "未填写" }}
+      </p>
+      <!-- <p class="dialogBox">
+        <span class="messageTitle">用户昵称：</span> 
+        {{ questionData.user ? questionData.user.name : "无" }}
       </p>
       <p class="dialogBox canchose">
         <span class="messageTitle">用户邮箱：</span> 
         {{ questionData.user ? questionData.user.email : "无" }}
       </p>
-      <div class="dialogBland"></div>
+      <div class="dialogBland"></div> -->
       <div class="dialogBland"></div>
     </div>
 
@@ -77,15 +81,15 @@
       <div class="dialogBland"></div>
       <p class="dialogBox canchose">
         <span class="messageTitle">店铺ID：</span> 
-        {{ questionData.shop ? questionData.shop._id : "无" }}
+        {{ questionData.father ? questionData.father._id : "无" }}
       </p>
       <p class="dialogBox">
         <span class="messageTitle">店铺名称：</span> 
-        {{ questionData.shop ? questionData.shop.name : "无" }}
+        {{ questionData.father ? questionData.father.name : "无" }}
       </p>
       <p class="dialogBox canchose">
         <span class="messageTitle">店铺联系方式：</span> 
-        {{ questionData.shop ? questionData.shop.contactNumber : "无" }}
+        {{ questionData.father ? questionData.father.contactNumber : "无" }}
       </p>
       <div class="dialogBland"></div>
     </div>
@@ -94,12 +98,16 @@
       <div class="dialogBland"></div>
       <p class="dialogBox">
         <span class="messageTitle">服务方式：</span> 
-        {{ questionData.serviceWayW }}
+        {{ questionData.serviceWay }}
       </p>
       <p class="dialogBox">
+        <span class="messageTitle">金额：</span> 
+        {{ questionData.price/100 }} 元
+      </p>
+      <!-- <p class="dialogBox">
         <span class="messageTitle">手机属性：</span> 
         {{ questionData.phoneModel ? questionData.phoneModel.name : "" }} &nbsp; 
-        {{ questionData.phoneModel ? questionData.phoneModel.color[0] : "" }} &nbsp;
+        {{ questionData.phoneModel ? questionData.phoneModel.color : "" }} &nbsp;
       </p>
       <div class="dialogBox">
         <span class="messageTitle">服务内容：</span> 
@@ -109,8 +117,7 @@
             <span class="messageTitle">金额：{{ serviceOrder.price }} 元</span> 
           </div>
         </div>
-        
-      </div>
+      </div> -->
       <div class="dialogBland2 bottomline"></div>
       <div class="dialogBland2"></div>
       <p class="dialogBox">
