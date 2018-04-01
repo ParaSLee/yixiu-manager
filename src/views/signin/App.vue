@@ -93,8 +93,6 @@
     position: absolute;
     height: 100%;
     width: 100%;
-    /*background-image: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);*/
-    /*background: rgb(58, 58, 58);*/
     background: #2C2C2C;
     overflow: hidden;
   }
@@ -106,7 +104,6 @@
     margin-top: -210px;
     height: 420px;
     width: 340px;
-    /*background-color: rgb(254, 240, 226);*/
     background-color: #FCFCFC;
     -moz-box-shadow:0px 2px 1px #005792; 
     -webkit-box-shadow:0px 2px 1px #005792; 
