@@ -6,10 +6,12 @@ import index from '../views/index/router'
 
 Vue.use(Router)
 export default new Router({
+  mode:'history',
+  base:'/yixiumanage/',
   routes: [
     {
       path: '/',
-      redirect:'/home'
+      redirect:'/signin'
     },
     ...signin,
     ...home,
