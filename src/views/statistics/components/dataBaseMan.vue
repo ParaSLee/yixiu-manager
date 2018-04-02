@@ -118,7 +118,6 @@
         }
         getshopAllData(a).then(res => {
           this.listquestionData(res);
-          console.log(res)
         },(err => {
           console.log(err)
         }))
@@ -147,7 +146,6 @@
       },
       //显示总数据内容
       listquestionData (Arr){
-        // console.log(Arr);
         this.shopData = Arr;
         this.shopData.moneyA = this.changeMoneyData(Arr.turnover);
         this.shopData.moneyB = this.changeMoneyData(Arr.turnoverAfter);
@@ -212,7 +210,6 @@
         }
       },
       listOrderData (Arr,type){
-        // console.log(Arr)
         for(let i in Arr){
           this.inputArr(Arr[i])
         }
