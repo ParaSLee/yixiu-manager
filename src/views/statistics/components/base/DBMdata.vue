@@ -47,7 +47,7 @@
   @font-face
   {
     font-family: HelveticaNeue;
-    src: url('../../../../assets/fonts/HelveticaNeueLTPro-Th.woff') format('woff');/*IE*/
+    src: url('../../fonts/HelveticaNeueLTPro-Th.woff') format('woff');/*IE*/
   }
 /*  @import 'http://cdn.webfont.youziku.com/webfonts/nomal/115403/46865/5abaf73df629d8174c40ea14.css';
 

@@ -2,12 +2,15 @@
   <div class="manage-container">
     <div class="manage-left">
       <div 
-        v-for="(item, index) in items" 
+        v-for="(item, index) in items" v-if="!item.type"
         @click="changeTage(index)"
         :class="index == nowitem ? 'chosedTag' : ''"
         :key="index"
       > 
         {{ item.name }} 
+      </div>
+      <div v-else class="sedtitle">
+        {{ item.name }} <sicon name="down" scale="1.7" color="rgb(50, 50, 50)"></sicon>
       </div>
     </div>
   </div>
@@ -37,12 +40,26 @@
             url:"/home/questionexamine"
           },
           {
+            name:"数据统计",
+            url:"/home/statistics"
+          },
+          {
+            name:"手机管理",
+            url:"",
+            type:"father"
+          },
+          {
             name:"手机品牌管理",
             url:"/home/phonebrand"
           },
           {
             name:"手机型号管理",
             url:"/home/phonemodel"
+          },
+          {
+            name:"维修管理",
+            url:"",
+            type:"father"
           },
           {
             name:"维修分类管理",
@@ -53,14 +70,26 @@
             url:"/home/service"
           },
           {
-            name:"数据统计",
-            url:"/home/statistics"
+            name:"视频管理",
+            url:"",
+            type:"father"
+          },
+          {
+            name:"课程分类",
+            url:"/home/videoClassification"
+          },
+          {
+            name:"课程管理",
+            url:"/home/videoClass"
+          },
+          {
+            name:"课程章节管理",
+            url:"/home/videoCourse"
           },
           {
             name:"退出",
             url:"/signin"
           },
-
         ]
       }
     },
@@ -69,7 +98,6 @@
     },
     methods: {
       changeTage(index) {
-        console.log(this.nowitem);
         this.nowitem = index;
         this.$router.push(this.items[index].url)
       },
@@ -86,16 +114,18 @@
         this.nowitem = 1
       }else if(this.$route.path === "/home/questionexamine") {
         this.nowitem = 2
-      }else if(this.$route.path === "/home/phonebrand") {
-        this.nowitem = 3
-      }else if(this.$route.path === "/home/phonemodel") {
-        this.nowitem = 4
-      }else if(this.$route.path === "/home/serviceClassification") {
-        this.nowitem = 5
-      }else if(this.$route.path === "/home/service") {
-        this.nowitem = 6
       }else if(this.$route.path === "/home/statistics") {
+        this.nowitem = 3
+      }else if(this.$route.path === "/home/phonebrand") {
+        this.nowitem = 4
+      }else if(this.$route.path === "/home/phonemodel") {
+        this.nowitem = 2
+      }else if(this.$route.path === "/home/serviceClassification") {
+        this.nowitem = 6
+      }else if(this.$route.path === "/home/service") {
         this.nowitem = 7
+      }else if(this.$route.path === "/home/videoClassification") {
+        this.nowitem = 8
       }
 
       // this.changeTag(this.$route.path);
@@ -119,7 +149,7 @@
   }
   .manage-left div{
     height: 45px;
-    padding-left: 35px;
+    padding-left: 55px;
     border-bottom: 1px solid rgb(72, 72, 72);
     line-height: 45px;
     color: rgb(169, 169, 169);
@@ -151,5 +181,19 @@
     overflow-y: auto;
     overflow-x: hidden;
   }
-
+  .manage-left .sedtitle{
+    background: rgb(248, 249, 252);
+    color: rgb(50, 50, 50);
+    cursor: default;
+    padding-left: 35px;
+  }
+  .manage-left .sedtitle:hover{
+    background: rgb(248, 249, 252);
+    color: rgb(50, 50, 50);
+  }
+  .manage-left .sedtitle svg{
+    float: right;
+    margin-top: 15px;
+    margin-right: 20px;
+  }
 </style>

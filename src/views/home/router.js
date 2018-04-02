@@ -12,6 +12,9 @@ import phonemodel from "../phonemodel/App"
 import service from "../service/App"
 import serviceClassification from "../serviceClassification/App"
 import statistics from "../statistics/App"
+import videoClass from "../videoClass/App"
+import videoClassification from "../videoClassification/App"
+import videoCourse from "../videoCourse/App"
 
 export default [{
   path: '/home',
@@ -65,6 +68,21 @@ export default [{
       name: "statistics",
       path: "statistics",
       component: statistics
+    },
+    {
+      name: "videoClass",
+      path: "videoClass",
+      component: videoClass
+    },
+    {
+      name: "videoClassification",
+      path: "videoClassification",
+      component: videoClassification
+    },
+    {
+      name: "videoCourse",
+      path: "videoCourse",
+      component: videoCourse
     }
 
   ]
