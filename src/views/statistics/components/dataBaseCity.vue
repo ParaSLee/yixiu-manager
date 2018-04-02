@@ -354,6 +354,7 @@
     text-align: center;
     padding-top: 360px;
     z-index: 10;
+    font-family: "YouYuan","Microsoft Yahei","PingFang SC";
   }
   .cityChoseBtn{
     margin-left: 10px;

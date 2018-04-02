@@ -238,6 +238,7 @@
     text-align: center;
     padding-top: 360px;
     z-index: 10;
+    font-family: "YouYuan","Microsoft Yahei","PingFang SC";
   }
   .loadingBox{
     padding-top: 270px;

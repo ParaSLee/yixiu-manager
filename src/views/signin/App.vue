@@ -46,8 +46,6 @@
     methods: {
       login(){
         this.loading = true;
-        console.log(this.password);
-        console.log(this.id);
         if (this.id==="" && this.password==="") {
           this.idText="用户名不能为空";
           this.passwordText="密码不能为空";
@@ -64,7 +62,6 @@
             username: this.id,
             password: md5(this.password)
           }
-          console.log(accound);
 
           managerlogin(accound).then(res => {
             if (res.errMsg == "用户不存在") {
@@ -76,8 +73,6 @@
             }else{
               this.$router.push("/home")
             }
-            console.log(res)
-
           },(err => {
             console.log(err)
           }))

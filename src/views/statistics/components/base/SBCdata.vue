@@ -59,13 +59,19 @@
 </script>
 
 <style scoped>
-  @import 'http://cdn.webfont.youziku.com/webfonts/nomal/115403/46865/5abaf73df629d8174c40ea14.css';
-
-  @import 'http://cdn.webfont.youziku.com/webfonts/nomal/115403/46758/5abaf4eaf629d8174c40ea0e.css';
-
+  @font-face
+  {
+    font-family: HelveticaNeue;
+    src: url('../../../../assets/fonts/HelveticaNeueLTPro-Th.woff') format('woff');/*IE*/
+  }
+/*  @import 'http://cdn.webfont.youziku.com/webfonts/nomal/115403/46865/5abaf73df629d8174c40ea14.css';
+*/
+/*  @import 'http://cdn.webfont.youziku.com/webfonts/nomal/115403/46758/5abaf4eaf629d8174c40ea0e.css';
+*/
   .data-contain{
     width: 100%;
-    font-family: "Source-Han-Ligh110f7f0e581c2cb";
+    /*font-family: "Source-Han-Ligh110f7f0e581c2cb";*/
+    font-family: "YouYuan","Microsoft Yahei","PingFang SC";
   }
   .allmoney{
     text-align: center;
@@ -80,8 +86,9 @@
     font-size: 50px;
   }
   .allmoney span{
-    font-family:'Source-Han-Ligh110f7f0e581c2cb';
-    font-size: 35px;
+    /*font-family:'Source-Han-Ligh110f7f0e581c2cb';*/
+    font-family: "YouYuan","Microsoft Yahei","PingFang SC";
+    font-size: 30px;
   }
   .line{
     display: inline-block;
@@ -106,6 +113,7 @@
   }
   .moneyItem span{
     font-family: 'HelveticaNeue';
+    font-size: 32px;
   }
   .middleLine{
     width: 100%;
