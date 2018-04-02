@@ -77,7 +77,6 @@
         nextpage:true,
         circleShow:false,  //数据读取中
         findquestion:{
-          createdAt:{},
           shop:"",
           limit:10, //一次获取列表的条数,系统默认为10
           skip:0 //跳过几个数据,系统默认为0
@@ -269,8 +268,10 @@
         }else{
           end = "";
         }
+        this.findquestion.createdAt = {};
 
         if (start === "" && end === "") {
+          delete this.findquestion.createdAt;
         }else if (start !== "" && end === "") {
           this.user.orderCreatedAt = {
             $gte:start
