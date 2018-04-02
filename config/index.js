@@ -10,7 +10,15 @@ module.exports = {
     // Paths
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
-    proxyTable: {},
+    proxyTable: {
+        '/api':{
+            target:'http://bymm.natappvip.cc',  //代理接口
+            changeOrigin: true, //跨域?
+            pathRewrite:{
+                '^/api':'' //需要rewrite的
+            }
+        }
+    },
 
     // Various Dev Server settings
     host: 'localhost', // can be overwritten by process.env.HOST

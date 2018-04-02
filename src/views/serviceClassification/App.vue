@@ -12,7 +12,7 @@
         <mu-th>ID</mu-th>
         <mu-th>分类名称</mu-th>
         <mu-th>所属父类</mu-th>
-        <mu-th>所属分类</mu-th>
+        <!-- <mu-th>所属分类</mu-th> -->
         <mu-th>建立时间</mu-th>
       </mu-tr>
     </mu-thead>

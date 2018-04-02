@@ -18,5 +18,7 @@
 </script>
 
 <style>
-
+  .mu-dialog{
+    max-width: 1000px;
+  }
 </style>

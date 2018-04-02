@@ -8,10 +8,14 @@
   
     <div class="stateChoseBox">
       <datepicker class="choseTime" language="zh" placeholder="选择开始时间" v-model="chosedStartDay" :format="format"></datepicker>
+      <span class="deltime" @click="clearTime('start')">清除</span>
       <span style="font-size:18px;margin:0 10px;">&nbsp;至</span>
       <datepicker class="choseTime" language="zh" placeholder="选择结束时间" v-model="chosedEndDay" :format="format"></datepicker>
+      <span class="deltime" @click="clearTime('end')">清除</span>
     </div>
-    <span class="tips" v-if="showTimetip">如果未选择时间节点，则搜索所有时间内的订单</span>
+    <span class="tips" v-if="showTimetip">{{ timeTips }}</span>
+    <span class="tips errtips" v-if="showTimetipErr">{{ timeTips }}</span>
+
 
     <mu-raised-button label="查询" @click="toSearch" class="returnBtn" primary :disabled="city==='选择城市'"/>
 
@@ -58,6 +62,7 @@
   export default {
     data(){
       return {
+        timeTips:"如果未选择时间节点，则搜索所有时间内的订单",
         citydialogshow:false,  //显示选择城市
         city:"选择城市",  
         chosedStartDay:"",  //开始日期选择
@@ -65,6 +70,7 @@
         format:"yyyy-MM-dd",  //日期格式
         showDataAsy: false,
         showTimetip: true,
+        showTimetipErr: false,
         circleShow:false,  //数据读取中
         findshopAllData:{
           detail:true, //是否显示店铺详情
@@ -197,7 +203,7 @@
       },
       //显示问题内容
       listAllShopData (Arr,type){ 
-        console.log(Arr)
+        // console.log(Arr)
         if (Arr.shopCount === 0) {
           this.noshopshow = true;
           this.showDataAsy = false;
@@ -221,11 +227,71 @@
         // console.log(this.AllOrderData)
         setTimeout(()=>{
           this.circleShow = true;
+          delete this.findshopAllData.orderCreatedAt;
         },0)
+      },
+      clearTime(type){
+        if (type==="start") {
+          this.chosedStartDay = "";
+        }else if (type==="end"){
+          this.chosedEndDay = "";
+        }
+      },
+      setTimeZero(TimeDate,type){
+        if (type==='start') {
+          TimeDate.setHours(0);
+          TimeDate.setMinutes(0);
+          TimeDate.setSeconds(0);
+          TimeDate.setMilliseconds(0);
+        }else if(type==='end'){
+          TimeDate.setHours(23);
+          TimeDate.setMinutes(59);
+          TimeDate.setSeconds(59);
+          TimeDate.setMilliseconds(0);
+        }
       },
       //搜索
       toSearch(){
-        this.getQlist(this.findshopAllData)
+        let start, end;
+        if (this.chosedStartDay) {
+          this.setTimeZero(this.chosedStartDay,'start');
+          start = this.chosedStartDay/1000;
+        }else{
+          start = "";
+        }
+        if (this.chosedEndDay) {
+          this.setTimeZero(this.chosedEndDay,'end');
+          end = this.chosedEndDay/1000;
+        }else{
+          end = "";
+        }
+
+        if (start === "" && end === "") {
+        }else if (start !== "" && end === "") {
+          this.findshopAllData.orderCreatedAt = {
+            $gte:start
+          }
+          this.timeTips = `从 ${this.chosedStartDay.getFullYear()}-${this.chosedStartDay.getMonth()+1}-${this.chosedStartDay.getDate()} 至 今`;
+        }else if (start === "" && end !== "") {
+          this.findshopAllData.orderCreatedAt = {
+            $lte:end
+          }
+          this.timeTips = `从 最初 至 ${this.chosedEndDay.getFullYear()}-${this.chosedEndDay.getMonth()+1}-${this.chosedEndDay.getDate()}`;
+        }else if (start !== "" && end !== "" && start <= end){
+          this.findshopAllData.orderCreatedAt = {
+            $gte:start,
+            $lte:end
+          }
+          this.timeTips = `从 ${this.chosedStartDay.getFullYear()}-${this.chosedStartDay.getMonth()+1}-${this.chosedStartDay.getDate()} 至 ${this.chosedEndDay.getFullYear()}-${this.chosedEndDay.getMonth()+1}-${this.chosedEndDay.getDate()}`;
+        }else if(start > end){
+          this.showTimetip = false;
+          this.showTimetipErr = true;
+          this.timeTips="开始时间不能大于结束时间！";
+          return 0;
+        }
+        this.showTimetip = true;
+        this.showTimetipErr = false;
+        this.getQlist(this.findshopAllData);
         this.noshopshow = false;
         this.circleShow = false;
         this.showDataAsy = true;
@@ -261,6 +327,9 @@
     margin-bottom: 20px;
     color: rgb(126, 87, 194);
   }
+  .errtips{
+    color:rgb(222, 60, 60);
+  }
   .returnBtn{
     margin-left: 10px;
     margin-bottom: 20px;
@@ -268,6 +337,7 @@
   .switchbtn{
     position: absolute;
     right: 7%;
+    top: 113px;
   }
   .switchbtnBox{
     float: right;
@@ -294,5 +364,16 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+  }
+  .deltime{
+    display: inline-block;
+    height: 27px;
+    margin-left: -35px;
+    padding: 1px 5px;
+    z-index: 10;
+    cursor: pointer;
+  }
+  .deltime:hover{
+    background: rgb(229, 229, 229);
   }
 </style>

@@ -8,10 +8,13 @@
   
     <div class="stateChoseBox">
       <datepicker class="choseTime" language="zh" placeholder="选择开始时间" v-model="chosedStartDay" :format="format"></datepicker>
+      <span class="deltime" @click="clearTime('start')">清除</span>
       <span style="font-size:18px;margin:0 10px;">&nbsp;至</span>
       <datepicker class="choseTime" language="zh" placeholder="选择结束时间" v-model="chosedEndDay" :format="format"></datepicker>
+      <span class="deltime" @click="clearTime('end')">清除</span>
     </div>
-    <span class="tips" v-if="showTimetip">如果未选择时间节点，则搜索所有时间内的订单</span>
+    <span class="tips" v-if="showTimetip">{{ timeTips }}</span>
+    <span class="tips errtips" v-if="showTimetipErr">{{ timeTips }}</span>
 
     <mu-raised-button label="查询" @click="toSearch" class="returnBtn" primary :disabled="user.name==='选择商户'"/>
 
@@ -67,11 +70,14 @@
         chosedEndDay:"",  //结束日期选择
         format:"yyyy-MM-dd",  //日期格式
         showDataAsy: false,
+        timeTips:"如果未选择时间节点，则搜索所有时间内的订单",
         showTimetip: true,
+        showTimetipErr: false,
         loading:true,
         nextpage:true,
         circleShow:false,  //数据读取中
         findquestion:{
+          createdAt:{},
           shop:"",
           limit:10, //一次获取列表的条数,系统默认为10
           skip:0 //跳过几个数据,系统默认为0
@@ -103,13 +109,16 @@
         this.user = user;
       },
       //获取该商家所有数据
-      getAll(id){
+      getAll(id,time){
         this.circleShow = true;
         let a = {
-          _id:id
+          _id:id,
+          orderCreatedAt:time,
+          detail:true
         }
         getshopAllData(a).then(res => {
           this.listquestionData(res);
+          console.log(res)
         },(err => {
           console.log(err)
         }))
@@ -228,8 +237,76 @@
         this.showDataAsy = true;
         this.loading=false;
       },
+      clearTime(type){
+        if (type==="start") {
+          this.chosedStartDay = "";
+        }else if (type==="end"){
+          this.chosedEndDay = "";
+        }
+      },
+      setTimeZero(TimeDate,type){
+        if (type==='start') {
+          TimeDate.setHours(0);
+          TimeDate.setMinutes(0);
+          TimeDate.setSeconds(0);
+          TimeDate.setMilliseconds(0);
+        }else if(type==='end'){
+          TimeDate.setHours(23);
+          TimeDate.setMinutes(59);
+          TimeDate.setSeconds(59);
+          TimeDate.setMilliseconds(0);
+        }
+      },
       //搜索
       toSearch(){
+        let start, end;
+        if (this.chosedStartDay) {
+          this.setTimeZero(this.chosedStartDay,'start');
+          start = this.chosedStartDay/1000;
+        }else{
+          start = "";
+        }
+        if (this.chosedEndDay) {
+          this.setTimeZero(this.chosedEndDay,'end');
+          end = this.chosedEndDay/1000;
+        }else{
+          end = "";
+        }
+
+        if (start === "" && end === "") {
+        }else if (start !== "" && end === "") {
+          this.user.orderCreatedAt = {
+            $gte:start
+          }
+          this.findquestion.createdAt = {
+            $gte:start
+          }
+          this.timeTips = `从 ${this.chosedStartDay.getFullYear()}-${this.chosedStartDay.getMonth()+1}-${this.chosedStartDay.getDate()} 至 今`;
+        }else if (start === "" && end !== "") {
+          this.user.orderCreatedAt = {
+            $lte:end
+          }
+          this.findquestion.createdAt = {
+            $lte:end
+          }
+          this.timeTips = `从 最初 至 ${this.chosedEndDay.getFullYear()}-${this.chosedEndDay.getMonth()+1}-${this.chosedEndDay.getDate()}`;
+        }else if (start !== "" && end !== "" && start <= end){
+          this.user.orderCreatedAt = {
+            $gte:start,
+            $lte:end
+          }
+          this.findquestion.createdAt = {
+            $gte:start,
+            $lte:end
+          }
+          this.timeTips = `从 ${this.chosedStartDay.getFullYear()}-${this.chosedStartDay.getMonth()+1}-${this.chosedStartDay.getDate()} 至 ${this.chosedEndDay.getFullYear()}-${this.chosedEndDay.getMonth()+1}-${this.chosedEndDay.getDate()}`;
+        }else if(start > end){
+          this.showTimetip = false;
+          this.showTimetipErr = true;
+          this.timeTips="开始时间不能大于结束时间！";
+          return 0;
+        }
+
         delete this.findquestion.state;
         this.findquestion.limit = 10;
         this.findquestion.skip = 0;
@@ -238,7 +315,7 @@
         this.circleShow = false;
         this.showDataAsy = true;
 
-        this.getAll(this.user.id)
+        this.getAll(this.user.id, this.user.orderCreatedAt)
       },
       moreSearch(){
         this.findquestion.limit +=10;
@@ -304,6 +381,7 @@
   .switchbtn{
     position: absolute;
     right: 7%;
+    top: 113px;
   }
   .switchbtnBox{
     float: right;
@@ -326,5 +404,16 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+  }
+  .deltime{
+    display: inline-block;
+    height: 27px;
+    margin-left: -35px;
+    padding: 1px 5px;
+    z-index: 10;
+    cursor: pointer;
+  }
+  .deltime:hover{
+    background: rgb(229, 229, 229);
   }
 </style>

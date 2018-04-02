@@ -221,6 +221,7 @@
   .switchbtn{
     position: absolute;
     right: 7%;
+    top: 113px;
   }
   .switchbtnBox{
     float: right;
