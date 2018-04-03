@@ -8,12 +8,6 @@
     <mu-flat-button :disabled="!addnewbtnshow" label="添加新的型号" class="demo-flat-button addnewbtn" @click="addnewModel"/>
     <span v-if="!addnewbtnshow">选择手机品牌后才可添加该品牌的新型号手机</span>
 
-    <!--   谢说的样式类型
-    <p>请选择手机品牌：</p>
-    <mu-raised-button label="苹果" class="demo-raised-button"/>
-    <mu-raised-button label="小米" class="demo-raised-button"/>
-    <mu-raised-button label="更多" class="demo-raised-button" @click="chosemoreBrand"/>
-     -->
   </div>
   
   <mu-circular-progress :size="40" v-if="circleShow" class="circleBox"/>
