@@ -13,7 +13,7 @@ import service from "../service/App"
 import serviceClassification from "../serviceClassification/App"
 import statistics from "../statistics/App"
 import videoClass from "../videoClass/App"
-import videoClassification from "../videoClassification/App"
+import addVideoClass from "../addVideoClass/App"
 import videoCourse from "../videoCourse/App"
 
 export default [{
@@ -75,9 +75,9 @@ export default [{
       component: videoClass
     },
     {
-      name: "videoClassification",
-      path: "videoClassification",
-      component: videoClassification
+      name: "addVideoClass",
+      path: "addVideoClass",
+      component: addVideoClass
     },
     {
       name: "videoCourse",

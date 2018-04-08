@@ -321,3 +321,39 @@ export function getshopareaData(data){
     });
   });
 }
+
+
+
+
+// 视频查询
+export function getVideoData(data){
+  return new Promise((resolve, reject) => {
+    ajax.post(`${url}/sql/find`,data).then((res) => {
+      resolve(res);
+    }).then((err) => {
+      reject(err);
+    });
+  });
+}
+
+// 视频添加
+export function addVideoData(data){
+  return new Promise((resolve, reject) => {
+    ajax.post(`${url}/sql/add`,data).then((res) => {
+      resolve(res);
+    }).then((err) => {
+      reject(err);
+    });
+  });
+}
+
+// 删除培训
+export function delVideoData(data){
+  return new Promise((resolve, reject) => {
+    ajax.post(`${url}/sql/remove`,data).then((res) => {
+      resolve(res);
+    }).then((err) => {
+      reject(err);
+    });
+  });
+}

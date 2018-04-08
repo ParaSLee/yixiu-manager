@@ -1,64 +1,47 @@
 <template>
 <div>
-  <mu-dialog :open="dialog" title="问题详情" @close="close" scrollable>   
+  <mu-dialog :open="dialog" title="课程详情" @close="close" scrollable>   
   
     <mu-tabs :value="activeTab" @change="handleTabChange">
-      <mu-tab value="tab1" title="问题信息"/>
-      <mu-tab value="tab2" title="用户信息"/>
-      <mu-tab value="tab3" title="问题详情"/>
-      <mu-tab value="tab4" title="状态修改"/>
+      <mu-tab value="tab1" title="课程信息"/>
+      <mu-tab value="tab3" title="课程介绍"/>
+      <mu-tab value="tab4" title="其他（之后再加）"/>
     </mu-tabs>
 
     <div v-if="activeTab === 'tab1'">
       <div class="dialogBland"></div>
       <p class="dialogBox canchose">
-        <span class="messageTitle">问题ID：</span> 
+        <span class="messageTitle">课程ID：</span> 
         {{ questionData._id }}
       </p>
-      <p class="dialogBox">
-        <span class="messageTitle">问题标题：</span> 
-        {{ questionData.title }}
+      <p class="dialogBox canchose">
+        <span class="messageTitle">课程名：</span> 
+        {{ questionData.name }}
       </p>
       <p class="dialogBox">
-        <span class="messageTitle">创建时间：</span> 
-        {{ questionData.time }}
+        <span class="messageTitle">课程等级：</span> 
+        {{ levelText[questionData.level] }}
       </p>
-      <div class="dialogBland2 bottomline"></div>
+      <p class="dialogBox">
+        <span class="messageTitle">课程封面：</span> 
+        <img :src="questionData.info?questionData.info.cover:''" class="cover" @click="lookImg(questionData.info.cover)">
+      </p>
+      <seebigphoto v-if="bigImgUrl!==''" :imgurl="bigImgUrl" @closeimg="closeimg"></seebigphoto>
       <div class="dialogBland2"></div>
-      <div class="dialogBox">
-        <span class="messageTitle">问题简介：</span> 
-        <div v-html="questionData.desc" class="Textdesc"></div>
-      </div>
-    </div>
-
-
-    <div v-if="activeTab === 'tab2'">
-      <div class="dialogBland"></div>
-      <p class="dialogBox canchose">
-        <span class="messageTitle">用户ID：</span> 
-        {{ questionData.author?questionData.author._id:"" }}
-      </p>
+      <div class="dialogBland bottomline"></div>
+      <div class="dialogBland2"></div>
       <p class="dialogBox">
-        <span class="messageTitle">用户昵称：</span> 
-        {{ questionData.author?questionData.author.name:"" }}
+        <span class="messageTitle">课程价格：</span> 
+        {{ questionData.price !== 0 ? `${questionData.price/100} 元` : '免费' }}
       </p>
-      <p class="dialogBox canchose">
-        <span class="messageTitle">用户电话：</span> 
-        {{ questionData.author?questionData.author.mobile :""}}
-      </p>
-      <p class="dialogBox canchose">
-        <span class="messageTitle">用户邮箱：</span> 
-        {{ questionData.author?questionData.author.email :""}}
-      </p>
-      <div class="dialogBland"></div>
-      <div class="dialogBland"></div>
+
     </div>
 
 
     <div v-if="activeTab === 'tab3'">
       <div class="dialogBland"></div>
-      <div class="contentBox">
-        <div v-html="questionData.info" class="Qcontent"></div>
+      <div class="contentBox canchose">
+        <div v-html="questionData.desc" class="Qcontent"></div>
         <div class="dialogBland"></div>
       </div>
       
@@ -66,30 +49,29 @@
 
     <div v-if="activeTab === 'tab4'">
       <div class="dialogBland"></div>
-      <span v-if="!changestateShow">
-        <span class="messageTitle">问题状态：</span> 
-        <span :class="stateStyle[questionData.state]">{{stateText[questionData.state]}}</span>
-        <mu-flat-button label="修改状态" class="demo-flat-button changestateBtn" @click="chosestate" />
-      </span>
-      <span v-else class="changestateBox">
-        <mu-radio label="待审核" name="group" nativeValue="0" v-model="chosevalue" class="demo-radio"/>
-        <mu-radio label="正常" name="group" nativeValue="1" v-model="chosevalue" class="demo-radio"/>
-        <mu-radio label="已采纳" name="group" nativeValue="2" v-model="chosevalue" class="demo-radio"/>
-        <mu-radio label="已关闭" name="group" nativeValue="3" v-model="chosevalue" class="demo-radio"/>
         
-        <mu-raised-button label="取消" class="demo-raised-button" @click="closechosestate" />
-        <mu-raised-button label="更新" class="demo-raised-button" @click="changestate" primary/>
-        <mu-circular-progress :size="40" v-if="circleShow" class="circleBox"/>
-      </span>
     </div>
+
+    <mu-dialog :open="deldialog" title="删除" @close="closedel">
+      确定删除？
+      <mu-flat-button slot="actions" @click="closedel" primary label="取消"/>
+      <mu-flat-button slot="actions" primary @click="delClass" label="确定"/>
+    </mu-dialog>
+
+    <mu-dialog :open="deldialog" title="" @close="closeAll">
+      删除成功！
+      <mu-flat-button slot="actions" primary @click="closeAll" label="确定"/>
+    </mu-dialog>
+
+    <mu-flat-button slot="actions" @click="deldia" secondary label="删除" class="delBtn"/>
     <mu-flat-button slot="actions" @click="close" primary label="关闭"/>
   </mu-dialog>
 </div>
 </template>
 
 <script>
-import { updateQuestion } from '../../common/api'
-import { Toast } from 'vant';
+import { delVideoData } from '../../common/api'
+import seebigphoto from "../../common/seeBigPhoto";
 
   export default {
     props:{
@@ -100,27 +82,22 @@ import { Toast } from 'vant';
       return {
         circleShow:false,
         chosevalue:-1,
-        changestateShow:false,
-        stateText:{
-          0:"待审核",
-          1:"正常",
-          2:"已采纳",
-          3:"已关闭"
-        },
-        stateStyle:{
-          0:"wait",
-          1:"normal",
-          2:"chosed",
-          3:"closed"
+        levelText:{
+          0:"初级",
+          1:"中级",
+          2:"高级",
         },
         activeTab: 'tab1',
         question:{
-          state: 0,
+          collection:"Train",
           _id:"",
-        }
+        },
+        deldialog:false,
+        bigImgUrl:"",
       }
     },
     components: {
+      seebigphoto
     },
     methods: {
       //关闭dialog
@@ -128,32 +105,37 @@ import { Toast } from 'vant';
         // this.questionData = [];
         this.$emit("close")
       },
-      //改变状态
-      chosestate(){
-        this.chosevalue = parseInt(this.questionData.state);
-        this.changestateShow = true;
+      //查看图片大图
+      lookImg(url){
+        this.bigImgUrl = url
       },
-      //关闭更改状态
-      closechosestate(){
-        this.changestateShow = false;
-        this.chosevalue = -1;
+      //关闭大图查看
+      closeimg(){
+        this.bigImgUrl = ""
       },
-      //更新
-      changestate(){
+      delClass(){
         this.circleShow = true;
-        this.question.state = parseInt(this.chosevalue);
         this.question._id = this.questionData._id;
 
-        updateQuestion(this.question).then(res => {
+        delVideoData(this.question).then(res => {
           this.circleShow = false;
-          this.questionData.state = res.state;
-          this.closechosestate();
+          console.log(res)
         },(err => {
           console.log(err)
         }))
       },
       handleTabChange (val) {
         this.activeTab = val
+      },
+      deldia(){
+        this.deldialog = true;
+      },
+      closedel(){
+        this.deldialog = false;
+      },
+      closeAll(){
+        this.closedel();
+        this.$root.reload()
       }
     },
     created(){
@@ -173,10 +155,6 @@ import { Toast } from 'vant';
     padding-bottom: 5px;
     display: flex;
     align-items: center;
-  }
-  .Textdesc >>> img{
-    max-width: 200px;
-    max-height: 200px;
   }
   .contentBox{
     border: 4px dotted #E4EDDB;
@@ -200,49 +178,6 @@ import { Toast } from 'vant';
     max-width: 200px;
     max-height: 200px; 
   }
-  .normal{
-    color: #17B978;
-  }
-  .wait{
-    color: #EC7700;
-  }
-  .unpass{
-    color: #E43A19;
-  }
-  .changestateBtn{
-    margin-left: 10px;
-  }
-  .checkBox{
-    display: flex;
-    align-items: center;
-  }
-  .changestateBox{
-    display: flex;
-    align-items: center;
-  }
-  .changestateBox label{
-    margin-right: 10px;
-  }
-  .changestateBox button{
-    margin-left: 10px;
-  }
-  .beforeImg{
-    max-width: 240px;
-    max-height: 240px;
-  }
-  .divflex{
-    width: 80%;
-    display: flex;
-    flex-direction:column;
-    justify-content: flex-start;
-    align-items: center;
-  }
-  .divflex span{
-    width: 100%;
-    display: flex;
-    flex-direction:row;
-    justify-content: flex-start;
-  }
   .dialogBland{
     margin-top: 50px;
   }
@@ -253,16 +188,7 @@ import { Toast } from 'vant';
     width: 80%;
     border-bottom: 1px solid rgba(153, 153, 153,0.7);
   }
-  .normal{
-    color: #17B978;
-  }
-  .wait{
-    color: #EC7700;
-  }
-  .chosed{
-    color: #00B7C2;
-  }
-  .closed{
-    /*color: */
+  .delBtn{
+    margin-right: 82%;
   }
 </style>

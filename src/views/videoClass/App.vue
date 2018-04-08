@@ -1,18 +1,22 @@
 <template>
 <div>
   <div class="serchBox">
-    <mu-select-field v-model="serchstate" label="选择问题状态" class="serchstateBox">
-      <mu-menu-item value="全部" title="全部"/>
-      <mu-menu-item value="初级" title="初级"/>
-      <mu-menu-item value="中级" title="中级"/>
-      <mu-menu-item value="高级" title="高级"/>
-    </mu-select-field>
+    <mu-raised-button label="添加课程"  class="addBtn" @click="addVideoClass"/>
 
-    <mu-text-field hintText="搜索课程" v-model="searchText" style="width:200px;"/>
+    <div class="serchContant">
+      <mu-select-field v-model="serchstate" label="选择课程级别" class="serchstateBox">
+        <mu-menu-item value="全部" title="全部"/>
+        <mu-menu-item value="初级" title="初级"/>
+        <mu-menu-item value="中级" title="中级"/>
+        <mu-menu-item value="高级" title="高级"/>
+      </mu-select-field>
 
-    <mu-raised-button label="搜索" @click="toSearch" class="returnBtn" primary/>
-    
-    <mu-raised-button label="返回全部" @click="returnAll" v-if="returnAllShow" class="returnBtn" primary/>
+      <mu-text-field hintText="搜索课程" v-model="searchText" style="width:200px;"/>
+
+      <mu-raised-button label="搜索" @click="toSearch" class="returnBtn" primary/>
+      
+      <mu-raised-button label="返回全部" @click="returnAll" v-if="returnAllShow" class="returnBtn" primary/>
+    </div>
   </div>
   
   <mu-circular-progress :size="40" v-if="circleShow" class="circleBox"/>
@@ -20,69 +24,53 @@
   <mu-table enableSelectAll :showCheckbox="false" ref="table" class="listTable" :height="'660px'">
     <mu-thead>
       <mu-tr>
-        <mu-th>课程ID</mu-th>
         <mu-th>课程标题</mu-th>
         <mu-th>课程简述</mu-th>
         <mu-th>课程价位</mu-th>
+        <mu-th>课程等级</mu-th>
       </mu-tr>
     </mu-thead>
     <mu-tbody>
       <mu-tr v-for="quetion in questionData" :key="quetion._id" >
         <mu-td>
-          <mu-icon-button tooltip="查看详情" tooltipPosition="bottom-right" touch @click.capture="open(quetion)"/>
+          <mu-icon-button tooltip="查看详情" tooltipPosition="bottom-right" touch @click.capture="open(quetion)" class="enterDetail"/>
             <sicon name="check" scale="2.3" class="checkI"></sicon>
           </mu-icon-button>
-          {{ quetion.id }}
+          {{ quetion.name }}
         </mu-td>
-        <mu-td class="texthidden">{{ quetion.title }}</mu-td>
-        <mu-td class="texthidden">{{ quetion.intro }}</mu-td>
-        <mu-td class="texthidden">{{ quetion.time }}</mu-td>
+        <mu-td class="texthidden">{{ quetion.desc }}</mu-td>
+        <mu-td class="texthidden">{{ quetion.price !== 0 ? `${quetion.price/100} 元` : '免费' }}</mu-td>
+        <mu-td class="texthidden">{{ levelText[quetion.level] }}</mu-td>
       </mu-tr>
     </mu-tbody>
   </mu-table>
   <mu-circular-progress :size="40" v-if="circleShow" class="circleBox"/>
 
-
   <Mdialog @close="close" :questionData="signalquetion" :dialog="dialog"></Mdialog>
 
-  <div class="ManagePagination">
-    <mu-raised-button v-if="nextpage" label="获取更多内容" primary class="demo-raised-button" @click="moreSearch" :disabled="loading"/>
-    <mu-raised-button v-else label="已无法获取更多内容" class="demo-raised-button" disabled/>
-  </div>
 </div>
 </template>
 
 <script>
-  import { getQuestionList } from '../common/api'
+  import { getVideoData } from '../common/api'
   import Mdialog from "./components/dialog"
 
   export default {
     data(){
       return {
-        stateText:{
-          0:"待审核",
-          1:"正常",
-          2:"已采纳",
-          3:"已关闭"
+        levelText:{
+          0:"初级",
+          1:"中级",
+          2:"高级"
         },
-        stateStyle:{
-          0:"wait",
-          1:"normal",
-          2:"chosed",
-          3:"closed"
-        },
-        loading:true,
-        nextpage:true,
         serchstate:"全部",  // 搜索的状态
         searchText:"",  // 搜索的文字
         returnAllShow:false,
         circleShow:false,  //数据读取中
         dialog: false,    //弹窗
         findquestion:{
-          limit:10, //一次获取列表的条数,系统默认为10
-          skip:0 //跳过几个数据,系统默认为0
+          collection:"Train",
         },
-        author:[],
         questionData:[],
         //单个quetion信息
         signalquetion:{},
@@ -95,112 +83,50 @@
       //获取10条问题内容
       getQlist (pickData,type){
         this.circleShow = true;
-        getQuestionList(pickData).then(res => {
+        getVideoData(pickData).then(res => {
           this.listquestionData(res, type)
         },(err => {
           console.log(err)
         }))
       },
-      //删除Html标签
-      delHTML(info){
-        let reg = /<.*>/g;
-        let reg2 = /&nbsp;/g;
-        let newinfor = info.replace(reg,"");
-        newinfor = newinfor.replace(reg2," ");
-        return newinfor;
-      },
       //显示问题内容
       listquestionData (Arr,type){
-        // console.log(Arr)
+        console.log(Arr)
         for(let i in Arr){
-          
-          // if (Arr[i].author==null) {
-          //   this.author = this.author.concat("{name:'无'}")
-          // }else{
-          //   this.author = this.author.concat(Arr[i].author);
-          // }
-          Arr[i].time = this.datestr(Arr[i].createdAt,"yyyy.MM.d");
           Arr[i].id = this.idstr(Arr[i]._id);
-          Arr[i].intro = this.delHTML(Arr[i].info)
-          for(let index in Arr[i].image){
-            Arr[i].info = Arr[i].info.concat(`<img src='${Arr[i].image[index]}'>`)
-          }
         }
-        console.log(this.author)
-        if (type==="增加") {
-          if (Arr.length < 10) {
-            this.nextpage = false;
-          }
-          this.questionData = this.questionData.concat(Arr);
-          this.returnAllShow = true;
-          this.loading=false;
-        }else{
-          this.questionData = Arr;
-          if (Arr.length < 10) {
-            this.nextpage = false;
-          }
-          this.loading=false;
-        }
-        // this.delquetionList = [];
+        this.questionData = Arr;
         this.circleShow = false;
       },
       //返回全部搜索
       returnAll(){
-        delete this.findquestion.title;
-        delete this.findquestion.state;
-        this.findquestion.limit=10;
-        this.findquestion.skip=0;
+        delete this.findquestion.name;
+        delete this.findquestion.level;
+
         this.getQlist(this.findquestion);
         this.returnAllShow = false;
         this.searchText = "";
         this.serchstate = "全部";
       },
-      //获取更多搜索内容
-      moreSearch(){
-        // if (this.serchstate === "全部") {
-        //   delete this.findquestion.state;
-        // }else{
-        //   for(let index in stateText){
-        //     if(stateText[index]==this.serchstate){
-        //       this.findquestion.state = index;
-        //       break;
-        //     }
-        //   }
-        // }
-        // if (this.searchText !== "") {
-        //   this.findquestion.title=this.searchText;
-        // }
-        this.loading = true;
-        this.findquestion.limit+=10;
-        this.findquestion.skip+=10;
-        let type = "增加";
-        this.getQlist(this.findquestion,type)
-      },
       //搜索
       toSearch(){
         if (this.serchstate === "全部") {
-          delete this.findquestion.state;
+          delete this.findquestion.level;
         }else{
-          this.findquestion.state = [];
-          for(let index in this.stateText){
-            if(this.stateText[index]==this.serchstate){
-              this.findquestion.state[0] = parseInt(index);
+          for(let index in this.levelText){
+            if(this.levelText[index]==this.serchstate){
+              this.findquestion.level = index.toString();
               break;
             }
           }
-          console.log(this.findquestion)
         }
         if (this.searchText !== "") {
-          this.findquestion.title=this.searchText;
+          this.findquestion.name=this.searchText;
+        }else{
+          delete this.findquestion.name;
         }
-
-        this.findquestion.limit=10;
-        this.findquestion.skip=0;
-        // let type = "增加";
         this.getQlist(this.findquestion)
-        this.loading = true;
         this.returnAllShow = true;
-        this.nextpage = true;
         if (this.serchstate === "全部" && this.searchText === "") {
           this.returnAllShow = false;
         }
@@ -215,6 +141,9 @@
       close () {
         this.dialog = false;
         this.signalquetion = {};
+      },
+      addVideoClass(){
+        this.$router.push({ name: 'addVideoClass'})
       }
     },
     created(){ 
@@ -225,6 +154,12 @@
 
 <style scoped>
   .serchBox{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .serchContant{
+    margin-top: 20px;
     display: flex;
     align-items: flex-end;
   }
@@ -292,6 +227,14 @@
     white-space:nowrap; 
     overflow: hidden;
     text-overflow:ellipsis;
+  }
+  .enterDetail{
+    margin-left: -20px;
+  }
+  .addBtn{
+    /*position: absolute;*/
+    /*left: 30px;*/
+    /*top: 0px;*/
   }
 
   

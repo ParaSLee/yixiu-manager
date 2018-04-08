@@ -75,10 +75,6 @@
             type:"father"
           },
           {
-            name:"课程分类",
-            url:"/home/videoClassification"
-          },
-          {
             name:"课程管理",
             url:"/home/videoClass"
           },
@@ -117,15 +113,17 @@
       }else if(this.$route.path === "/home/statistics") {
         this.nowitem = 3
       }else if(this.$route.path === "/home/phonebrand") {
-        this.nowitem = 4
+        this.nowitem = 5
       }else if(this.$route.path === "/home/phonemodel") {
-        this.nowitem = 2
-      }else if(this.$route.path === "/home/serviceClassification") {
         this.nowitem = 6
-      }else if(this.$route.path === "/home/service") {
-        this.nowitem = 7
-      }else if(this.$route.path === "/home/videoClassification") {
+      }else if(this.$route.path === "/home/serviceClassification") {
         this.nowitem = 8
+      }else if(this.$route.path === "/home/service") {
+        this.nowitem = 9
+      }else if(this.$route.path === "/home/videoClass") {
+        this.nowitem = 11
+      }else if(this.$route.path === "/home/videoCourse") {
+        this.nowitem = 12
       }
 
       // this.changeTag(this.$route.path);
