@@ -357,3 +357,14 @@ export function delVideoData(data){
     });
   });
 }
+
+// 更新培训
+export function upVideoData(data){
+  return new Promise((resolve, reject) => {
+    ajax.post(`${url}/sql/update`,data).then((res) => {
+      resolve(res);
+    }).then((err) => {
+      reject(err);
+    });
+  });
+}

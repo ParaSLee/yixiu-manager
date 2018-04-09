@@ -6,7 +6,21 @@
   <div class="line"></div>
   <div class="addbody">
     <div class="ItemBox">
-      <span>课程名：</span> 
+      <span>所属课程：</span> 
+      <div class="ItemText">
+        <mu-text-field fullWidth hintText="请输入课程名" v-model="ClassData.name" disabled/><br/>
+      </div>
+    </div>
+    <div class="ItemBox">
+      <span>所属章节：</span>
+      <div class="ItemText">
+        <mu-select-field v-model="newClass.index">
+          <mu-menu-item v-for="item in CourseData" :key="item.index" :value="item.index" :title="`${item.index}. ${item.name}`"/>
+        </mu-select-field>
+      </div>
+    </div>
+    <div class="ItemBox">
+      <span>视频名：</span> 
       <div class="ItemText">
         <mu-text-field 
           fullWidth 
@@ -19,37 +33,17 @@
       </div>
     </div>
     <div class="ItemBox">
-      <span>等&nbsp;&nbsp;&nbsp;级：</span>
+      <span>视&nbsp;&nbsp;&nbsp;频：</span>
       <div class="ItemText">
-        <mu-select-field v-model="newClass.level">
-          <mu-menu-item value="0" title="初级"/>
-          <mu-menu-item value="1" title="中级"/>
-          <mu-menu-item value="2" title="高级"/>
-        </mu-select-field>
-      </div>
-    </div>
-    <div class="ItemBox">
-      <span>封&nbsp;&nbsp;&nbsp;面：</span>
-      <div class="ItemText">
-        <img :src="newClass.info.cover" class="cover" @click="lookImg(newClass.info.cover)">
-        <van-uploader class="upimg" :after-read="onRead" accept="image/jpeg,image/png,image/jpg">
+        <mu-raised-button v-if="hasVideo" label="查看视频" class="demo-raised-button videoBtn" primary @click="seeVideo"/>
+        <van-uploader class="upimg" :after-read="onRead" accept="video/*">
           <van-icon name="photograph" />
         </van-uploader>
-        <mu-circular-progress :size="40" v-if="circleShow" class="circleBox"/>
+        <mu-linear-progress v-if="circleShow" mode="determinate" :value="uploading" color="rgb(33, 150, 243)"/>
       </div>
+      <p class="tagTip" v-if="errTipShow.errurl">必须上传视频</p>
     </div>
-    <seebigphoto v-if="bigImgUrl!==''" :imgurl="bigImgUrl" @closeimg="closeimg"></seebigphoto>
-    <div class="ItemBox">
-      <span>标&nbsp;&nbsp;&nbsp;签：</span>
-      <div class="tagsBox">
-        <mu-text-field class="tags" hintText="标签" v-model="newClass.tag[0]"/>
-        <mu-text-field class="tags" hintText="标签" v-model="newClass.tag[1]"/>
-        <mu-text-field class="tags" hintText="标签" v-model="newClass.tag[2]"/>
-        <mu-text-field class="tags" hintText="标签" v-model="newClass.tag[3]"/>
-        <mu-text-field class="tags" hintText="标签" v-model="newClass.tag[4]"/>
-      </div>
-      <p class="tagTip">选填，最多5个</p>
-    </div>
+
     <div class="ItemBoxM">
       <div class="ItemBox ItemBoxM">
         <span>描&nbsp;&nbsp;&nbsp;述：</span>
@@ -68,20 +62,7 @@
         </div>
       </div>
     </div>
-    
-    <div class="ItemBox">
-      <span>价&nbsp;&nbsp;&nbsp;格：</span>
-      <div class="ItemText">
-        <mu-text-field 
-          class="tags"
-          hintText="请输入价格" 
-          errorText="这是必填项" 
-          v-if="errTipShow.errprice"
-          v-model="price"
-        />
-        <mu-text-field hintText="请输入价格" class="tags" v-model="price" v-else/>&nbsp;元<br/>
-      </div>
-    </div>
+
   </div>
   
   <mu-raised-button label="提交" class="demo-raised-button" primary @click="addNewClass"/>
@@ -95,43 +76,44 @@
 
 <script>
   import { addVideoData } from '../common/api'
-  import { Uploader,Icon,Toast } from 'vant';
-  import seebigphoto from "../common/seeBigPhoto";
+  import { Uploader,Icon } from 'vant';
   import axios from 'axios';
 
   export default {
     data(){
       return {
+        uploading:0,
+        ClassData:{},
+        CourseData:[],
         price:null,
         newClass:{
-          collection:"Train",//固定参数
+          collection:"TrainVideo",//固定参数
+          index:1,//索引
           name:"",//培训课程名称
           desc:"",//描述
-          tag:[],//标签
-          type:"",//分类
-          level:"0",//级别
-          info:{  //详情,是一个对象,里面数据结构可自行组织
-            cover:""
+          url:"",//视频地址
+          info:{},
+          train:{
+            _id:""
           },
-          price:null //价格 上传需要单位：分
+          trainChapter:{
+            _id:""
+          }
         },
-        bigImgUrl:"",
         circleShow:false,  //加载动画
         upcircleShow:false,
         okdialog:false,
+        hasVideo:false,
         errTipShow:{
           errname:false,
           errdesc:false,
-          errprice:false,
-          errcover:false
+          errurl:false,
         },
       }
     },
     components: {
-      seebigphoto,
       [Uploader.name]:Uploader,
       [Icon.name]:Icon,
-      [Toast.name]:Toast,
     },
     methods: {
       addNewClass (){
@@ -152,23 +134,22 @@
           iserr = true;
           this.upcircleShow = false;
         }
-        if (this.price===null) {
-          this.errTipShow.errprice = true;
-          iserr = true;
-          this.upcircleShow = false;
-        }else{
-          this.newClass.price = this.price*100;
-        }
-        if (this.newClass.info.cover===null) {
-          this.errTipShow.errcover = true;
+        if (this.newClass.url==="") {
+          this.errTipShow.errurl = true;
           iserr = true;
           this.upcircleShow = false;
         }
 
-        // console.log(this.newClass)
+        
         if (iserr === false) {
+          this.newClass.train._id = this.ClassData.id;
+          for(let i of this.CourseData){
+            if (i.index === this.newClass.index ) {
+              this.newClass.trainChapter._id = i._id;
+              break;
+            }
+          }
           addVideoData(this.newClass).then(res => {
-            console.log(res)
             this.okdialog = true;
           },(err => {
             console.log(err)
@@ -177,36 +158,58 @@
       },
       close () {
         this.dialog = false;
-        this.$router.push({ path: '/home/videoClass'})
+        this.$router.push({ path: '/home/videosManage'})
       },
       prepage(){
-        this.$router.go(-1)
-      },
-      //查看图片大图
-      lookImg(url){
-        this.bigImgUrl = url
-      },
-      //关闭大图查看
-      closeimg(){
-        this.bigImgUrl = ""
+        this.$router.push({ path: '/home/videosManage'})
       },
       //传递照片
       onRead(file,content){
         this.circleShow = true;
         let fd = new FormData();
-        console.log(file)
         
         fd.append('file', file.file);
 
         let config = {
           headers: {'Content-Type': 'multipart/form-data'}
         }
+        this.hasVideo = false;
+        
+        this.timer = setInterval(() => {
+          this.uploading += 1
+          if (this.uploading >= 80) clearInterval(this.timer);
+        }, 3000)
         axios.post('https://yixiu.natappvip.cc/upload', fd, config)
         .then(res => {
-          this.newClass.info.cover = res.data.data;
-          this.circleShow = false;
+          clearInterval(this.timer)
+          this.timer2 = setInterval(() => {
+            this.uploading += 3
+            if (this.uploading >= 100) {
+              clearInterval(this.timer2)
+              this.showVideo(res)
+            };
+          }, 100)
         })
       },
+      showVideo(res){
+        // console.log(res)
+        this.newClass.url = res.data.data;
+        this.hasVideo = true;
+      },
+      seeVideo(){
+        window.open(this.newClass.url, '_blank');
+      }
+    },
+    created(){ 
+      let VideData = sessionStorage.getItem('VideData');
+      if (VideData) {
+        VideData = JSON.parse(VideData);
+        this.ClassData = VideData[0];
+        this.CourseData = VideData[1];
+      }
+    },
+    beforeDestroy () {
+      clearInterval(this.timer)
     }
   }
 </script>
@@ -262,7 +265,7 @@
     position: absolute;
     top: 40px;
     left: -30px;
-    color: rgb(126, 87, 194);
+    color: rgb(244, 67, 54);
   }
   .cover{
     max-width: 150px;
@@ -280,5 +283,9 @@
     font-size: 14px;
     margin-left: 5px;
     /*margin-top: 5px;*/
+  }
+  .videoBtn{
+    margin-right: 20px;
+    margin-bottom: 10px;
   }
 </style>

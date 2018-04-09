@@ -5,10 +5,12 @@
     <userDialog :dialog="userdialogshow" @getuser="getuser" @closeuser="closeuser"></userDialog>
     
     <mu-flat-button :disabled="!addnewbtnshow" label="添加新章节" class="demo-flat-button addnewbtn" @click="addnewModel"/>
-    <span v-if="!addnewbtnshow">选择课程后才可添加该课程的章节</span>
-
+    <span v-if="!addnewbtnshow" style="color:rgb(126, 87, 194)">选择课程后才可添加该课程的章节</span>
   </div>
-  
+
+  <mu-raised-button :disabled="!addnewbtnshow" label="进入视频管理" class="demo-raised-button enterbtn" primary @click="enterVideos"/>
+  <span v-if="!addnewbtnshow" style="color:rgb(126, 87, 194)">选择课程后才可修改该课程的视频</span>
+
   <mu-circular-progress :size="40" v-if="circleShow" class="circleBox"/>
 
   <mu-table :showCheckbox="false" ref="table" class="listTable" :height="'660px'">
@@ -38,8 +40,6 @@
   <mdialog @close="close" :phoneModelData="signalbrand" :dialog="dialog" @deleted="choseBrand"></mdialog>
 
   <newdialog @close="closenew" :dialog="newdialog" :brandid="user.id" :brandname="user.name" @updata="choseBrand"></newdialog>
-
-  <!-- <more @close="closemore" :dialog="more" :phonebrandname="phonebrandname"></more> -->
 
 </div>
 </template>
@@ -79,6 +79,13 @@
       userDialog
     },
     methods: {
+      enterVideos(){
+        let VideData = [this.user,this.PhoneModelData]
+        VideData = JSON.stringify(VideData)
+        sessionStorage.setItem('VideData', VideData);
+        // console.log(VideData)
+        this.$router.push({ name: 'videosManage'})
+      },
       showuser(){
         this.userdialogshow = true;
       },
@@ -111,8 +118,7 @@
         for(let i in Arr){
           Arr[i].id = this.idstr(Arr[i]._id);
         }
-        this.PhoneModelData = Arr;
-        console.log(this.PhoneModelData)
+        this.PhoneModelData = Arr.sort(this.compare('index'));
         this.circleShow = false;
       },
       //弹出
@@ -134,7 +140,13 @@
       },
     },
     created(){ 
-      
+      let VideData = sessionStorage.getItem('VideData');
+      if (VideData) {
+        VideData = JSON.parse(VideData);
+        console.log(VideData[0])
+        this.getuser(VideData[0])
+        sessionStorage.removeItem('VideData');
+      }
     }
   }
 </script>
@@ -156,6 +168,7 @@
   }
   .addnewbtn{
     margin-left: 20px;
+    color:rgb(126, 87, 194);
   }
   .colorbox{
     overflow: hidden;
@@ -185,5 +198,10 @@
   }
   .enterDetail{
     margin-left: -20px;
+  }
+  .enterbtn{
+    margin-top: 20px;
+    margin-left: 10px;
+    margin-right: 10px;
   }
 </style>

@@ -59,6 +59,14 @@ let filters = {
     }
     return newobj;
   },
+  //数组对象排序
+  compare(property){
+    return function(a,b){
+      var value1 = a[property];
+      var value2 = b[property];
+      return value1 - value2;
+    }
+  }
 }
 
 
@@ -75,5 +83,6 @@ export default {
     Vue.prototype.datestr = filters.datestr
     Vue.prototype.idstr = filters.idstr
     Vue.prototype.copy = filters.copy
+    Vue.prototype.compare = filters.compare
   }
 }

@@ -149,7 +149,7 @@ import seebigphoto from "../../common/seeBigPhoto";
           }
         }
         getVideoData(findquestion).then(res => {
-          this.courseData = res;
+          this.courseData = res.sort(this.compare('index'));
         },(err => {
           console.log(err)
         }))

@@ -15,6 +15,8 @@ import statistics from "../statistics/App"
 import videoClass from "../videoClass/App"
 import addVideoClass from "../addVideoClass/App"
 import videoCourse from "../videoCourse/App"
+import videosManage from "../videosManage/App"
+import addVideos from "../addVideos/App"
 
 export default [{
   path: '/home',
@@ -83,6 +85,16 @@ export default [{
       name: "videoCourse",
       path: "videoCourse",
       component: videoCourse
+    },
+    {
+      name: "videosManage",
+      path: "videosManage",
+      component: videosManage
+    },
+    {
+      name: "addVideos",
+      path: "addVideos",
+      component: addVideos
     }
 
   ]

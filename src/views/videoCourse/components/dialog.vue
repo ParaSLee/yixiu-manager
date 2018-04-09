@@ -49,7 +49,7 @@
 </template>
 
 <script>
-import { delVideoData,updataPhoneModel } from '../../common/api'
+import { delVideoData,upVideoData } from '../../common/api'
 
 
   export default {
@@ -84,31 +84,34 @@ import { delVideoData,updataPhoneModel } from '../../common/api'
       //更新状态
       changestate(){
         this.circleShow = true;
-        delete this.newBrandData.id;
-        delete this.newBrandData.manufacturer;
-        delete this.newBrandData.time;
-        delete this.newBrandData.createdAt;
-        delete this.newBrandData.updatedAt;
-        delete this.newBrandData.__v;
+        let pushData = {
+          collection:"TrainChapter",
+          find:{
+            _id:this.newBrandData._id
+          },
+          update:{
+            desc:this.newBrandData.desc,
+            index:this.newBrandData.index,
+            name:this.newBrandData.name
+          }
+        }
+        console.log(pushData)
 
-        console.log(this.newBrandData)
-
-        // updataPhoneModel(this.newBrandData).then(res => {
-        //   if (res==="更新成功") {
-        //     this.phoneModelData.name = this.newBrandData.name;
-        //     this.phoneModelData.color = this.newBrandData.color;
-        //     this.phoneModelData.cover = this.newBrandData.cover;
-        //     this.phoneModelData.desc = this.newBrandData.desc;
-        //     this.phoneModelData.alias = this.newBrandData.alias;
-        //     this.changebtnShow = false;
-        //     alert("更新成功")
-        //   }else{
-        //     alert("更新失败")
-        //   }
-        //   this.circleShow = false;
-        // },(err => {
-        //   console.log(err)
-        // }))
+        upVideoData(pushData).then(res => {
+          console.log(res)
+          if (res==="更新成功") {
+            this.phoneModelData.name = this.newBrandData.name;
+            this.phoneModelData.index = this.newBrandData.index;
+            this.phoneModelData.desc = this.newBrandData.desc;
+            this.changebtnShow = false;
+            alert("更新成功")
+          }else{
+            alert("更新失败")
+          }
+          this.circleShow = false;
+        },(err => {
+          console.log(err)
+        }))
       },
       // 点击修改型号
       confirmchange(){
@@ -144,6 +147,7 @@ import { delVideoData,updataPhoneModel } from '../../common/api'
           this.circleShow = false;
           alert("删除成功");
           this.closedel();
+          this.close();
           this.$emit("deleted")
         },(err => {
           console.log(err)
