@@ -100,6 +100,8 @@
           for(let j of this.CourseData){
             if (j._id == Arr[i].trainChapter) {
               Arr[i].Chapter = j.name;
+              Arr[i].Chapterindex = j.index;
+
               break;
             }
           }

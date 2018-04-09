@@ -35,7 +35,7 @@
 
     <p class="dialogBox canchose">
       <span class="messageTitle">章节索引：</span> 
-      <span>{{ phoneModelData.index }}</span>
+      <span>{{ phoneModelData.Chapterindex }}</span>
     </p>
 
     <div class="dialogBland bottomline"></div>

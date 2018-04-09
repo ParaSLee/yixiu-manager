@@ -46,7 +46,7 @@
   </mu-table>
   <mu-circular-progress :size="40" v-if="circleShow" class="circleBox"/>
 
-  <Mdialog @close="close" :questionData="signalquetion" :dialog="dialog"></Mdialog>
+  <Mdialog @close="close" :questionData="signalquetion" :dialog="dialog" @delclose="getQlist(findquestion)"></Mdialog>
 
 </div>
 </template>

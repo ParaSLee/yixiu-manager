@@ -60,7 +60,7 @@
       <mu-flat-button slot="actions" primary @click="delClass" label="确定"/>
     </mu-dialog>
 
-    <mu-dialog :open="deldialog" title="" @close="closeAll">
+    <mu-dialog :open="deldialog2" title="" @close="closeAll">
       删除成功！
       <mu-flat-button slot="actions" primary @click="closeAll" label="确定"/>
     </mu-dialog>
@@ -97,6 +97,7 @@ import seebigphoto from "../../common/seeBigPhoto";
           _id:"",
         },
         deldialog:false,
+        deldialog2:false,
         bigImgUrl:"",
       }
     },
@@ -123,6 +124,7 @@ import seebigphoto from "../../common/seeBigPhoto";
 
         delVideoData(this.question).then(res => {
           this.circleShow = false;
+          this.deldialog2 = true;
           // console.log(res)
         },(err => {
           console.log(err)
@@ -138,8 +140,10 @@ import seebigphoto from "../../common/seeBigPhoto";
         this.deldialog = false;
       },
       closeAll(){
+        this.deldialog2 = false;
         this.closedel();
-        this.$root.reload()
+        this.$emit("close")
+        this.$emit("delclose")
       },
       getCourse(){
         let findquestion={
