@@ -147,6 +147,9 @@
         this.getuser(VideData[0])
         sessionStorage.removeItem('VideData');
       }
+    },
+    destoryed(){
+      sessionStorage.removeItem('VideData');
     }
   }
 </script>

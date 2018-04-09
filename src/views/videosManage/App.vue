@@ -113,6 +113,13 @@
       toSearch(){
         if (this.serchstate === "全部") {
           delete this.findquestion.trainChapter;
+          let a = [];
+          for(let i of this.CourseData){
+            a = a.concat(i._id)
+          }
+          this.findquestion.trainChapter = {
+            $in:a
+          }
         }else{
           this.findquestion.trainChapter = {};
           this.findquestion.trainChapter._id = this.serchstate;
@@ -140,7 +147,14 @@
         VideData = JSON.parse(VideData);
         this.ClassData = VideData[0];
         this.CourseData = VideData[1];
-        this.findquestion.train._id = this.ClassData.id
+        this.findquestion.train._id = this.ClassData.id;
+        let a = [];
+        for(let i of this.CourseData){
+          a = a.concat(i._id)
+        }
+        this.findquestion.trainChapter = {
+          $in:a
+        }
         this.getQlist(this.findquestion);
       }
       // console.log(this.ClassData)

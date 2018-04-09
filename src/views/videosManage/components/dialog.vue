@@ -83,7 +83,12 @@ import { delVideoData,upVideoData } from '../../common/api'
       },
       // 点击修改型号
       confirmchange(){
-        
+        this.$router.push({ 
+          name: 'addVideos',
+          params: { 
+            data: this.phoneModelData, 
+          }
+        })
       },
       //判断是否删除
       confirmdel(){

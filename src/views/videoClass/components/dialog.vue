@@ -1,6 +1,14 @@
 <template>
 <div>
-  <mu-dialog :open="dialog" title="课程详情" @close="close" scrollable>   
+  <mu-dialog :open="dialog" @close="close" scrollable>   
+
+  <div slot="title" class="slotTitle">
+    <span>课程详情</span>
+    <div class="funcBtn">
+      <mu-flat-button @click="deldia" secondary label="删除" class="delBtn"/>
+      <mu-flat-button @click="changedia" primary label="修改" class="delBtn"/>
+    </div>
+  </div>
   
     <mu-tabs :value="activeTab" @change="handleTabChange">
       <mu-tab value="tab1" title="课程信息"/>
@@ -65,7 +73,6 @@
       <mu-flat-button slot="actions" primary @click="closeAll" label="确定"/>
     </mu-dialog>
 
-    <mu-flat-button slot="actions" @click="deldia" secondary label="删除" class="delBtn"/>
     <mu-flat-button slot="actions" @click="close" primary label="关闭"/>
   </mu-dialog>
 </div>
@@ -105,9 +112,16 @@ import seebigphoto from "../../common/seeBigPhoto";
       seebigphoto
     },
     methods: {
+      changedia(){
+        this.$router.push({ 
+          name: 'addVideoClass',
+          params: { 
+            data: this.questionData, 
+          }
+        })
+      },
       //关闭dialog
       close(){
-        // this.questionData = [];
         this.$emit("close")
       },
       //查看图片大图
@@ -215,7 +229,10 @@ import seebigphoto from "../../common/seeBigPhoto";
     width: 80%;
     border-bottom: 1px solid rgba(153, 153, 153,0.7);
   }
-  .delBtn{
-    margin-right: 82%;
+  .slotTitle{
+    width: 100%;
+  }
+  .funcBtn{
+    float: right;
   }
 </style>

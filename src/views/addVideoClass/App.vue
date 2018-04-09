@@ -84,7 +84,10 @@
     </div>
   </div>
   
-  <mu-raised-button label="提交" class="demo-raised-button" primary @click="addNewClass"/>
+  <mu-raised-button v-if="updata" label="更新" class="demo-raised-button" primary @click="upNewClass"/>
+  
+  <mu-raised-button v-else label="提交" class="demo-raised-button" primary @click="addNewClass"/>
+  
   <mu-circular-progress :size="40" v-if="upcircleShow" class="circleBox"/>
   <mu-dialog :open="okdialog" @close="close">
     提交成功！
@@ -94,14 +97,15 @@
 </template>
 
 <script>
-  import { addVideoData } from '../common/api'
-  import { Uploader,Icon,Toast } from 'vant';
+  import { addVideoData,upVideoData } from '../common/api'
+  import { Uploader,Icon } from 'vant';
   import seebigphoto from "../common/seeBigPhoto";
   import axios from 'axios';
 
   export default {
     data(){
       return {
+        updata:false,
         price:null,
         newClass:{
           collection:"Train",//固定参数
@@ -131,7 +135,6 @@
       seebigphoto,
       [Uploader.name]:Uploader,
       [Icon.name]:Icon,
-      [Toast.name]:Toast,
     },
     methods: {
       addNewClass (){
@@ -175,6 +178,66 @@
           }))
         }
       },
+      upNewClass(){
+        this.upcircleShow = true;
+        for(let i in this.errTipShow){
+          this.errTipShow[i] = false;
+        }
+
+        let iserr = false;
+        
+        if (this.newClass.name==="") {
+          this.errTipShow.errname = true;
+          iserr = true;
+          this.upcircleShow = false;
+        }
+        if (this.newClass.desc==="") {
+          this.errTipShow.errdesc = true;
+          iserr = true;
+          this.upcircleShow = false;
+        }
+        if (this.price===null) {
+          this.errTipShow.errprice = true;
+          iserr = true;
+          this.upcircleShow = false;
+        }else{
+          this.newClass.price = this.price*100;
+        }
+        if (this.newClass.info.cover===null) {
+          this.errTipShow.errcover = true;
+          iserr = true;
+          this.upcircleShow = false;
+        }
+        
+        // console.log(pushData)
+
+        if (iserr === false) {
+          let pushData = {
+            collection:"Train",
+            find:{
+              _id:this.newClass._id
+            },
+            update:{
+              desc:this.newClass.desc,
+              name:this.newClass.name,
+              price:this.newClass.price,
+              tag:this.newClass.tag,
+              level:this.newClass.level,
+              info:this.newClass.info,
+              type:this.newClass.type,
+            }
+          }
+          
+          upVideoData(pushData).then(res => {
+            // console.log(res)
+            if (res == "更新成功") {
+              this.okdialog = true;
+            }
+          },(err => {
+            console.log(err)
+          }))
+        }
+      },
       close () {
         this.dialog = false;
         this.$router.push({ path: '/home/videoClass'})
@@ -207,6 +270,14 @@
           this.circleShow = false;
         })
       },
+    },
+    created(){
+      if (this.$route.params.data) {
+        let classData = this.$route.params.data;
+        this.newClass = classData;
+        this.price = classData.price/100;
+        this.updata = true;
+      }
     }
   }
 </script>

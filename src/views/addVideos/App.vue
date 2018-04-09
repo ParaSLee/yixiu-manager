@@ -64,8 +64,9 @@
     </div>
 
   </div>
+  <mu-raised-button v-if="updata" label="更新" class="demo-raised-button" primary @click="upNewClass"/>
+  <mu-raised-button v-else label="提交" class="demo-raised-button" primary @click="addNewClass"/>
   
-  <mu-raised-button label="提交" class="demo-raised-button" primary @click="addNewClass"/>
   <mu-circular-progress :size="40" v-if="upcircleShow" class="circleBox"/>
   <mu-dialog :open="okdialog" @close="close">
     提交成功！
@@ -75,13 +76,14 @@
 </template>
 
 <script>
-  import { addVideoData } from '../common/api'
+  import { addVideoData,upVideoData } from '../common/api'
   import { Uploader,Icon } from 'vant';
   import axios from 'axios';
 
   export default {
     data(){
       return {
+        updata:false,
         uploading:0,
         ClassData:{},
         CourseData:[],
@@ -156,6 +158,68 @@
           }))
         }
       },
+      upNewClass(){
+        this.upcircleShow = true;
+        for(let i in this.errTipShow){
+          this.errTipShow[i] = false;
+        }
+
+        let iserr = false;
+        
+        if (this.newClass.name==="") {
+          this.errTipShow.errname = true;
+          iserr = true;
+          this.upcircleShow = false;
+        }
+        if (this.newClass.desc==="") {
+          this.errTipShow.errdesc = true;
+          iserr = true;
+          this.upcircleShow = false;
+        }
+        if (this.newClass.url==="") {
+          this.errTipShow.errurl = true;
+          iserr = true;
+          this.upcircleShow = false;
+        }
+
+        
+        // console.log(pushData)
+
+        if (iserr === false) {
+          for(let i of this.CourseData){
+            if (i.index === this.newClass.index ) {
+              this.newClass.trainChapter = i._id;
+              this.newClass.index = i.index;
+              break;
+            }
+          }
+
+          let pushData = {
+            collection:"TrainVideo",
+            find:{
+              _id:this.newClass._id
+            },
+            update:{
+              desc:this.newClass.desc,
+              name:this.newClass.name,
+              url:this.newClass.url,
+              index:this.newClass.index,
+              trainChapter:{
+                _id:this.newClass.trainChapter
+              },
+            }
+          }
+
+          console.log(pushData)
+
+          upVideoData(pushData).then(res => {
+            console.log(res)
+            this.okdialog = true;
+          },(err => {
+            console.log(err)
+          }))
+        }
+      },
       close () {
         this.dialog = false;
         this.$router.push({ path: '/home/videosManage'})
@@ -206,6 +270,13 @@
         VideData = JSON.parse(VideData);
         this.ClassData = VideData[0];
         this.CourseData = VideData[1];
+      }
+      if (this.$route.params.data) {
+        let classData = this.$route.params.data;
+        this.newClass = classData;
+        this.hasVideo = true;
+        this.updata = true;
+        console.log(this.newClass)
       }
     },
     beforeDestroy () {
