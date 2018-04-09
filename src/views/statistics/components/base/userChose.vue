@@ -3,7 +3,8 @@
   <mu-dialog :open="dialog" @close="close" scrollable>  
     <div class="searchBox" slot="title">
       <mu-text-field hintText="输入商户名" v-model="searchName" class="inputname" /><br/>
-      <mu-flat-button label="搜索" class="demo-flat-button" @click="search"/>
+      <!-- <mu-flat-button label="搜索" class="demo-flat-button" /> -->
+      <mu-raised-button label="搜索" class="demo-raised-button searchBtn" primary @click="search"/>
       <span class="notice">只能获取到正常运营的商户</span>
       <mu-circular-progress :size="40" v-if="circleShow" class="circleBox"/>
     </div> 
@@ -185,5 +186,8 @@
     color: rgb(126, 87, 194);
     margin-left: 10px;
   }
-  
+  .searchBtn{
+    font-size: 16px;
+    margin-left: 10px;
+  }
 </style>

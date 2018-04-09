@@ -74,7 +74,8 @@ import { Uploader,Icon } from 'vant';
           this.newBrandData.train._id = this.brandid;
           addVideoData(this.newBrandData).then(res => {
             alert("提交成功！");
-            this.$emit("updata")
+            this.$emit("updata");
+            this.$emit("close");
           },(err => {
             console.log(err)
           }))

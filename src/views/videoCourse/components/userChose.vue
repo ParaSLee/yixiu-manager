@@ -7,7 +7,7 @@
         <mu-menu-item value="1" title="中级"/>
         <mu-menu-item value="2" title="高级"/>
       </mu-select-field>
-      <mu-flat-button label="搜索" class="demo-flat-button" @click="search"/>
+      <mu-raised-button label="搜索" class="demo-raised-button searchBtn" primary @click="search"/>
       <mu-circular-progress :size="40" v-if="circleShow" class="circleBox"/>
     </div> 
     <div style="overflow:hidden">
@@ -152,5 +152,8 @@
     color: rgb(126, 87, 194);
     margin-left: 10px;
   }
-  
+  .searchBtn{
+    font-size: 15px;
+    margin-left: 10px;
+  }
 </style>

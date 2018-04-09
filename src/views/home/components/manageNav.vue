@@ -12,6 +12,7 @@
       <div v-else class="sedtitle">
         {{ item.name }} <sicon name="down" scale="1.7" color="rgb(50, 50, 50)"></sicon>
       </div>
+      <div @click="out" class="out">退出</div>
     </div>
   </div>
 </template>
@@ -81,11 +82,7 @@
           {
             name:"课程章节管理",
             url:"/home/videoCourse"
-          },
-          {
-            name:"退出",
-            url:"/signin"
-          },
+          }
         ]
       }
     },
@@ -97,9 +94,9 @@
         this.nowitem = index;
         this.$router.push(this.items[index].url)
       },
-      changeTag(url){
-        
-      }
+      out(){
+        this.$router.push("/signin")
+      },
     },
     created(){
       /*if (this.$route.path === "/home/adduser") {
@@ -193,5 +190,10 @@
     float: right;
     margin-top: 15px;
     margin-right: 20px;
+  }
+  .manage-left .out{
+    margin-top: 30px;
+    border-top: 1px solid rgb(72, 72, 72);
+    padding-left: 35px;
   }
 </style>

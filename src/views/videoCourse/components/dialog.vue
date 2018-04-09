@@ -104,6 +104,7 @@ import { delVideoData,upVideoData } from '../../common/api'
             this.phoneModelData.index = this.newBrandData.index;
             this.phoneModelData.desc = this.newBrandData.desc;
             this.changebtnShow = false;
+            this.close();
             alert("更新成功")
           }else{
             alert("更新失败")
