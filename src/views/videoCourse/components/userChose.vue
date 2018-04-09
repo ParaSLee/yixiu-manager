@@ -2,27 +2,23 @@
 <div>
   <mu-dialog :open="dialog" @close="close" scrollable>  
     <div class="searchBox" slot="title">
-      <mu-text-field hintText="输入商户名" v-model="searchName" class="inputname" /><br/>
+      <mu-select-field v-model="findshopLish.level" label="选择课程级别" class="serchstateBox">
+        <mu-menu-item value="0" title="初级"/>
+        <mu-menu-item value="1" title="中级"/>
+        <mu-menu-item value="2" title="高级"/>
+      </mu-select-field>
       <mu-flat-button label="搜索" class="demo-flat-button" @click="search"/>
-      <span class="notice">只能获取到正常运营的商户</span>
       <mu-circular-progress :size="40" v-if="circleShow" class="circleBox"/>
     </div> 
     <div style="overflow:hidden">
       <div class="userInfoBox" v-for="(user,index) in shopData" @click="choseTage(index)"
         :class="index == nowitem ? 'chosedTag' : ''">
-        <div>店铺名：{{ user?user.name:"" }}</div>
+        <div>课程名：{{ user?user.name:"" }}</div>
         <div>ID：{{ user?user.id:"" }}</div>
-        <div>封面： <img :src="user.cover?user.cover:''"></div>
+        <div>封面： <img :src="user.info?user.info.cover:''"></div>
       </div>
     </div>
     
-
-
-    <div class="ManagePagination">
-      <mu-raised-button v-if="nextpage" label="获取更多内容" primary class="demo-raised-button" @click="moreSearch" :disabled="loading"/>
-      <mu-raised-button v-else label="已无法获取更多内容" class="demo-raised-button" disabled/>
-    </div>
-
     <mu-flat-button slot="actions" @click="close" primary label="关闭"/>
     <mu-flat-button slot="actions" @click="get" primary label="确定"/>
   </mu-dialog>
@@ -30,7 +26,7 @@
 </template>
 
 <script>
-  import { getShopListSort } from '../../../common/api.js'
+  import { getVideoData } from '../../common/api.js'
   export default {
     props:{
       dialog:Boolean
@@ -38,17 +34,12 @@
     data(){
       return {
         nowitem: -1,
-        loading:true,
-        searchName:"",
         findshopLish:{
-          // name: "",
-          limit:10,//一次获取列表的条数,系统默认为10
-          skip:0,//跳过几个数据,系统默认为0
-          qualificationState:"正常"
+          collection:"Train",
+          level:""
         },
         circleShow:false,
         shopData:[],
-        nextpage:true,
         user:{
           name:"",
           id:""
@@ -64,10 +55,9 @@
         this.user.id=this.shopData[this.nowitem]._id;
       },
       //获取10条商家内容
-      getShopList (pickData,type){
-        getShopListSort(pickData).then(res => {
-          this.circleShow = false;
-          this.listShopData(res,type)
+      getShopList (pickData){
+        getVideoData(pickData).then(res => {
+          this.listShopData(res)
         },(err => {
           console.log(err)
         }))
@@ -76,21 +66,7 @@
         for(let i in Arr){
           Arr[i].id = this.idstr(Arr[i]._id);
         }
-        if (type==="增加") {
-          if (Arr.length < 10) {
-            this.nextpage = false;
-          }
-          this.shopData = this.shopData.concat(Arr);
-          this.returnAllShow = true;
-          this.loading=false;
-        }else{
-          this.shopData = Arr;
-          if (Arr.length < 10) {
-            this.nextpage = false;
-          }
-          this.loading=false;
-        }
-        // console.log(this.shopData)
+        this.shopData = Arr;
         this.circleShow = false;
       },
       //关闭dialog
@@ -106,22 +82,12 @@
         }
       },
       search(){
-        if (this.searchName !== "") {
-          this.findshopLish.name=this.searchName;
-        }
-        this.nowitem = (-1);
-        this.findshopLish.limit=10;
-        this.findshopLish.skip=0;
-        this.getShopList(this.findshopLish);
-        this.circleShow = true;
-      },
-      moreSearch(){
-        this.loading = true;
-        this.findshopLish.limit+=10;
-        this.findshopLish.skip+=10;
-        let type = "增加";
-        this.getShopList(this.findshopLish,type)
-      },
+        if (this.findshopLish.level!== "") {
+          this.nowitem = (-1);
+          this.getShopList(this.findshopLish);
+          this.circleShow = true;
+        } 
+      }
     }
   }
 </script>
@@ -131,6 +97,7 @@
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
+    align-items: center;
     margin-top: 10px;
   }
   .inputname{

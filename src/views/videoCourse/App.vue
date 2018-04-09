@@ -1,12 +1,11 @@
 <template>
 <div>
   <div class="serchBox">
-    <mu-select-field label="请选择手机品牌" :maxHeight="300" @change="choseBrand">
-      <mu-menu-item v-for="item, index in phonebrandname" :key="index" :title="item" :value="index"/>
-    </mu-select-field>
+    <mu-raised-button :label="user.name" class="demo-raised-button userChoseBtn" @click="showuser"/>
+    <userDialog :dialog="userdialogshow" @getuser="getuser" @closeuser="closeuser"></userDialog>
     
-    <mu-flat-button :disabled="!addnewbtnshow" label="添加新的型号" class="demo-flat-button addnewbtn" @click="addnewModel"/>
-    <span v-if="!addnewbtnshow">选择手机品牌后才可添加该品牌的新型号手机</span>
+    <mu-flat-button :disabled="!addnewbtnshow" label="添加新章节" class="demo-flat-button addnewbtn" @click="addnewModel"/>
+    <span v-if="!addnewbtnshow">选择课程后才可添加该课程的章节</span>
 
   </div>
   
@@ -15,31 +14,30 @@
   <mu-table :showCheckbox="false" ref="table" class="listTable" :height="'660px'">
     <mu-thead>
       <mu-tr>
-        <mu-th>ID</mu-th>
-        <mu-th>型号名称</mu-th>
-        <mu-th>颜色</mu-th>
+        <mu-th>章节名称</mu-th>
+        <mu-th>章节描述</mu-th>
+        <mu-th>章节索引</mu-th>
       </mu-tr>
     </mu-thead>
     <mu-tbody>
       <mu-tr v-for="phonebrand in PhoneModelData" :key="phonebrand._id" >
         <mu-td>
-          <mu-icon-button tooltip="查看详情" tooltipPosition="bottom-right" touch @click.capture="open(phonebrand)" />
+          <mu-icon-button tooltip="查看详情" tooltipPosition="bottom-right" touch @click.capture="open(phonebrand)" class="enterDetail"/>
             <sicon name="check" scale="2.3" class="checkI"></sicon>
           </mu-icon-button>
-          &nbsp;&nbsp;
-          {{ phonebrand.id }}
+          {{ phonebrand.name }}
         </mu-td>
-        <mu-td>{{ phonebrand.name }}</mu-td>
-        <mu-td class="colorbox"><span v-for="item in phonebrand.color">{{ item }}</span></mu-td>
+        <mu-td>{{ phonebrand.desc }}</mu-td>
+        <mu-td>{{ phonebrand.index }}</mu-td>
       </mu-tr>
     </mu-tbody>
   </mu-table>
   
   <mu-circular-progress :size="40" v-if="circleShow" class="circleBox"/>
 
-  <mdialog @close="close" :phoneModelData="signalbrand" :dialog="dialog"></mdialog>
+  <mdialog @close="close" :phoneModelData="signalbrand" :dialog="dialog" @deleted="choseBrand"></mdialog>
 
-  <newdialog @close="closenew" :dialog="newdialog" :brandid="brandid" :brandname="brandname" @updata="choseBrand"></newdialog>
+  <newdialog @close="closenew" :dialog="newdialog" :brandid="user.id" :brandname="user.name" @updata="choseBrand"></newdialog>
 
   <!-- <more @close="closemore" :dialog="more" :phonebrandname="phonebrandname"></more> -->
 
@@ -47,24 +45,29 @@
 </template>
 
 <script>
-  import { getPhoneBrand,getPhoneModelById } from '../common/api'
+  import { getVideoData } from '../common/api'
   import Mdialog from "./components/dialog"
   import newdialog from "./components/adddialog"
-  // import more from "./components/more"
+  import userDialog from "./components/userChose"
 
   export default {
     data(){
       return {
+        userdialogshow:false,  //显示选择程序
+        user:{
+          name:"选择课程",
+          id:"",
+        }, 
+        findDataList:{
+          collection:"TrainChapter",
+          train:{
+            _id:""
+          }
+        },
         addnewbtnshow: false,  //是否可添加新型号
-        brandid:"",   //选中的手机
-        brandname:"",   //选中的手机
-        phonebrandname:[],  //存储手机品牌
-        phonebrandid:[],  //存储手机品牌ID
-        nextpage:true,
         circleShow:false,  //数据读取中
         dialog: false,    //弹窗
         newdialog: false,  //新建品牌弹窗
-        // more:false,   //更多内容
         PhoneModelData:[],
         //单个shop信息
         signalbrand:{},
@@ -73,36 +76,32 @@
     components: {
       Mdialog,
       newdialog,
-      // more
+      userDialog
     },
     methods: {
+      showuser(){
+        this.userdialogshow = true;
+      },
+      closeuser(){
+        this.userdialogshow = false;
+      },
+      getuser(user){
+        this.userdialogshow = false;
+        this.user = user;
+        this.choseBrand();
+      },
       //添加新的型号
       addnewModel(){
         this.newdialog = true;
       },
       //获取手机品牌拥有的型号
-      choseBrand(value){
+      choseBrand(){
         this.addnewbtnshow = true;
         this.circleShow = true;
-        this.brandid = (value===0 || value) ? this.phonebrandid[value] : this.brandid;
-        this.brandname = (value===0 || value) ? this.phonebrandname[value] : this.brandname;
-        console.log(this.brandid)
-        getPhoneModelById(this.brandid).then(res => {
-          // console.log(res)
+        this.findDataList.train._id = this.user.id;
+
+        getVideoData(this.findDataList).then(res => {
           this.listPhoneModelData(res);
-        },(err => {
-          console.log(err)
-        }))
-      },
-      //获取手机品牌内容
-      getphonebrand (){
-        this.circleShow = true;
-        getPhoneBrand().then(res => {
-          for(let index in res){
-            this.phonebrandname = this.phonebrandname.concat(res[index].name);
-            this.phonebrandid = this.phonebrandid.concat(res[index]._id);
-          }
-          this.circleShow = false;
         },(err => {
           console.log(err)
         }))
@@ -110,7 +109,6 @@
       //显示手机品牌内容
       listPhoneModelData (Arr){
         for(let i in Arr){
-          Arr[i].time = this.datestr(Arr[i].createdAt,"yyyy.MM.d");
           Arr[i].id = this.idstr(Arr[i]._id);
         }
         this.PhoneModelData = Arr;
@@ -126,9 +124,6 @@
       opennew(){
         this.newdialog = true;
       },
-      // chosemoreBrand(){
-      //   this.more=true;
-      // },
       //关闭
       close () {
         this.dialog = false;
@@ -137,17 +132,19 @@
       closenew(){
         this.newdialog = false;
       },
-      // closemore(){
-      //   this.more=false;
-      // },
     },
     created(){ 
-      this.getphonebrand()
+      
     }
   }
 </script>
 
 <style scoped> 
+  .serchBox{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
   .serchBox p{
     margin-bottom: 10px;
   }
@@ -181,5 +178,12 @@
   .addBtn{
     margin-left: 10px;
     margin-bottom: 20px;
+  }
+  .userChoseBtn{
+    margin-left: 10px;
+    /*margin-bottom: 20px;*/
+  }
+  .enterDetail{
+    margin-left: -20px;
   }
 </style>

@@ -5,7 +5,7 @@
     <mu-tabs :value="activeTab" @change="handleTabChange">
       <mu-tab value="tab1" title="课程信息"/>
       <mu-tab value="tab3" title="课程介绍"/>
-      <mu-tab value="tab4" title="其他（之后再加）"/>
+      <mu-tab value="tab4" title="课程章节"/>
     </mu-tabs>
 
     <div v-if="activeTab === 'tab1'">
@@ -34,7 +34,6 @@
         <span class="messageTitle">课程价格：</span> 
         {{ questionData.price !== 0 ? `${questionData.price/100} 元` : '免费' }}
       </p>
-
     </div>
 
 
@@ -49,7 +48,10 @@
 
     <div v-if="activeTab === 'tab4'">
       <div class="dialogBland"></div>
-        
+      <p class="dialogBox canchose" v-for="(item,index) in courseData">
+        <span class="messageTitle">{{ item?item.index : "" }}：</span> 
+        {{ item?item.name : ""}}
+      </p>
     </div>
 
     <mu-dialog :open="deldialog" title="删除" @close="closedel">
@@ -70,7 +72,7 @@
 </template>
 
 <script>
-import { delVideoData } from '../../common/api'
+import { delVideoData,getVideoData } from '../../common/api'
 import seebigphoto from "../../common/seeBigPhoto";
 
   export default {
@@ -80,6 +82,8 @@ import seebigphoto from "../../common/seeBigPhoto";
     },
     data(){
       return {
+        id:"",
+        courseData:[],
         circleShow:false,
         chosevalue:-1,
         levelText:{
@@ -119,7 +123,7 @@ import seebigphoto from "../../common/seeBigPhoto";
 
         delVideoData(this.question).then(res => {
           this.circleShow = false;
-          console.log(res)
+          // console.log(res)
         },(err => {
           console.log(err)
         }))
@@ -136,9 +140,28 @@ import seebigphoto from "../../common/seeBigPhoto";
       closeAll(){
         this.closedel();
         this.$root.reload()
+      },
+      getCourse(){
+        let findquestion={
+          collection:"TrainChapter",
+          train:{
+            _id:this.id
+          }
+        }
+        getVideoData(findquestion).then(res => {
+          this.courseData = res;
+        },(err => {
+          console.log(err)
+        }))
       }
     },
-    created(){
+    updated(){
+      if (this.id!==this.questionData._id) {
+        this.id = this.questionData._id
+        if (this.id !== undefined) {
+          this.getCourse();
+        }
+      }
     }
   }
 </script>
