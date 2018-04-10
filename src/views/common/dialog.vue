@@ -158,7 +158,7 @@ import axios from 'axios'
       //     headers: {'Content-Type': 'multipart/form-data'}
       //   }
       //   console.log(fd.get('_id'))
-      //   axios.post('https://yixiu.natappvip.cc/upload/shop/certificate/', fd, config)
+      //   axios.post('https://m.yixiutech.com/upload/shop/certificate/', fd, config)
       //   .then(res => {
       //     console.log(res);
       //   })

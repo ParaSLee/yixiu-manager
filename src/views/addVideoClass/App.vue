@@ -264,7 +264,7 @@
         let config = {
           headers: {'Content-Type': 'multipart/form-data'}
         }
-        axios.post('https://yixiu.natappvip.cc/upload', fd, config)
+        axios.post('https://m.yixiutech.com/upload', fd, config)
         .then(res => {
           this.newClass.info.cover = res.data.data;
           this.circleShow = false;
