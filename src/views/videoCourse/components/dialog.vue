@@ -95,10 +95,10 @@ import { delVideoData,upVideoData } from '../../common/api'
             name:this.newBrandData.name
           }
         }
-        console.log(pushData)
+        // console.log(pushData)
 
         upVideoData(pushData).then(res => {
-          console.log(res)
+          // console.log(res)
           if (res==="更新成功") {
             this.phoneModelData.name = this.newBrandData.name;
             this.phoneModelData.index = this.newBrandData.index;

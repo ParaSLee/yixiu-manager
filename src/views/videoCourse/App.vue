@@ -125,7 +125,7 @@
       open (PhoneModelData) {
         this.dialog = true;
         this.signalbrand = PhoneModelData;
-        console.log(this.signalbrand);
+        // console.log(this.signalbrand);
       },
       opennew(){
         this.newdialog = true;
@@ -143,7 +143,7 @@
       let VideData = sessionStorage.getItem('VideData');
       if (VideData) {
         VideData = JSON.parse(VideData);
-        console.log(VideData[0])
+        // console.log(VideData[0])
         this.getuser(VideData[0])
         sessionStorage.removeItem('VideData');
       }

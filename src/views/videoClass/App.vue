@@ -91,7 +91,7 @@
       },
       //显示问题内容
       listquestionData (Arr,type){
-        console.log(Arr)
+        // console.log(Arr)
         for(let i in Arr){
           Arr[i].id = this.idstr(Arr[i]._id);
         }
@@ -135,7 +135,7 @@
       open (questionData) {
         this.dialog = true;
         this.signalquetion = questionData;
-        console.log(this.signalquetion);
+        // console.log(this.signalquetion);
       },
       //关闭
       close () {

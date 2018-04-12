@@ -38,6 +38,17 @@
         <mu-circular-progress :size="40" v-if="circleShow" class="circleBox"/>
       </div>
     </div>
+    <div class="ItemBox">
+      <span>演示视频：</span>
+      <div class="ItemText">
+        <mu-raised-button v-if="hasVideo" label="查看视频" class="demo-raised-button videoBtn" primary @click="seeVideo"/>
+        <van-uploader class="upimg2" :after-read="onVideoRead" accept="video/*">
+          <van-icon name="photograph" />
+        </van-uploader>
+        <mu-linear-progress v-if="VideocircleShow" mode="determinate" :value="uploading" color="rgb(33, 150, 243)"/>
+      </div>
+      <p class="tagTip">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;可选</p>
+    </div>
     <seebigphoto v-if="bigImgUrl!==''" :imgurl="bigImgUrl" @closeimg="closeimg"></seebigphoto>
     <div class="ItemBox">
       <span>标&nbsp;&nbsp;&nbsp;签：</span>
@@ -68,6 +79,20 @@
         </div>
       </div>
     </div>
+
+    <div class="ItemBox">
+      <span>推荐学习时间：</span>
+      <div class="ItemText">
+        <mu-text-field 
+          class="tags"
+          hintText="请输入整数" 
+          errorText="必填项，且只能输入数字" 
+          v-if="errTipShow.errtime"
+          v-model="newClass.info.time"
+        />
+        <mu-text-field hintText="请输入数字" class="tags" v-model="newClass.info.time" v-else/>&nbsp;小时<br/>
+      </div>
+    </div>
     
     <div class="ItemBox">
       <span>价&nbsp;&nbsp;&nbsp;格：</span>
@@ -75,7 +100,7 @@
         <mu-text-field 
           class="tags"
           hintText="请输入价格" 
-          errorText="这是必填项" 
+          errorText="必填项，且只能输入数字" 
           v-if="errTipShow.errprice"
           v-model="price"
         />
@@ -105,6 +130,7 @@
   export default {
     data(){
       return {
+        hasVideo:false,
         updata:false,
         price:null,
         newClass:{
@@ -115,19 +141,24 @@
           type:"",//分类
           level:"0",//级别
           info:{  //详情,是一个对象,里面数据结构可自行组织
-            cover:""
+            cover:"",   //存储课程封面
+            video:"",   //存储试看视频地址
+            time:"",    //推荐学习时间
           },
           price:null //价格 上传需要单位：分
         },
         bigImgUrl:"",
         circleShow:false,  //加载动画
+        VideocircleShow:false,
+        uploading:0,
         upcircleShow:false,
         okdialog:false,
         errTipShow:{
           errname:false,
           errdesc:false,
           errprice:false,
-          errcover:false
+          errcover:false,
+          errtime:false
         },
       }
     },
@@ -159,6 +190,10 @@
           this.errTipShow.errprice = true;
           iserr = true;
           this.upcircleShow = false;
+        }else if(isNaN(this.price)){
+          this.errTipShow.errprice = true;
+          iserr = true;
+          this.upcircleShow = false;
         }else{
           this.newClass.price = this.price*100;
         }
@@ -167,11 +202,21 @@
           iserr = true;
           this.upcircleShow = false;
         }
+        if (this.newClass.info.time==="") {
+          this.errTipShow.errtime = true;
+          iserr = true;
+          this.upcircleShow = false;
+        }else if(isNaN(this.newClass.info.time)){
+          this.errTipShow.errtime = true;
+          iserr = true;
+          this.upcircleShow = false;
+        }
+
 
         // console.log(this.newClass)
         if (iserr === false) {
           addVideoData(this.newClass).then(res => {
-            console.log(res)
+            // console.log(res)
             this.okdialog = true;
           },(err => {
             console.log(err)
@@ -200,11 +245,24 @@
           this.errTipShow.errprice = true;
           iserr = true;
           this.upcircleShow = false;
+        }else if(isNaN(this.price)){
+          this.errTipShow.errprice = true;
+          iserr = true;
+          this.upcircleShow = false;
         }else{
           this.newClass.price = this.price*100;
         }
         if (this.newClass.info.cover===null) {
           this.errTipShow.errcover = true;
+          iserr = true;
+          this.upcircleShow = false;
+        }
+        if (this.newClass.info.time==="") {
+          this.errTipShow.errtime = true;
+          iserr = true;
+          this.upcircleShow = false;
+        }else if(isNaN(this.newClass.info.time)){
+          this.errTipShow.errtime = true;
           iserr = true;
           this.upcircleShow = false;
         }
@@ -257,7 +315,7 @@
       onRead(file,content){
         this.circleShow = true;
         let fd = new FormData();
-        console.log(file)
+        // console.log(file)
         
         fd.append('file', file.file);
 
@@ -270,6 +328,41 @@
           this.circleShow = false;
         })
       },
+      onVideoRead(file,content){
+        this.VideocircleShow = true;
+        let fd = new FormData();
+        
+        fd.append('file', file.file);
+
+        let config = {
+          headers: {'Content-Type': 'multipart/form-data'}
+        }
+        this.hasVideo = false;
+        
+        this.timer = setInterval(() => {
+          this.uploading += 1
+          if (this.uploading >= 80) clearInterval(this.timer);
+        }, 3000)
+        axios.post('https://m.yixiutech.com/upload', fd, config)
+        .then(res => {
+          clearInterval(this.timer)
+          this.timer2 = setInterval(() => {
+            this.uploading += 3
+            if (this.uploading >= 100) {
+              clearInterval(this.timer2)
+              this.showVideo(res)
+            };
+          }, 100)
+        })
+      },
+      showVideo(res){
+        // console.log(res)
+        this.newClass.info.video = res.data.data;
+        this.hasVideo = true;
+      },
+      seeVideo(){
+        window.open(this.newClass.info.video, '_blank');
+      }
     },
     created(){
       if (this.$route.params.data) {
@@ -304,7 +397,6 @@
     display: flex;
     align-items: top;
     margin-bottom: 20px;
-
   }
   .ItemBoxM{
     overflow: hidden;
@@ -338,10 +430,14 @@
   .cover{
     max-width: 150px;
     max-height: 150px; 
-    margin-right: 20px;
   }
   .upimg{
     margin-top: 10px;
+    margin-left: 20px;
+  }
+  .upimg2{
+    margin-top: 10px;
+    margin-left: 24px;
   }
   .circleBox{
     margin-left: 20px;
@@ -350,6 +446,8 @@
     color: #FF6138;
     font-size: 14px;
     margin-left: 5px;
-    /*margin-top: 5px;*/
+  }
+  .videoBtn{
+    margin-bottom: 10px;
   }
 </style>

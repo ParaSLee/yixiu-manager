@@ -210,10 +210,10 @@
             }
           }
 
-          console.log(pushData)
+          // console.log(pushData)
 
           upVideoData(pushData).then(res => {
-            console.log(res)
+            // console.log(res)
             this.okdialog = true;
           },(err => {
             console.log(err)
@@ -276,7 +276,7 @@
         this.newClass = classData;
         this.hasVideo = true;
         this.updata = true;
-        console.log(this.newClass)
+        // console.log(this.newClass)
       }
     },
     beforeDestroy () {

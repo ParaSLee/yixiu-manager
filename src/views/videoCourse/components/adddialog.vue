@@ -59,6 +59,16 @@ import { Uploader,Icon } from 'vant';
     methods: {
       //关闭dialog
       close(){
+        this.newBrandData = {
+          collection:"TrainChapter",
+          name:"",
+          index:0,   //索引
+          desc:"",
+          info:{},
+          train:{
+            _id:this.brandid
+          }
+        }
         this.$emit("close")
       },
       //提交
@@ -74,6 +84,17 @@ import { Uploader,Icon } from 'vant';
           this.newBrandData.train._id = this.brandid;
           addVideoData(this.newBrandData).then(res => {
             alert("提交成功！");
+            this.newBrandData = {
+              collection:"TrainChapter",
+              name:"",
+              index:0,   //索引
+              desc:"",
+              info:{},
+              train:{
+                _id:this.brandid
+              }
+            }
+            this.index=null;
             this.$emit("updata");
             this.$emit("close");
           },(err => {

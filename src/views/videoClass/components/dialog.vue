@@ -31,10 +31,15 @@
         {{ levelText[questionData.level] }}
       </p>
       <p class="dialogBox">
+        <span class="messageTitle">推荐学习时间：</span> 
+        {{ questionData.info ? `${questionData.info.time}小时` : `未设置` }}
+      </p>
+      <p class="dialogBox">
         <span class="messageTitle">课程封面：</span> 
         <img :src="questionData.info?questionData.info.cover:''" class="cover" @click="lookImg(questionData.info.cover)">
       </p>
       <seebigphoto v-if="bigImgUrl!==''" :imgurl="bigImgUrl" @closeimg="closeimg"></seebigphoto>
+      
       <div class="dialogBland2"></div>
       <div class="dialogBland bottomline"></div>
       <div class="dialogBland2"></div>
@@ -56,6 +61,11 @@
 
     <div v-if="activeTab === 'tab4'">
       <div class="dialogBland"></div>
+      <p class="dialogBox">
+        <span class="messageTitle">演示视频：</span> 
+        <mu-raised-button v-if="video" label="查看视频" class="demo-raised-button" primary @click="seeVideo"/>
+        <span v-else>尚未添加</span>
+      </p>
       <p class="dialogBox canchose" v-for="(item,index) in courseData">
         <span class="messageTitle">{{ item?item.index : "" }}：</span> 
         {{ item?item.name : ""}}
@@ -89,6 +99,7 @@ import seebigphoto from "../../common/seeBigPhoto";
     },
     data(){
       return {
+        video:false,
         id:"",
         courseData:[],
         circleShow:false,
@@ -171,9 +182,19 @@ import seebigphoto from "../../common/seeBigPhoto";
         },(err => {
           console.log(err)
         }))
+      },
+      seeVideo(){
+        window.open(this.questionData.info.video, '_blank');
       }
     },
     updated(){
+      if (this.questionData.info) {
+        if (this.questionData.info.video != "" && this.questionData.info.video !== undefined) {
+          this.video = true;
+        }
+      }else{
+        this.video = false;
+      }
       if (this.id!==this.questionData._id) {
         this.id = this.questionData._id
         if (this.id !== undefined) {
