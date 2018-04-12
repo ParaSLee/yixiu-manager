@@ -437,7 +437,7 @@
   }
   .upimg2{
     margin-top: 10px;
-    margin-left: 24px;
+    margin-left: 8px;
   }
   .circleBox{
     margin-left: 20px;
