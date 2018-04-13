@@ -17,7 +17,7 @@
     </p>
 
     <p class="dialogBox canchose">
-      <span class="messageTitle">描述：</span> 
+      <span class="messageTitle">视频简介：</span> 
       <span>{{ phoneModelData.desc }}</span>
     </p>
 
