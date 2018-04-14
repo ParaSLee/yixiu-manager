@@ -95,6 +95,7 @@
         this.$router.push(this.items[index].url)
       },
       out(){
+        sessionStorage.removeItem('sign')
         this.$router.push("/signin")
       },
     },
@@ -132,9 +133,9 @@
   .manage-container{
     position: absolute;
     width: 100%;
-    height: 100%;
+    min-height: 100%;
     background: rgb(58, 58, 58);
-    overflow: hidden;
+    /*overflow: hidden;*/
     z-index: 99;
   }
   .manage-left{

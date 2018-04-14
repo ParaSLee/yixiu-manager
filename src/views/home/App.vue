@@ -17,13 +17,18 @@
     },
     methods: {
      
+    },
+    created(){
+      if(!sessionStorage.getItem('sign')){
+        this.$router.push("/signin")
+      }
     }
   }
 </script>
 
 <style scoped>
   .contain-right{
-    position: absolute;
+    position: fixed;
     height: 98%;
     margin-left: 288px;
     background: #fff;

@@ -71,6 +71,7 @@
               this.idText="";
               this.passwordText="密码错误";
             }else{
+              sessionStorage.setItem('sign', true)
               this.$router.push("/home")
             }
           },(err => {

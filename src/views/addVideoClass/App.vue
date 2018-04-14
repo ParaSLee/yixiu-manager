@@ -39,7 +39,7 @@
       </div>
     </div>
     <div class="ItemBox">
-      <span>演示视频：</span>
+      <span>试看视频：</span>
       <div class="ItemText">
         <mu-raised-button v-if="hasVideo" label="查看视频" class="demo-raised-button videoBtn" primary @click="seeVideo"/>
         <van-uploader class="upimg2" :after-read="onVideoRead" accept="video/*">

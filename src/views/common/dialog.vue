@@ -82,6 +82,28 @@
         <mu-raised-button label="更新" class="demo-raised-button" @click="changestate" primary/>
       </span>
     </p>
+
+    <p class="dialogBox checkBox">
+      <span class="messageTitle">销售权限：</span> 
+      <span v-if="!changesellShow">
+        <span v-if="shopData.sellPhone===true" class="normal">可销售</span>
+        <span v-else class="unpass">不可销售</span>
+        <mu-flat-button 
+          label="修改权限" 
+          class="demo-flat-button changestateBtn" 
+          @click="chosesell" 
+          :disabled="shopData.qualificationState==='未通过' || shopData.qualificationState==='待审核'"
+        />
+        <span class="tig">只有能正常运营的店铺能修改销售权限</span>
+      </span>
+      <span v-else class="changestateBox">
+        <mu-radio label="不可销售" name="group" nativeValue="不可销售" v-model="chosesellValue" class="demo-radio"/>
+        <mu-radio label="可销售" name="group" nativeValue="可销售" v-model="chosesellValue" class="demo-radio"/>
+        
+        <mu-raised-button label="取消" class="demo-raised-button" @click="closechosesell" />
+        <mu-raised-button label="更新" class="demo-raised-button" @click="changesell" primary/>
+      </span>
+    </p>
     <mu-flat-button slot="actions" @click="close" primary label="关闭"/>
     <seebigphoto v-if="bigImgUrl!==''" :imgurl="bigImgUrl" @closeimg="closeimg"></seebigphoto>
   </mu-dialog>
@@ -114,10 +136,14 @@ import axios from 'axios'
         },
         bigImgUrl:"",
         chosevalue:-1,
+        chosesellValue:"不可销售",
         changestateShow:false,
+        changesellShow:false,
         oldqualificationState:"",
+        oldqualificationSell:"",
         shop:{
           qualificationState: "待审核",
+          sellPhone:false,
           _id:"",
         }
       }
@@ -142,27 +168,6 @@ import axios from 'axios'
       closeimg(){
         this.bigImgUrl = ""
       },
-      //传递照片
-      // onRead(file,content){
-      //   let fd = new FormData();
-
-      //   let a = {
-      //     name:"certificate",
-      //     data:file.file
-      //   }
-        
-      //   fd.append('file', file.file);
-      //   fd.append("_id", this.shopData._id);
-
-      //   let config = {
-      //     headers: {'Content-Type': 'multipart/form-data'}
-      //   }
-      //   console.log(fd.get('_id'))
-      //   axios.post('https://m.yixiutech.com/upload/shop/certificate/', fd, config)
-      //   .then(res => {
-      //     console.log(res);
-      //   })
-      // },
       //改变状态
       chosestate(){
         this.changestateShow = true;
@@ -174,6 +179,16 @@ import axios from 'axios'
         this.chosevalue = -1;
         this.shop.qualificationState = this.oldqualificationState;
       },
+      chosesell(){
+        this.changesellShow = true;
+        this.oldqualificationSell = this.shop.sellPhone === true ? true : false;
+        this.chosesellValue = this.shop.sellPhone===true ? "可销售" : "不可销售";
+      },
+      closechosesell(){
+        this.changesellShow = false;
+        this.chosesellValue = "不可销售";
+        this.shop.sellPhone = this.oldqualificationSell;
+      },
       //更新状态
       changestate(){
         if(this.chosevalue===false){
@@ -181,6 +196,7 @@ import axios from 'axios'
         }else if (this.shop.qualificationState == this.chosevalue) {
           alert("没有改变状态")
         }else{
+          delete this.shop.sellPhone;
           this.shop.qualificationState = this.chosevalue;
           this.shop._id = this.shopData._id;
           if (this.shop.qualificationState=="正常") {
@@ -199,6 +215,19 @@ import axios from 'axios'
         }
         
         // changeState()
+      },
+      changesell(){
+        this.shop.sellPhone = this.chosesellValue==="可销售"? true : false;
+        this.shop._id = this.shopData._id;
+        delete this.shop.qualificationState;
+        console.log(this.shop)
+        changeState(this.shop).then(res => {
+          console.log(res)
+          this.changesellShow = false;
+          this.shopData.sellPhone = res.sellPhone
+        },(err => {
+          console.log(err)
+        }))
       },
       enterPhoto(){
         if (this.shopData.certificate) {
@@ -283,5 +312,9 @@ import axios from 'axios'
   .beforeImg{
     max-width: 240px;
     max-height: 240px;
+  }
+  .tig{
+    color: #FF6138;
+    font-size: 14px;
   }
 </style>
