@@ -8,8 +8,9 @@
     <span v-if="!addnewbtnshow" style="color:rgb(126, 87, 194)">选择课程后才可添加该课程的章节</span>
   </div>
 
-  <mu-raised-button :disabled="!addnewbtnshow" label="进入视频管理" class="demo-raised-button enterbtn" primary @click="enterVideos"/>
+  <mu-raised-button :disabled="!addnewbtnshow || nodata" label="进入视频管理" class="demo-raised-button enterbtn" primary @click="enterVideos"/>
   <span v-if="!addnewbtnshow" style="color:rgb(126, 87, 194)">选择课程后才可修改该课程的视频</span>
+  <span v-else-if="nodata" style="color:rgb(126, 87, 194)">创建章节后才可进入视频中心</span>
 
   <mu-circular-progress :size="40" v-if="circleShow" class="circleBox"/>
 
@@ -68,6 +69,7 @@
         circleShow:false,  //数据读取中
         dialog: false,    //弹窗
         newdialog: false,  //新建品牌弹窗
+        nodata:true,
         PhoneModelData:[],
         //单个shop信息
         signalbrand:{},
@@ -119,6 +121,11 @@
           Arr[i].id = this.idstr(Arr[i]._id);
         }
         this.PhoneModelData = Arr.sort(this.compare('index'));
+        if (this.PhoneModelData.length!=0) {
+          this.nodata = false;
+        }else{
+          this.nodata = true;
+        }
         this.circleShow = false;
       },
       //弹出
