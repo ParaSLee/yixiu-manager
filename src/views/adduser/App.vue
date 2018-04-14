@@ -22,11 +22,12 @@
 
 <style scoped>
   .nouse{
-    width: 100em;
+    width: 100%;
     height: 100%;
     background: rgb(247, 247, 247);
   }
   .nouse img{
+    width: 100%;
     display: block;
     margin: 0 auto;
   }
