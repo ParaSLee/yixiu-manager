@@ -70,9 +70,12 @@
             }else if(res.errMsg == "密码错误"){
               this.idText="";
               this.passwordText="密码错误";
-            }else{
+            }else if(!res.errMsg){
+              console.log(res)
               sessionStorage.setItem('sign', true)
               this.$router.push("/home")
+            }else{
+              this.idText="该账号不能登录后台管理";
             }
           },(err => {
             console.log(err)
