@@ -92,7 +92,7 @@
         this.circleShow = true;
         this.brandid = (value===0 || value) ? this.phonebrandid[value] : this.brandid;
         this.brandname = (value===0 || value) ? this.phonebrandname[value] : this.brandname;
-        console.log(this.brandid)
+        // console.log(this.brandid)
         getPhoneModelById(this.brandid).then(res => {
           // console.log(res)
           this.listPhoneModelData(res);
@@ -120,14 +120,14 @@
           Arr[i].id = this.idstr(Arr[i]._id);
         }
         this.PhoneModelData = Arr;
-        console.log(this.PhoneModelData)
+        // console.log(this.PhoneModelData)
         this.circleShow = false;
       },
       //弹出
       open (PhoneModelData) {
         this.dialog = true;
         this.signalbrand = PhoneModelData;
-        console.log(this.signalbrand);
+        // console.log(this.signalbrand);
       },
       opennew(){
         this.newdialog = true;

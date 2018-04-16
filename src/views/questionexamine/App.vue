@@ -132,7 +132,7 @@
             Arr[i].info = Arr[i].info.concat(`<img src='${Arr[i].image[index]}'>`)
           }
         }
-        console.log(this.author)
+        // console.log(this.author)
         if (type==="增加") {
           if (Arr.length < 10) {
             this.nextpage = false;
@@ -194,7 +194,7 @@
               break;
             }
           }
-          console.log(this.findquestion)
+          // console.log(this.findquestion)
         }
         if (this.searchText !== "") {
           this.findquestion.title=this.searchText;
@@ -215,7 +215,7 @@
       open (questionData) {
         this.dialog = true;
         this.signalquetion = questionData;
-        console.log(this.signalquetion);
+        // console.log(this.signalquetion);
       },
       //关闭
       close () {

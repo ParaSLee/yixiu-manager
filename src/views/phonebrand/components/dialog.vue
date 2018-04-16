@@ -116,7 +116,7 @@ import { Uploader,Icon } from 'vant';
       onRead(file,content){
         this.circleShow = true;
         let fd = new FormData();
-        console.log(file)
+        // console.log(file)
         
         fd.append('file', file.file);
 
@@ -138,7 +138,7 @@ import { Uploader,Icon } from 'vant';
         delete this.newBrandData.updatedAt;
         delete this.newBrandData.__v;
 
-        console.log(this.newBrandData)
+        // console.log(this.newBrandData)
         updataPhoneBrand(this.newBrandData).then(res => {
           if (res==="更新成功") {
             this.phonebrandData.name = this.newBrandData.name;

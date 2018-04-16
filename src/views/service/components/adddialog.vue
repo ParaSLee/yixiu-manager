@@ -92,12 +92,12 @@ import { Uploader,Icon } from 'vant';
           this.newBrandData.category = this.brandid;
           // this.newBrandData.shop = "all"
 
-          console.log(this.newBrandData)
+          // console.log(this.newBrandData)
 
 
           addService(this.newBrandData).then(res => {
             alert("提交成功！");
-            console.log(res)
+            // console.log(res)
             this.$emit("updateold")
             // location.reload();
           },(err => {
@@ -117,7 +117,7 @@ import { Uploader,Icon } from 'vant';
       onRead(file,content){
         this.circleShow = true;
         let fd = new FormData();
-        console.log(file)
+        // console.log(file)
         
         fd.append('file', file.file);
 

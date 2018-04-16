@@ -86,7 +86,7 @@ import { Uploader,Icon } from 'vant';
       onRead(file,content){
         this.circleShow = true;
         let fd = new FormData();
-        console.log(file)
+        // console.log(file)
         
         fd.append('file', file.file);
 

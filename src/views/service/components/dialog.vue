@@ -134,7 +134,7 @@ import { Uploader,Icon } from 'vant';
       onRead(file,content){
         this.circleShow = true;
         let fd = new FormData();
-        console.log(file)
+        // console.log(file)
         
         fd.append('file', file.file);
 
@@ -158,7 +158,7 @@ import { Uploader,Icon } from 'vant';
         delete this.newBrandData.__v;
         delete this.newBrandData.sort;
 
-        console.log(this.newBrandData)
+        // console.log(this.newBrandData)
 
         updataService(this.newBrandData).then(res => {
           if (res==="更新成功") {

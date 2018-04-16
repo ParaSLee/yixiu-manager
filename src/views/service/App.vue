@@ -123,14 +123,14 @@
           Arr[i].id = this.idstr(Arr[i]._id);
         }
         this.PhoneModelData = Arr;
-        console.log(this.PhoneModelData)
+        // console.log(this.PhoneModelData)
         this.circleShow = false;
       },
       //弹出
       open (PhoneModelData) {
         this.dialog = true;
         this.signalbrand = PhoneModelData;
-        console.log(this.signalbrand);
+        // console.log(this.signalbrand);
       },
       opennew(){
         this.newdialog = true;
