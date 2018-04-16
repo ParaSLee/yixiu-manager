@@ -103,7 +103,7 @@ import { Uploader,Icon } from 'vant';
           addServiceCategory(this.newBrandData).then(res => {
             // alert("提交成功！");
             location.reload();
-            console.log(res)
+            // console.log(res)
           },(err => {
             console.log(err)
           }))
@@ -113,7 +113,7 @@ import { Uploader,Icon } from 'vant';
       onRead(file,content){
         this.circleShow = true;
         let fd = new FormData();
-        console.log(file)
+        // console.log(file)
         
         fd.append('file', file.file);
 
