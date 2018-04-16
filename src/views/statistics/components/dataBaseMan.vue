@@ -165,7 +165,7 @@
         }
 
         if(this.searchShop!=""){
-          Arr.name = Arr.user.name;
+          Arr.name = Arr.user?Arr.user.name:"";
         }else if(this.searchUser!=""){
           Arr.name = 123;
         }

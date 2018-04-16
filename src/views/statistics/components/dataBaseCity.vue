@@ -252,6 +252,7 @@
       },
       //搜索
       toSearch(){
+        this.AllOrderData = [];
         let start, end;
         if (this.chosedStartDay) {
           this.setTimeZero(this.chosedStartDay,'start');
