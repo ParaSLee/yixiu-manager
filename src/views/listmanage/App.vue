@@ -1,8 +1,9 @@
 <template>
 <div>
   <div class="serchBox">
-    <p style="color:rgb(185, 185, 185);margin-bottom:10px;">商户名和用户手机号至少填一个,但是不能同时填入</p>
-    <mu-text-field hintText="根据商户名搜索" v-model="searchShop" :disabled="searchUser!=''"/>
+    <p style="color:rgb(185, 185, 185);margin-bottom:10px;">商户ID和用户手机号至少填一个,但是不能同时填入</p>
+    <mu-text-field hintText="根据商户ID搜索" v-model="searchShop" :disabled="searchUser!=''"/>
+    <p class="tip">为了确保精准度，请使用商户id搜索</p>
 
     <mu-text-field hintText="根据用户手机号搜索" v-model="searchUser" :disabled="searchShop!=''"/>
 
@@ -52,7 +53,7 @@
   
 
 
-  <Mdialog @close="close" :signalorderData="signalOrder" :dialog="dialog"></Mdialog>
+  <Mdialog @close="close" :signalorderData="signalOrder" :dialog="dialog" @delclose="delclose"></Mdialog>
 
   <div class="ManagePagination">
     <mu-raised-button v-if="nextpage" label="点击加载更多" class="demo-raised-button" @click="moreSearch" :disabled="loading" primary/>
@@ -76,7 +77,7 @@
 </template>
 
 <script>
-  import { getOrderListData,getAllOrderListData } from '../common/api'
+  import { getVideoData } from '../common/api'
   import Mdialog from "./components/dialog"
 
   export default {
@@ -92,8 +93,10 @@
         dialog3:false,   //取消删除
         dialog4:false,   //没有查询内容
         findorderList:{
+          collection:"Order",
           limit:10,//一次获取列表的条数,系统默认为10
-          skip:0//跳过几个数据,系统默认为0
+          skip:0,//跳过几个数据,系统默认为0
+          shop:"",
         },
         orderData:[
           // {
@@ -124,8 +127,8 @@
       //获取10条商家内容
       getOrderList (pickData,type){
         this.circleShow = true;
-        getAllOrderListData(pickData).then(res => {
-          console.log(res);
+        getVideoData(pickData).then(res => {
+          // console.log(res);
           this.listOrderData(res, type)
         },(err => {
           console.log(err)
@@ -146,7 +149,7 @@
         }
 
         if(this.searchShop!=""){
-          Arr.name = Arr.user.name;
+          Arr.name = Arr.user ? Arr.user.name : "";
         }else if(this.searchUser!=""){
           Arr.name = 123;
         }
@@ -221,15 +224,17 @@
         this.findorderList.limit=10;
         this.findorderList.skip=0;
         if (this.searchShop!=="") {
-          this.findorderList.shopName = this.searchShop.replace(/\s/g, "");
+          delete this.findorderList.phone;
+          this.findorderList.shop = this.searchShop.replace(/\s/g, "");
           this.getOrderList(this.findorderList)
         }else if(this.searchUser!==""){
+          delete this.findorderList.shop;
           this.findorderList.phone = this.searchUser.replace(/\s/g, "");
           this.getOrderList(this.findorderList)
         }else{
           this.dialog4 = true;
         }
-        console.log(this.findorderList)
+        // console.log(this.findorderList)
       },
       //清空
       clearBtn(){
@@ -266,12 +271,15 @@
       open (orderData) {
         this.dialog = true;
         this.signalOrder = orderData;
-        console.log(this.signalOrder);
+        // console.log(this.signalOrder);
       },
       //关闭
       close () {
         this.dialog = false;
-        // this.signalOrder = {};
+        this.signalOrder = {};
+      },
+      delclose(){
+        this.getOrderList(this.findorderList)
       },
       nodelcolse(){
         this.dialog2 = false;
@@ -287,8 +295,8 @@
 </script>
 
 <style scoped>
-  .listTable{
-    /*margin-top: 30px;*/
+  .serchBox{
+    position: relative;
   }
   .mu-table tbody{
     line-height: 48px;
@@ -351,5 +359,10 @@
   }
   .quit{
     color: #BBBBBB;
+  }
+  .tip{
+    position: absolute;
+    top: 80px;
+    color: rgb(126, 87, 194);
   }
 </style>

@@ -76,7 +76,7 @@
       getphonebrand (){
         this.circleShow = true;
         getPhoneBrand().then(res => {
-          console.log(res)
+          // console.log(res)
           this.listPhonebrandData(res.reverse())
         },(err => {
           console.log(err)
@@ -95,7 +95,7 @@
       open (PhonebrandData) {
         this.dialog = true;
         this.signalbrand = PhonebrandData;
-        console.log(this.signalbrand);
+        // console.log(this.signalbrand);
       },
       opennew(){
         this.newdialog = true;

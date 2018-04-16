@@ -204,9 +204,9 @@ import axios from 'axios'
           }else{
             this.shop.qualification = false;
           }
-          console.log(this.shop)
+          // console.log(this.shop)
           changeState(this.shop).then(res => {
-            console.log(res)
+            // console.log(res)
             this.changestateShow = false;
             this.shopData.qualificationState = res.qualificationState
           },(err => {
@@ -220,9 +220,9 @@ import axios from 'axios'
         this.shop.sellPhone = this.chosesellValue==="可销售"? true : false;
         this.shop._id = this.shopData._id;
         delete this.shop.qualificationState;
-        console.log(this.shop)
+        // console.log(this.shop)
         changeState(this.shop).then(res => {
-          console.log(res)
+          // console.log(res)
           this.changesellShow = false;
           this.shopData.sellPhone = res.sellPhone
         },(err => {

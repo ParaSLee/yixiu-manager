@@ -119,12 +119,26 @@
         {{ signalorderData.remark }}
       </p>
     </div>
+    <mu-flat-button slot="actions" @click="deldia" secondary label="删除"/>
     <mu-flat-button slot="actions" @click="close" primary label="关闭"/>
+
+    <mu-dialog :open="deldialog" title="删除" @close="closedel">
+      确定删除？
+      <mu-flat-button slot="actions" @click="closedel" primary label="取消"/>
+      <mu-flat-button slot="actions" primary @click="delClass" label="确定"/>
+    </mu-dialog>
+
+    <mu-dialog :open="deldialog2" title="" @close="closeAll">
+      删除成功！
+      <mu-flat-button slot="actions" primary @click="closeAll" label="确定"/>
+    </mu-dialog>
+
   </mu-dialog>
 </div>
 </template>
 
 <script>
+import { delVideoData } from '../../common/api'
   export default {
     props:{
       signalorderData:Object,
@@ -132,7 +146,13 @@
     },
     data(){
       return {
-        activeTab: 'tab1'
+        activeTab: 'tab1',
+        deldialog:false,
+        deldialog2:false,
+        findorderList:{
+          collection:"Order",
+          _id:"",
+        },
       }
     },
     components: {
@@ -140,12 +160,34 @@
     methods: {
       //关闭dialog
       close(){
-        // this.signalorderData = [];
         this.$emit("close")
       },
       handleTabChange (val) {
         this.activeTab = val
-      }
+      },
+      deldia(){
+        this.deldialog = true;
+      },
+      closedel(){
+        this.deldialog = false;
+      },
+      delClass(){
+        this.circleShow = true;
+        this.findorderList._id = this.signalorderData._id;
+
+        delVideoData(this.findorderList).then(res => {
+          this.circleShow = false;
+          this.deldialog2 = true;
+        },(err => {
+          console.log(err)
+        }))
+      },
+      closeAll(){
+        this.deldialog2 = false;
+        this.closedel();
+        this.$emit("close")
+        this.$emit("delclose")
+      },
     }
   }
 </script>
