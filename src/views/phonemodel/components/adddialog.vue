@@ -11,7 +11,7 @@
     </p>
     <p class="dialogBox canchose">
       <span class="messageTitle">颜色：</span> 
-      <mu-text-field v-model="colors" hintText="例如：黑色 白色" label="请用1个空格隔开不同颜色"/>
+      <mu-text-field v-model="colors" hintText="例如：黑色 白色" label="请用1个空格隔开不同颜色，文字开头和结尾不能有空格" style="min-width:400px;"/>
     </p>
     <p class="dialogBox canchose">
       <span class="messageTitle">型号别名：</span> 

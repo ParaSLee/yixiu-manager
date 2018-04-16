@@ -32,7 +32,7 @@
       <span v-if="!changebtnShow">
         <span v-for="item in phoneModelData.color">{{ item }} </span>
       </span>
-      <mu-text-field v-else v-model="newcolor" label="请用1个空格隔开不同颜色"/>
+      <mu-text-field v-else v-model="newcolor" label="请用1个空格隔开不同颜色，文字开头和结尾不能有空格" style="min-width:400px;"/>
     </p>
 
     <p class="dialogBox canchose">
