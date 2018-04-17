@@ -285,7 +285,7 @@ import axios from 'axios'
       closeAll(){
         this.deldialog2 = false;
         this.closedel();
-        this.$emit("close")
+        this.close();
         this.$emit("delclose")
       },
     },

@@ -14,7 +14,11 @@
     
     <mu-raised-button label="返回全部" @click="returnAll" v-if="returnAllShow" class="returnBtn" primary/>
   </div>
-  <p class="payment">总押金：<span>{{ payment }}</span> 元</p>
+  <p class="payment">
+    总押金：<span>{{ payment }}</span> 元  
+    <span class="spm"></span>
+    总商户：<span>{{ shopCount }}</span> 家 
+  </p>
   
   <mu-circular-progress :size="40" v-if="circleShow" class="circleBox"/>
 
@@ -53,7 +57,7 @@
   <mu-circular-progress :size="40" v-if="circleShow" class="circleBox"/>
 
 
-  <Mdialog @close="close" :shopData="signalShop" :dialog="dialog"></Mdialog>
+  <Mdialog @close="close" @delclose="getShopList(findshopLish)" :shopData="signalShop" :dialog="dialog"></Mdialog>
 
   <mu-pagination v-if="!returnAllShow" :total="total" :current="current" @pageChange="handleClick" class="ManagePagination">
   </mu-pagination>
@@ -118,6 +122,7 @@
           collection:"Shop",
         },
         payment:0,
+        shopCount:0,
         //单个shop信息
         signalShop:{},
         // delshopList:[]//存储要删除Shop的ID
@@ -163,6 +168,7 @@
             allpayment += i.payment;
           }
           this.payment = allpayment/100;
+          this.shopCount = res.length;
         },(err => {
           console.log(err)
         }))
@@ -362,5 +368,8 @@
   }
   .payment span{
     font-size: 18px;
+  }
+  .spm{
+    margin-right: 30px;
   }
 </style>
