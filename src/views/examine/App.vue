@@ -14,6 +14,7 @@
     
     <mu-raised-button label="返回全部" @click="returnAll" v-if="returnAllShow" class="returnBtn" primary/>
   </div>
+  <p class="payment">总押金：<span>{{ payment }}</span> 元</p>
   
   <mu-circular-progress :size="40" v-if="circleShow" class="circleBox"/>
 
@@ -79,6 +80,7 @@
   import { 
     getShopListSort, 
     getShopListAllNumber,
+    getVideoData
   } from '../common/api'
   import Mdialog from "../common/dialog"
 
@@ -112,6 +114,10 @@
             // contactNumber:"",   联系方式
           // }
         ],
+        findorderList:{
+          collection:"Shop",
+        },
+        payment:0,
         //单个shop信息
         signalShop:{},
         // delshopList:[]//存储要删除Shop的ID
@@ -132,6 +138,31 @@
         this.circleShow = true;
         getShopListSort(pickData).then(res => {
           this.listShopData(res, type)
+          return pickData;
+        },(err => {
+          console.log(err)
+        })).then(pickData => {
+          this.allDeposit(pickData);
+        })
+      },
+      allDeposit(type){
+        if (type.qualificationState!=undefined) {
+          this.findorderList.qualificationState = type.qualificationState;
+        }else{
+          delete this.findorderList.qualificationState
+        }
+        if (type.name!=undefined) {
+          this.findorderList.name = {$regex:type.name};
+        }else{
+          delete this.findorderList.name
+        }
+        getVideoData(this.findorderList).then(res => {
+          console.log(res)
+          let allpayment = 0;
+          for(let i of res){
+            allpayment += i.payment;
+          }
+          this.payment = allpayment/100;
         },(err => {
           console.log(err)
         }))
@@ -326,5 +357,10 @@
     justify-content: flex-end;
     margin-top: 30px;
   }
-
+  .payment{
+    font-size: 16px;
+  }
+  .payment span{
+    font-size: 18px;
+  }
 </style>

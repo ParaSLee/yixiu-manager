@@ -152,7 +152,7 @@ import { delVideoData } from '../../common/api'
         findorderList:{
           collection:"Order",
           _id:"",
-        },
+        }
       }
     },
     components: {
@@ -172,11 +172,11 @@ import { delVideoData } from '../../common/api'
         this.deldialog = false;
       },
       delClass(){
-        this.circleShow = true;
+        // this.circleShow = true;
         this.findorderList._id = this.signalorderData._id;
 
         delVideoData(this.findorderList).then(res => {
-          this.circleShow = false;
+          // this.circleShow = false;
           this.deldialog2 = true;
         },(err => {
           console.log(err)

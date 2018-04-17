@@ -129,7 +129,11 @@
           console.log(err)
         }))
       },
-      changeMoneyData(money){
+      changeMoneyData(money,type){
+        if (type=="B") {
+          money = parseInt(money*0.2);
+          console.log(money)
+        }
         if (money<100) {
           return (money/100);
         }else{
@@ -146,8 +150,8 @@
       //显示总数据内容
       listquestionData (Arr){
         this.shopData = Arr;
-        this.shopData.moneyA = this.changeMoneyData(Arr.turnover);
-        this.shopData.moneyB = this.changeMoneyData(Arr.turnoverAfter);
+        this.shopData.moneyA = this.changeMoneyData(Arr.turnover,"A");
+        this.shopData.moneyB = this.changeMoneyData(Arr.turnover,"B");
         this.getList();
       },
       //填入获取到的内容

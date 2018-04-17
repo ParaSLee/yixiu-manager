@@ -104,7 +104,20 @@
         <mu-raised-button label="更新" class="demo-raised-button" @click="changesell" primary/>
       </span>
     </p>
+    <mu-flat-button slot="actions" @click="deldia" secondary label="删除"/>
     <mu-flat-button slot="actions" @click="close" primary label="关闭"/>
+
+    <mu-dialog :open="deldialog" title="删除" @close="closedel">
+      确定删除？
+      <mu-flat-button slot="actions" @click="closedel" primary label="取消"/>
+      <mu-flat-button slot="actions" primary @click="delClass" label="确定"/>
+    </mu-dialog>
+
+    <mu-dialog :open="deldialog2" title="" @close="closeAll">
+      删除成功！
+      <mu-flat-button slot="actions" primary @click="closeAll" label="确定"/>
+    </mu-dialog>
+
     <seebigphoto v-if="bigImgUrl!==''" :imgurl="bigImgUrl" @closeimg="closeimg"></seebigphoto>
   </mu-dialog>
 
@@ -115,7 +128,7 @@
 
 <script>
 import { Uploader, Icon } from 'vant';
-import { changeState } from './api'
+import { changeState,delVideoData } from './api'
 import seebigphoto from "./seeBigPhoto"
 import axios from 'axios'
 
@@ -145,7 +158,13 @@ import axios from 'axios'
           qualificationState: "待审核",
           sellPhone:false,
           _id:"",
-        }
+        },
+        findorderList:{
+          collection:"Shop",
+          _id:"",
+        },
+        deldialog:false,
+        deldialog2:false,
       }
     },
     components: {
@@ -245,7 +264,30 @@ import axios from 'axios'
             }
           }
         }
-      }
+      },
+      deldia(){
+        this.deldialog = true;
+      },
+      closedel(){
+        this.deldialog = false;
+      },
+      delClass(){
+        this.circleShow = true;
+        this.findorderList._id = this.shopData._id;
+
+        delVideoData(this.findorderList).then(res => {
+          this.circleShow = false;
+          this.deldialog2 = true;
+        },(err => {
+          console.log(err)
+        }))
+      },
+      closeAll(){
+        this.deldialog2 = false;
+        this.closedel();
+        this.$emit("close")
+        this.$emit("delclose")
+      },
     },
     created(){
       this.chosevalue = this.shopData.qualificationState;

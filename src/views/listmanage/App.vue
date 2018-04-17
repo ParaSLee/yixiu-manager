@@ -96,7 +96,6 @@
           collection:"Order",
           limit:10,//一次获取列表的条数,系统默认为10
           skip:0,//跳过几个数据,系统默认为0
-          shop:"",
         },
         orderData:[
           // {

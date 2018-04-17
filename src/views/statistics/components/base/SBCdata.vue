@@ -13,7 +13,7 @@
     </div>
     <div class="line"></div>
     <div class="moneyItem">
-      折扣后交易总额：<span>{{ AllShopData.moneyB ?  AllShopData.moneyB : "0" }} </span>元
+      平台利润：<span>{{ AllShopData.moneyB ?  AllShopData.moneyB : "0" }} </span>元
     </div>
   </div>
 

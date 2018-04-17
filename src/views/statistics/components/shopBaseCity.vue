@@ -120,15 +120,19 @@
           // console.log(res)
           if (type!="全部") {
             this.areaShopData = res;
-            this.areaShopData.moneyA = this.changeMoneyData(res.turnover);
-            this.areaShopData.moneyB = this.changeMoneyData(res.turnoverAfter);
+            this.areaShopData.moneyA = this.changeMoneyData(res.turnover,"A");
+            this.areaShopData.moneyB = this.changeMoneyData(res.turnover,"B");
           }
           this.listAllShopData(res, type)
         },(err => {
           console.log(err)
         }))
       },
-      changeMoneyData(money){
+      changeMoneyData(money,type){
+        if (type=="B") {
+          money = parseInt(money*0.2);
+          console.log(money)
+        }
         if (money<100) {
           return (money/100);
         }else{
