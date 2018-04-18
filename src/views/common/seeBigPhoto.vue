@@ -32,4 +32,8 @@
     justify-content: center;
     overflow: auto;
   }
+  .imgBox img{
+    max-width: 150%;
+    max-height: 150%;
+  }
 </style>

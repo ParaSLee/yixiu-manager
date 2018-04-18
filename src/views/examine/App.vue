@@ -15,7 +15,7 @@
     <mu-raised-button label="返回全部" @click="returnAll" v-if="returnAllShow" class="returnBtn" primary/>
   </div>
   <p class="payment">
-    总押金：<span>{{ payment }}</span> 元  
+    总保证金：<span>{{ payment }}</span> 元  
     <span class="spm"></span>
     总商户：<span>{{ shopCount }}</span> 家 
   </p>
@@ -143,11 +143,13 @@
         this.circleShow = true;
         getShopListSort(pickData).then(res => {
           this.listShopData(res, type)
-          return pickData;
+          return {pickData,type};
         },(err => {
           console.log(err)
-        })).then(pickData => {
-          this.allDeposit(pickData);
+        })).then((pickData,type) => {
+          if (type!=="增加") {
+            this.allDeposit(pickData);
+          }
         })
       },
       allDeposit(type){
@@ -162,7 +164,7 @@
           delete this.findorderList.name
         }
         getVideoData(this.findorderList).then(res => {
-          console.log(res)
+          //console.log(res)
           let allpayment = 0;
           for(let i of res){
             allpayment += i.payment;
@@ -278,7 +280,7 @@
       open (shopData) {
         this.dialog = true;
         this.signalShop = shopData;
-        // console.log(this.signalShop);
+        console.log(this.signalShop);
       },
       //关闭
       close () {
