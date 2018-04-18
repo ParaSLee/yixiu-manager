@@ -59,7 +59,7 @@
     <p class="dialogBox">
       <span class="messageTitle">营业执照：</span> 
       <span v-if="thephoto.license && thephoto.license.length != 0">
-        <img :src="thephoto.license" class="beforeImg" @click="lookImg(thephoto.certificate)">
+        <img :src="thephoto.license" class="beforeImg" @click="lookImg(thephoto.license)">
       </span>
       <span v-else>
         尚未添加
@@ -68,7 +68,7 @@
     <p class="dialogBox">
       <span class="messageTitle">商户协议：</span> 
       <span v-if="thephoto.protocol && thephoto.protocol.length != 0">
-        <img :src="thephoto.protocol" class="beforeImg" @click="lookImg(thephoto.certificate)">
+        <img :src="thephoto.protocol" class="beforeImg" @click="lookImg(thephoto.protocol)">
       </span>
       <span v-else>
         尚未添加
