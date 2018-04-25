@@ -368,3 +368,37 @@ export function upVideoData(data){
     });
   });
 }
+
+// 发生验证短信
+export function sendmessage(data){
+  return new Promise((resolve, reject) => {
+    ajax.post(`${url}/sms/send`,data).then((res) => {
+      resolve(res);
+    }).then((err) => {
+      reject(err);
+    });
+  });
+}
+
+// 注册
+export function useRegin(data){
+  return new Promise((resolve, reject) => {
+    ajax.post(`${url}/reg`,data).then((res) => {
+      resolve(res);
+    }).then((err) => {
+      reject(err);
+    });
+  });
+}
+
+// 注册
+export function useLogin(data){
+  return new Promise((resolve, reject) => {
+    ajax.post(`${url}/login`,data).then((res) => {
+      resolve(res);
+    }).then((err) => {
+      reject(err);
+    });
+  });
+}
+

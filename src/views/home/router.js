@@ -17,6 +17,10 @@ import addVideoClass from "../addVideoClass/App"
 import videoCourse from "../videoCourse/App"
 import videosManage from "../videosManage/App"
 import addVideos from "../addVideos/App"
+import useStatistics from "../useStatistics/App"
+import useSignin from "../useSignin/App"
+import useRegister from "../useRegister/App"
+import useForget from "../useForget/App"
 
 export default [{
   path: '/home',
@@ -96,6 +100,41 @@ export default [{
       path: "addVideos",
       component: addVideos
     }
-
   ]
+},
+{
+  name: "useSignin",
+  path: '/useSignin',
+  component: useSignin,
+  // redirect: '/useStatistics',
+  // meta: {
+  //   keepAlive: true // 需要被缓存
+  // },
+},
+{
+  name: "useRegister",
+  path: '/useRegister',
+  component: useRegister,
+  // redirect: '/useStatistics',
+  // meta: {
+  //   keepAlive: true // 需要被缓存
+  // },
+},
+{
+  name: "useForget",
+  path: '/useForget',
+  component: useForget,
+  // redirect: '/useStatistics',
+  // meta: {
+  //   keepAlive: true // 需要被缓存
+  // },
+},
+{
+  name: "useStatistics",
+  path: '/useStatistics',
+  component: useStatistics,
+  // redirect: '/useStatistics',
+  // meta: {
+  //   keepAlive: true // 需要被缓存
+  // },
 }]

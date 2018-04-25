@@ -66,6 +66,12 @@ let filters = {
       var value2 = b[property];
       return value1 - value2;
     }
+  },
+  mobileReg(str){
+    //手机号验证
+    const reg = /^1\d{10}$/
+    const result = reg.test(str);
+    return result
   }
 }
 
@@ -84,5 +90,6 @@ export default {
     Vue.prototype.idstr = filters.idstr
     Vue.prototype.copy = filters.copy
     Vue.prototype.compare = filters.compare
+    Vue.prototype.mobileReg = filters.mobileReg
   }
 }
