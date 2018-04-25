@@ -23,7 +23,7 @@
         <mu-th>支付方式</mu-th>
         <mu-th>创建时间</mu-th>
         <mu-th>总金额</mu-th>
-        <mu-th>对方名称</mu-th>
+        <mu-th>客户名</mu-th>
         <mu-th>备注</mu-th>
         <mu-th>订单状态</mu-th>
       </mu-tr>

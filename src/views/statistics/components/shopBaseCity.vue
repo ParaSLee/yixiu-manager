@@ -117,7 +117,7 @@
       //获取10条问题内容
       getQlist (pickData,type){
         getshopAllData(pickData).then(res => {
-          // console.log(res)
+          console.log(res)
           if (type!="全部") {
             this.areaShopData = res;
             this.areaShopData.moneyA = this.changeMoneyData(res.turnover,"A");
@@ -131,7 +131,7 @@
       changeMoneyData(money,type){
         if (type=="B") {
           money = parseInt(money*0.2);
-          console.log(money)
+          // console.log(money)
         }
         if (money<100) {
           return (money/100);

@@ -172,6 +172,7 @@
       //获取10条商家内容
       getShopList (pickData,type){
         this.circleShow = true;
+        // console.log(pickData)
         getVideoData(pickData).then(res => {
           // console.log(res)
           this.listShopData(res, type)
@@ -193,7 +194,7 @@
           delete this.findorderList.qualificationState
         }
         if (type.name!=undefined) {
-          this.findorderList.name = {$regex:type.name};
+          this.findorderList.name = type.name;
         }else{
           delete this.findorderList.name
         }
@@ -202,7 +203,7 @@
         }else{
           delete this.findorderList.createdAt
         }
-        console.log(this.findorderList)
+        // console.log(this.findorderList)
         getVideoData(this.findorderList).then(res => {
           let allpayment = 0;
           for(let i of res){
@@ -339,7 +340,8 @@
           this.findshopLish.qualificationState = this.serchstate;
         }
         if (this.searchText !== "") {
-          this.findshopLish.name=this.searchText;
+          let txt = this.searchText
+          this.findshopLish.name = {$regex:txt};
         }
 
         this.findshopLish.limit=10;
