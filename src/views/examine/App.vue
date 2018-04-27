@@ -165,29 +165,29 @@
       },
       //点击页码
       handleClick (newIndex) {
-        this.findshopLish.limit = 10*newIndex;
-        this.findshopLish.skip = this.findshopLish.limit-10;
+        this.findshopLish.limit = 10;
+        this.findshopLish.skip = newIndex*10-10;
         this.getShopList(this.findshopLish);
+        // console.log(this.findshopLish)
       },
       //获取10条商家内容
       getShopList (pickData,type){
         this.circleShow = true;
-        // console.log(pickData)
         getVideoData(pickData).then(res => {
           // console.log(res)
           this.listShopData(res, type)
           return {pickData,type};
         },(err => {
           console.log(err)
-        })).then((pickData,type) => {
-          if (type!=="增加") {
-            this.allDeposit(pickData.pickData);
+        })).then((pickData) => {
+          if (pickData.type==="全部" || pickData.type==="修改") {
+            this.allDeposit(pickData.pickData,pickData.type);
           }else{
             this.circleShow = false;
           }
         })
       },
-      allDeposit(type){
+      allDeposit(type,kind){
         if (type.qualificationState!=undefined) {
           this.findorderList.qualificationState = type.qualificationState;
         }else{
@@ -203,8 +203,19 @@
         }else{
           delete this.findorderList.createdAt
         }
+        if(kind==="全部"){
+          this.findorderList.limit = this.total;
+          this.findorderList.skip = 0;
+        }else if(kind=="修改"){
+          this.findorderList.limit = this.total;
+          this.findorderList.skip = 0;
+        }else{
+          delete this.findorderList.limit;
+          delete this.findorderList.skip;
+        }
         // console.log(this.findorderList)
         getVideoData(this.findorderList).then(res => {
+          // console.log(res)
           let allpayment = 0;
           for(let i of res){
             allpayment += i.payment;
@@ -258,7 +269,7 @@
         this.timeTips = "如果未选择时间节点，则搜索所有时间内的订单";
         this.showTimetip = true;
         this.showTimetipErr = false;
-        this.getShopList(this.findshopLish);
+        this.getShopList(this.findshopLish,"全部");
         this.returnAllShow = false;
         this.searchText = "";
         this.serchstate = "全部";
@@ -274,7 +285,7 @@
           this.findshopLish.name=this.searchText;
         }
         this.loading = true;
-        this.findshopLish.limit+=10;
+        this.findshopLish.limit=10;
         this.findshopLish.skip+=10;
         let type = "增加";
         this.getShopList(this.findshopLish,type)
@@ -347,7 +358,7 @@
         this.findshopLish.limit=10;
         this.findshopLish.skip=0;
         // let type = "增加";
-        this.getShopList(this.findshopLish)
+        this.getShopList(this.findshopLish,"修改")
         this.loading = true;
         this.returnAllShow = true;
         this.nextpage = true;
@@ -398,7 +409,7 @@
     },
     created(){ 
       this.getShopNumber();
-      this.getShopList(this.findshopLish)
+      this.getShopList(this.findshopLish,"全部")
     }
   }
 </script>
