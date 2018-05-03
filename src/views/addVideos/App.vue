@@ -243,7 +243,7 @@
           this.uploading += 1
           if (this.uploading >= 80) clearInterval(this.timer);
         }, 3000)
-        axios.post('https://m.yixiutech.com/upload', fd, config)
+        axios.post('https://m.yixiutech.com/upload2', fd, config)
         .then(res => {
           clearInterval(this.timer)
           this.timer2 = setInterval(() => {

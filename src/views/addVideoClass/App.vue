@@ -322,8 +322,9 @@
         let config = {
           headers: {'Content-Type': 'multipart/form-data'}
         }
-        axios.post('https://m.yixiutech.com/upload', fd, config)
+        axios.post('https://m.yixiutech.com/upload2', fd, config)
         .then(res => {
+          // console.log(res)
           this.newClass.info.cover = res.data.data;
           this.circleShow = false;
         })
