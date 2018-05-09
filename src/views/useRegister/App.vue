@@ -10,17 +10,17 @@
         <p>密码：<span v-if="passwordText">{{passwordText}}</span></p>
         <input type="password" v-model="password">
       </div>
-      <div class="signin-content">
+      <!-- <div class="signin-content">
         <p>验证码：<span v-if="vercode">{{vercode}}</span></p>
         <input type="text" v-model="code">
         <button class="getCode" @click="getmessage" :disabled="LoadinggetMessaga" :class="LoadinggetMessaga?'cantgetCode':''">{{ getMessaga }}</button>
-      </div>
+      </div> -->
       <div class="signin-content" @click="regin">
         <button>注册</button>
       </div>
-      <div class="signin-content rigin" @click="backlogin">
+<!--       <div class="signin-content rigin" @click="backlogin">
         <button>返回登录</button>
-      </div>
+      </div> -->
 
     </div>
     <div class="loadingBox"  v-if="loading">
@@ -36,42 +36,42 @@
   //vant
   import { Loading } from 'vant';
   import md5 from "js-md5";
-  import { useRegin,sendmessage } from '../common/api'
+  import { useRegin/*,sendmessage*/ } from '../common/api'
 
   export default {
     data(){
       return {
-        LoadinggetMessaga: false,
-        theTime:60,
-        getMessaga: "获取验证码",
+        // LoadinggetMessaga: false,
+        // theTime:60,
+        // getMessaga: "获取验证码",
         idText:"",
-        vercode:"",
+        // vercode:"",
         passwordText:"",
         loading:false,
         id:"",
-        code:"",
+        // code:"",
         password:"",
-        eCode:"",
+        // eCode:"",
       }
     },
     components: {
       [Loading.name]: Loading,
     },
     methods: {
-      backlogin(){
-        this.$router.push("/useSignin")
-      },
+      // backlogin(){
+      //   this.$router.push("/useSignin")
+      // },
       regin(){
         this.idText="";
         this.passwordText="";
-        this.vercode="";
+        // this.vercode="";
 
         let isOK = true;
         this.loading = true;
-        if (this.code==="") {
-          this.vercode="验证码不能为空";
-          isOK = false;
-        }
+        // if (this.code==="") {
+        //   this.vercode="验证码不能为空";
+        //   isOK = false;
+        // }
         
         if (this.id==="") {
           this.idText="手机号不能为空";
@@ -82,10 +82,10 @@
           isOK = false;
         }
         if (isOK===true) {
-          if (this.code!==this.eCode) {
-            this.vercode="验证码错误";
-            isOK = false;
-          }else{
+          // if (this.code!==this.eCode) {
+          //   this.vercode="验证码错误";
+          //   isOK = false;
+          // }else{
             let accound = {
               mobile: `${this.id}S`,
               password: md5(this.password)
@@ -108,56 +108,57 @@
             },(err => {
               console.log(err)
             }))
-          }
+          // }
         }
         this.loading = false;
       },
-      getmessage(){
-        if (!this.id) {
-          this.idText="手机号不能为空";
-        }else if(this.mobileReg(this.id)==false){
-          this.idText="请输入正确的手机号";
-        }else{
-          this.idText="";
-          let a = {
-            mobile: this.id
-          }
-          sendmessage(a)
-          .then(res => {
-            // console.log(res)
-            if (res.errMsg=="触发小时级流控Permits:5") {
-              this.vercode="注册人数过多，请1小时后重试";
-              this.LoadinggetMessaga = true;
-            }else{
-              this.eCode = res;
-              this.LoadinggetMessaga = true;
-              this.getMessaga = `${this.theTime}秒后重新发送`
-              let inter = setInterval(() => {
-                this.theTime -= 1;
-                this.getMessaga = `${this.theTime}秒后重新发送`
-                if (this.theTime == 0) {
-                  this.getMessaga = "重新获取验证码";
-                  this.LoadinggetMessaga = false;
-                  clearInterval(inter)
-                  this.theTime = 60;
-                }
-              },1000);
-            }
-          },(err => {
-            console.log(err);
-          }))
-        }
-      },
+      // getmessage(){
+      //   if (!this.id) {
+      //     this.idText="手机号不能为空";
+      //   }else if(this.mobileReg(this.id)==false){
+      //     this.idText="请输入正确的手机号";
+      //   }else{
+      //     this.idText="";
+      //     let a = {
+      //       mobile: this.id
+      //     }
+      //     sendmessage(a)
+      //     .then(res => {
+      //       // console.log(res)
+      //       if (res.errMsg=="触发小时级流控Permits:5") {
+      //         this.vercode="注册人数过多，请1小时后重试";
+      //         this.LoadinggetMessaga = true;
+      //       }else{
+      //         this.eCode = res;
+      //         this.LoadinggetMessaga = true;
+      //         this.getMessaga = `${this.theTime}秒后重新发送`
+      //         let inter = setInterval(() => {
+      //           this.theTime -= 1;
+      //           this.getMessaga = `${this.theTime}秒后重新发送`
+      //           if (this.theTime == 0) {
+      //             this.getMessaga = "重新获取验证码";
+      //             this.LoadinggetMessaga = false;
+      //             clearInterval(inter)
+      //             this.theTime = 60;
+      //           }
+      //         },1000);
+      //       }
+      //     },(err => {
+      //       console.log(err);
+      //     }))
+      //   }
+      // },
     }
   }
 </script>
 
 <style scoped>
   .signin-container{
-    position: absolute;
+    /*position: absolute;*/
     height: 100%;
     width: 100%;
     background: #2C2C2C;
+    background-image: linear-gradient(to right, #868f96 0%, #596164 100%);
     overflow: hidden;
   }
   .signin-box{
@@ -165,7 +166,8 @@
     top: 50%;
     left: 50%;
     margin-left: -170px;
-    margin-top: -270px;
+    /*margin-top: -270px;*/
+    margin-top: -200px;
     padding-bottom: 20px;
     /*height: 420px;*/
     width: 340px;
@@ -264,7 +266,7 @@
     height: 100%;
     background-color: rgba(124, 124, 124,0.2);
   }
-  .signin-content .getCode{
+  /*.signin-content .getCode{
     position: absolute;
     top: 0;
     right: 10px;
@@ -286,5 +288,5 @@
     background: rgb(186, 186, 186);
     color: #f9f6e5;
     font-weight: 500;
-  }
+  }*/
 </style>

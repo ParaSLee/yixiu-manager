@@ -391,10 +391,21 @@ export function useRegin(data){
   });
 }
 
-// 注册
+// 登录
 export function useLogin(data){
   return new Promise((resolve, reject) => {
     ajax.post(`${url}/login`,data).then((res) => {
+      resolve(res);
+    }).then((err) => {
+      reject(err);
+    });
+  });
+}
+
+// 修改密码
+export function useChange(data){
+  return new Promise((resolve, reject) => {
+    ajax.post(`${url}/user/update/password`,data).then((res) => {
       resolve(res);
     }).then((err) => {
       reject(err);

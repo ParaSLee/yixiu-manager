@@ -42,20 +42,20 @@
         尚未添加
       </span>
     </p>
-    <p class="dialogBox">
+    <!-- <p class="dialogBox">
       <span class="messageTitle">商户证书：</span> 
-      <!-- <span>
+      <span>
         <van-uploader :after-read="onRead" accept="image/gif, image/jpeg" multiple>
           <van-icon name="photograph" />
         </van-uploader>
-      </span> -->
+      </span>
       <span v-if="thephoto.certificate && thephoto.certificate.length != 0">
         <img :src="thephoto.certificate" class="beforeImg" @click="lookImg(thephoto.certificate)">
       </span>
       <span v-else>
         尚未添加
       </span>
-    </p>
+    </p> -->
     <p class="dialogBox">
       <span class="messageTitle">营业执照：</span> 
       <span v-if="thephoto.license && thephoto.license.length != 0">

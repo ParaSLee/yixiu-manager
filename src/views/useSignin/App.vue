@@ -14,7 +14,7 @@
         <button>登录</button>
       </div>
       <div class="signin-content rigin">
-        <button class="BTNm" @click="rigin">注册</button>
+        <!-- <button class="BTNm" @click="rigin">注册</button> -->
         <button @click="forget">忘记密码</button>
       </div>
 
@@ -191,7 +191,7 @@
   .rigin button{
     display: inline-block;
     height: 45px;
-    width: 45%;
+    /*width: 45%;*/
     color: #1C1124;
     background: #E7EFF3;
   }

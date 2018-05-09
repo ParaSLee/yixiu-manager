@@ -99,35 +99,23 @@ export default [{
       name: "addVideos",
       path: "addVideos",
       component: addVideos
-    }
+    },
+    {
+      name: "useRegister",
+      path: 'useRegister',
+      component: useRegister,
+    },
   ]
 },
 {
   name: "useSignin",
   path: '/useSignin',
   component: useSignin,
-  // redirect: '/useStatistics',
-  // meta: {
-  //   keepAlive: true // 需要被缓存
-  // },
-},
-{
-  name: "useRegister",
-  path: '/useRegister',
-  component: useRegister,
-  // redirect: '/useStatistics',
-  // meta: {
-  //   keepAlive: true // 需要被缓存
-  // },
 },
 {
   name: "useForget",
   path: '/useForget',
   component: useForget,
-  // redirect: '/useStatistics',
-  // meta: {
-  //   keepAlive: true // 需要被缓存
-  // },
 },
 {
   name: "useStatistics",

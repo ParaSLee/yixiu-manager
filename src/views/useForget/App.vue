@@ -2,22 +2,21 @@
   <div class="signin-container">
     <div class="signin-box">
       <h2 class="signin-title">修改密码</h2>
-      <p style="margin-left:50px;font-size:18px;">该功能暂时无法使用</p>
       <div class="signin-content">
         <p>手机号：<span v-if="idText">{{idText}}</span></p>
         <input type="text" v-model="id">
-      </div>
-      <div class="signin-content">
-        <p>密码：<span v-if="passwordText">{{passwordText}}</span></p>
-        <input type="password" v-model="password">
       </div>
       <div class="signin-content">
         <p>验证码：<span v-if="vercode">{{vercode}}</span></p>
         <input type="text" v-model="code">
         <button class="getCode" @click="getmessage" :disabled="LoadinggetMessaga" :class="LoadinggetMessaga?'cantgetCode':''">{{ getMessaga }}</button>
       </div>
+      <div class="signin-content">
+        <p>新密码：<span v-if="passwordText">{{passwordText}}</span></p>
+        <input type="password" v-model="password">
+      </div>
       <div class="signin-content" @click="regin">
-        <button>注册</button>
+        <button>修改密码</button>
       </div>
       <div class="signin-content rigin" @click="backlogin">
         <button>返回登录</button>
@@ -29,6 +28,10 @@
         <van-loading color="black" size="70px"/>
       </div>
     </div>
+    <mu-dialog :open="dialog" @close="close">
+      <p style="font-size:20px">修改成功！</p>
+      <mu-flat-button slot="actions" primary @click="close" label="确定"/>
+    </mu-dialog>
     
   </div>
 </template>
@@ -37,7 +40,7 @@
   //vant
   import { Loading } from 'vant';
   import md5 from "js-md5";
-  import { useRegin,sendmessage } from '../common/api'
+  import { getVideoData,sendmessage,useChange } from '../common/api'
 
   export default {
     data(){
@@ -53,6 +56,7 @@
         code:"",
         password:"",
         eCode:"",
+        dialog:false,
       }
     },
     components: {
@@ -88,23 +92,26 @@
             isOK = false;
           }else{
             let accound = {
+              collection:"User",
               mobile: `${this.id}S`,
-              password: md5(this.password)
             }
 
-            useRegin(accound).then(res => {
-                // console.log(res)
-              if (res.errMsg == "手机号不存在") {
+            getVideoData(accound).then(res => {
+              if (res.length < 1) {
                 this.idText="手机号不存在";
                 this.passwordText="";
-              }else if(res.errMsg == "密码错误"){
-                this.idText="";
-                this.passwordText="密码错误";
-              }else if(!res.errMsg){
-                sessionStorage.setItem('sign', true)
-                this.$router.push("/useStatistics")
-              }else{
-                this.idText="不能使用该账号登录";
+              }else {
+                const user = {
+                  _id:res[0]._id,
+                  password:this.password,
+                }
+                useChange(user).then(res => {
+                  if (res==="更新完成") {
+                    this.dialog = true;
+                  }else {
+                    this.idText="修改失败";
+                  }
+                })
               }
             },(err => {
               console.log(err)
@@ -123,7 +130,6 @@
           let a = {
             mobile: this.id
           }
-          /*
           sendmessage(a)
           .then(res => {
             // console.log(res)
@@ -148,9 +154,11 @@
           },(err => {
             console.log(err);
           }))
-          */
         }
       },
+      close(){
+        this.$router.push({path:"/useSignin"});
+      }
     }
   }
 </script>
@@ -289,5 +297,8 @@
     background: rgb(186, 186, 186);
     color: #f9f6e5;
     font-weight: 500;
+  }
+  .mu-dialog{
+    max-width: 300px;
   }
 </style>

@@ -45,6 +45,10 @@
             url:"/home/statistics"
           },
           {
+            name:"添加可访问数据统计的商户",
+            url:"/home/useRegister"
+          },
+          {
             name:"手机管理",
             url:"",
             type:"father"
