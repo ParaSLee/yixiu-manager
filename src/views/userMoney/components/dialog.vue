@@ -3,31 +3,33 @@
   <mu-dialog :open="dialog" title="问题详情" @close="close" scrollable>   
   
     <mu-tabs :value="activeTab" @change="handleTabChange">
-      <mu-tab value="tab1" title="问题信息"/>
-      <mu-tab value="tab2" title="用户信息"/>
-      <mu-tab value="tab3" title="问题详情"/>
-      <mu-tab value="tab4" title="状态修改"/>
+      <mu-tab value="tab1" title="返利信息"/>
     </mu-tabs>
 
     <div v-if="activeTab === 'tab1'">
       <div class="dialogBland"></div>
       <p class="dialogBox canchose">
-        <span class="messageTitle">问题ID：</span> 
+        <span class="messageTitle">用户ID：</span> 
         {{ questionData._id }}
       </p>
       <p class="dialogBox">
-        <span class="messageTitle">问题标题：</span> 
-        {{ questionData.title }}
+        <span class="messageTitle">邀请人数：</span> 
+        {{ userNumber }}
       </p>
       <p class="dialogBox">
-        <span class="messageTitle">创建时间：</span> 
-        {{ questionData.time }}
+        <span class="messageTitle">总返利：</span> 
+        {{ allnumber }}
       </p>
-      <div class="dialogBland2 bottomline"></div>
-      <div class="dialogBland2"></div>
-      <div class="dialogBox">
-        <span class="messageTitle">问题简介：</span> 
-        <div v-html="questionData.desc" class="Textdesc"></div>
+      <p class="dialogBox">
+        <span class="messageTitle">已返利：</span>
+        {{ surplusnumber }}
+      </p>
+      <p class="dialogBox">
+        <span class="messageTitle">待返利：</span>
+        {{ allnumber - surplusnumber }}
+      </p>
+      <div class="search">
+        <button @click="serchmoney (questionData)">查询</button>
       </div>
     </div>
 
@@ -89,7 +91,7 @@
 
 <script>
 import { updateQuestion } from '../../common/api'
-import { Toast } from 'vant';
+import { Toast, Button } from 'vant';
 
   export default {
     props:{
@@ -98,6 +100,11 @@ import { Toast } from 'vant';
     },
     data(){
       return {
+        userNumber: 0,
+        allnumber: 0,
+        surplusnumber: 0,
+        userlist: [],
+        allUserIds: [],
         circleShow:false,
         chosevalue:-1,
         changestateShow:false,
@@ -121,12 +128,101 @@ import { Toast } from 'vant';
       }
     },
     components: {
+      [Button.name]: Button,
     },
     methods: {
       //关闭dialog
       close(){
         // this.questionData = [];
         this.$emit("close")
+      },
+      async serchmoney(questionData){
+        let userId = questionData._id;
+        console.log(userId);
+        // let userId = "5ad21852ab85e142eaef9276";
+        // let userId = '5ad6cf52060e415f31618742';
+        // let userId = "5ad2b050ab85e142eaef929c";
+        // 1.获取关联用户
+        let userLists = await this.$api.sendData('https://m.yixiutech.com/sql/find/', {
+            collection:'User',
+            parent: userId,
+            limit: 0,
+            select:{_id:1},
+		    })
+        console.log('----------------------');
+        console.log(userLists);
+        // let userIdlist = userLists.data;
+        this.userNumber = userLists.length;
+        // if(userIdlist.length == 0){
+        //   alert("已推荐0人，加油哦！");
+        //   return;
+        // } else {
+        //   alert("已推荐" + userIdlist.length + "人");
+        // }
+        
+        // console.log(userIdlist.length);
+        // console.log(userIdlist);
+
+        let userids = [];
+        if(userLists.length>0){
+          for(var x= 0; x<userLists.length; x++){
+            userids.push(userLists[x]._id);
+          }
+        }
+        this.allUserIds = userids;
+        console.log('----------------------1');
+        console.log(userids);
+        //2.根据获取到的列表,查询订单列表
+        // let iduser = "5ad209cfab85e142eaef9271"
+        let userOrderlist = await this.$api.sendData('https://m.yixiutech.com/sql/find/', {
+          collection:'Order',
+          user:{
+            $in:userids//遍历childrenShoplist的_id放到这里面
+            // $in:[iduser]
+          },
+          limit: 0,
+          state: 13,
+          select:{payment:1},
+        })
+        console.log("--------------------------2");
+        console.log(userOrderlist);
+        // let userOrderlists = userOrderlist.data;
+        let sumMoney = 0;
+        if(userOrderlist.length>0){
+          for(var y= 0; y<userOrderlist.length; y++){
+            sumMoney = sumMoney + userOrderlist[y].payment;
+           }
+        }
+        console.log("--------------------------3");
+        console.log(sumMoney);
+        this.allnumber = (sumMoney/100)*0.03;
+        console.log(this.allnumber);
+        // 已返利订单查询
+
+        let userOrderlistHadGet = await this.$api.sendData('https://m.yixiutech.com/sql/find/', {
+          collection:'Order',
+          user:{
+            $in:userids//遍历childrenShoplist的_id放到这里面
+            // $in:[iduser]
+          },
+          limit: 0,
+          state: 13,
+          rebate: true,
+          select:{payment:1},
+        })
+
+        console.log(userOrderlistHadGet);
+        // let userOrderlistHadGets = userOrderlistHadGet.data;
+        let sum = 0;
+        if(userOrderlistHadGet.length>0){
+          for(var y= 0; y<userOrderlistHadGet.length; y++){
+            sum = sum + userOrderlistHadGet[y].payment;
+           }
+        }
+        console.log("--------------------------3");
+        console.log(sum);
+        this.surplusnumber = (sum/100)*0.03;
+        console.log(this.surplusnumber);
       },
       //改变状态
       chosestate(){
@@ -156,7 +252,93 @@ import { Toast } from 'vant';
         this.activeTab = val
       }
     },
-    created(){
+    async created(){
+        // let userId = questionData._id;
+
+        // // let userId = "5ad21852ab85e142eaef9276";
+        // // let userId = '5ad6cf52060e415f31618742';
+        // // let userId = "5ad2b050ab85e142eaef929c";
+        // // 1.获取关联用户
+        // let userLists = await this.$api.sendData('https://m.yixiutech.com/sql/find/', {
+        //     collection:'User',
+        //     parent: userId,
+        //     limit: 0,
+        //     select:{_id:1},
+		    // })
+        // console.log('----------------------');
+        // console.log(userLists);
+        // let userIdlist = userLists.data;
+        // this.number = userIdlist.length;
+        // // if(userIdlist.length == 0){
+        // //   alert("已推荐0人，加油哦！");
+        // //   return;
+        // // } else {
+        // //   alert("已推荐" + userIdlist.length + "人");
+        // // }
+        
+        // console.log(userIdlist.length);
+        // console.log(userIdlist);
+
+        // let userids = [];
+        // if(userIdlist.length>0){
+        //   for(var x= 0; x<userIdlist.length; x++){
+        //     userids.push(userIdlist[x]._id);
+        //   }
+        // }
+        // this.allUserIds = userids;
+        // console.log('----------------------1');
+        // console.log(userids);
+        // //2.根据获取到的列表,查询订单列表
+        // // let iduser = "5ad209cfab85e142eaef9271"
+        // let userOrderlist = await this.$api.sendData('https://m.yixiutech.com/sql/find/', {
+        //   collection:'Order',
+        //   user:{
+        //     $in:userids//遍历childrenShoplist的_id放到这里面
+        //     // $in:[iduser]
+        //   },
+        //   limit: 0,
+        //   state: 13,
+        //   select:{payment:1},
+        // })
+        // console.log("--------------------------2");
+        // console.log(userOrderlist);
+        // let userOrderlists = userOrderlist.data;
+        // let sumMoney = 0;
+        // if(userOrderlists.length>0){
+        //   for(var y= 0; y<userOrderlists.length; y++){
+        //     sumMoney = sumMoney + userOrderlists[y].payment;
+        //    }
+        // }
+        // console.log("--------------------------3");
+        // console.log(sumMoney);
+        // this.allnumber = (sumMoney/100)*0.03;
+        // console.log(this.allnumber);
+        // // 已返利订单查询
+
+        // let userOrderlistHadGet = await this.$api.sendData('https://m.yixiutech.com/sql/find/', {
+        //   collection:'Order',
+        //   user:{
+        //     $in:userids//遍历childrenShoplist的_id放到这里面
+        //     // $in:[iduser]
+        //   },
+        //   limit: 0,
+        //   state: 13,
+        //   rebate: true,
+        //   select:{payment:1},
+        // })
+
+        // console.log(userOrderlistHadGet);
+        // let userOrderlistHadGets = userOrderlistHadGet.data;
+        // let sum = 0;
+        // if(userOrderlistHadGets.length>0){
+        //   for(var y= 0; y<userOrderlistHadGets.length; y++){
+        //     sum = sum + userOrderlistHadGets[y].payment;
+        //    }
+        // }
+        // console.log("--------------------------3");
+        // console.log(sum);
+        // this.surplusnumber = (sum/100)*0.03;
+        // console.log(this.surplusnumber);
     }
   }
 </script>

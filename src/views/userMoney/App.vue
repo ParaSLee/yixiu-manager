@@ -1,19 +1,7 @@
 <template>
 <div>
   <div class="serchBox">
-    <mu-select-field v-model="serchstate" label="选择问题状态" class="serchstateBox">
-      <mu-menu-item value="全部" title="全部"/>
-      <mu-menu-item value="待审核" title="待审核"/>
-      <mu-menu-item value="正常" title="正常"/>
-      <mu-menu-item value="已采纳" title="已采纳"/>
-      <mu-menu-item value="已关闭" title="已关闭"/>
-    </mu-select-field>
-
-    <mu-text-field hintText="搜索标题" v-model="searchText" style="width:200px;"/>
-
-    <mu-raised-button label="搜索" @click="toSearch" class="returnBtn" primary/>
-    
-    <mu-raised-button label="返回全部" @click="returnAll" v-if="returnAllShow" class="returnBtn" primary/>
+    全部用户
   </div>
   
   <mu-circular-progress :size="40" v-if="circleShow" class="circleBox"/>
@@ -21,25 +9,20 @@
   <mu-table enableSelectAll :showCheckbox="false" ref="table" class="listTable" :height="'660px'">
     <mu-thead>
       <mu-tr>
-        <mu-th>问题ID</mu-th>
-        <mu-th>问题标题</mu-th>
-        <mu-th>问题简述</mu-th>
-        <mu-th>提问人</mu-th>
-        <mu-th>时间</mu-th>
-        <mu-th>问题状态</mu-th>
+        <mu-th>用户ID</mu-th>
+        <mu-th>名字</mu-th>
+        <mu-th>联系方式</mu-th>
+        <mu-th>返利</mu-th>
       </mu-tr>
     </mu-thead>
     <mu-tbody>
-      <mu-tr v-for="quetion in questionData" :key="quetion._id" >
-        <mu-td>{{ quetion.id }}</mu-td>
-        <mu-td class="texthidden">{{ quetion.title }}</mu-td>
-        <mu-td class="texthidden">{{ quetion.intro }}</mu-td>
-        <mu-td class="texthidden" v-if="quetion.author!=null">{{ quetion.author.name }}</mu-td>
-        <mu-td class="texthidden" v-else>无</mu-td>
-        <mu-td class="texthidden">{{ quetion.time }}</mu-td>
+      <mu-tr v-for="user in users" :key="users._id" >
+        <mu-td>{{ user._id }}</mu-td>
+        <mu-td class="texthidden">{{ user.name }}</mu-td>
+        <mu-td class="texthidden">{{ user.mobile }}</mu-td>
         <mu-td>
-          <span :class="stateStyle[quetion.state]">{{ stateText[quetion.state] }}</span>
-          <mu-icon-button tooltip="查看详情" tooltipPosition="bottom-right" touch @click.capture="open(quetion)"/>
+          <span>返利</span>
+          <mu-icon-button tooltip="查看详情" tooltipPosition="bottom-right" touch @click.capture="open(user)"/>
             <sicon name="check" scale="2.3" class="checkI"></sicon>
           </mu-icon-button>
         </mu-td>
@@ -63,6 +46,7 @@
   import Mdialog from "./components/dialog"
 
   export default {
+
     data(){
       return {
         stateText:{
@@ -77,6 +61,7 @@
           2:"chosed",
           3:"closed"
         },
+        users: [],
         loading:true,
         nextpage:true,
         serchstate:"全部",  // 搜索的状态
@@ -212,9 +197,9 @@
         }
       },
       //弹出
-      open (questionData) {
+      open (user) {
         this.dialog = true;
-        this.signalquetion = questionData;
+        this.signalquetion = user;
         // console.log(this.signalquetion);
       },
       //关闭
@@ -223,8 +208,16 @@
         this.signalquetion = {};
       }
     },
-    created(){ 
-      this.getQlist(this.findquestion)
+    async created(){ 
+      // this.getQlist(this.findquestion)
+      let userList = await this.$api.sendData('https://m.yixiutech.com/sql/find/', {
+          collection:'User',
+          limit: 20,
+          select:{_id:1, name:1, email:1, mobile:1, wx:1},
+		  })
+      console.log(userList);
+      this.users = userList;
+      sessionStorage.setItem('userInfo', JSON.stringify(res));
     }
   }
 </script>
