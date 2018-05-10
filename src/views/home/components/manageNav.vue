@@ -49,6 +49,10 @@
             url:"/home/useRegister"
           },
           {
+            name:"用户返利",
+            url:"/home/userMoney"
+          },
+          {
             name:"手机管理",
             url:"",
             type:"father"

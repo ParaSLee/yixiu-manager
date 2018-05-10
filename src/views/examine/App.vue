@@ -45,6 +45,7 @@
         <mu-th>创建时间</mu-th>
         <mu-th>保证金</mu-th>
         <mu-th>商家状态</mu-th>
+        <mu-th>商家返利</mu-th>
       </mu-tr>
     </mu-thead>
     <mu-tbody>
@@ -61,6 +62,12 @@
             <sicon name="check" scale="2.3" class="checkI"></sicon>
           </mu-icon-button>
         </mu-td>
+        <mu-td>
+          <span>返利</span>
+          <mu-icon-button tooltip="查看详情" tooltipPosition="bottom-right" touch @click.capture="shopRebate(shop)" />
+            <sicon name="check" scale="2.3" class="checkI"></sicon>
+          </mu-icon-button>
+        </mu-td>
       </mu-tr>
     </mu-tbody>
   </mu-table>
@@ -73,7 +80,7 @@
 
 
   <Mdialog @close="close" @delclose="getShopList(findshopLish)" :shopData="signalShop" :dialog="dialog"></Mdialog>
-
+  <shopRebateMoney @closeRebate="closeRebate" @delclose="getShopList(findshopLish)" :shopData="signalShop" :dialog="dialog1"></shopRebateMoney>
   <mu-pagination v-if="!returnAllShow" :total="total" :current="current" @pageChange="handleClick" class="ManagePagination">
   </mu-pagination>
 
@@ -103,7 +110,7 @@
   } from '../common/api'
   import Datepicker from 'vuejs-datepicker';
   import Mdialog from "../common/dialog"
-
+  import shopRebateMoney from "../common/shopRebateMoney"
   export default {
     data(){
       return {
@@ -120,6 +127,7 @@
         returnAllShow:false,
         circleShow:false,  //数据读取中
         dialog: false,    //弹窗
+        dialog1: false,    //弹窗
         // dialog2:false,   //点击删除却没有选择内容的时候
         // dialog3:false,   //取消删除
         total: 10,    //总页数
@@ -153,7 +161,8 @@
     },
     components: {
       Mdialog,
-      Datepicker
+      Datepicker,
+      shopRebateMoney
     },
     methods: {
       clearTime(type){
@@ -397,7 +406,16 @@
       close () {
         this.dialog = false;
         this.signalShop = {};
-      }
+      },
+      shopRebate (shopData) {
+        this.dialog1 = true;
+        this.signalShop = shopData;
+        console.log(this.signalShop);
+      },
+      closeRebate () {
+        this.dialog1 = false;
+        this.signalShop = {};
+      },
       /*
       nodelcolse(){
         this.dialog2 = false;

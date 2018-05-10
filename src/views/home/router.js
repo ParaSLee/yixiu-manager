@@ -21,6 +21,7 @@ import useStatistics from "../useStatistics/App"
 import useSignin from "../useSignin/App"
 import useRegister from "../useRegister/App"
 import useForget from "../useForget/App"
+import userMoney from "../userMoney/App"
 
 export default [{
   path: '/home',
@@ -104,6 +105,11 @@ export default [{
       name: "useRegister",
       path: 'useRegister',
       component: useRegister,
+    },
+    {
+      name: "userMoney",
+      path: 'userMoney',
+      component: userMoney,
     },
   ]
 },
