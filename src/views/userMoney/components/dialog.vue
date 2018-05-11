@@ -182,7 +182,7 @@ import { Toast, Button } from 'vant';
           },
           limit: 0,
           state: 13,
-          select:{payment:1},
+          select:{payment:1, service:1},
         })
         console.log("--------------------------2");
         console.log(userOrderlist);
@@ -190,7 +190,10 @@ import { Toast, Button } from 'vant';
         let sumMoney = 0;
         if(userOrderlist.length>0){
           for(var y= 0; y<userOrderlist.length; y++){
-            sumMoney = sumMoney + userOrderlist[y].payment;
+            if(userOrderlist[y].service.length !== 0){
+              sumMoney = sumMoney + userOrderlist[y].payment;
+            }
+            
            }
         }
         console.log("--------------------------3");
@@ -207,8 +210,8 @@ import { Toast, Button } from 'vant';
           },
           limit: 0,
           state: 13,
-          rebate: true,
-          select:{payment:1},
+          userRebate: true,
+          select:{payment:1, service:1},
         })
 
         console.log(userOrderlistHadGet);
@@ -216,7 +219,10 @@ import { Toast, Button } from 'vant';
         let sum = 0;
         if(userOrderlistHadGet.length>0){
           for(var y= 0; y<userOrderlistHadGet.length; y++){
-            sum = sum + userOrderlistHadGet[y].payment;
+            if(userOrderlistHadGet[y].service.length !== 0){
+              sum = sum + userOrderlistHadGet[y].payment;
+            }
+            
            }
         }
         console.log("--------------------------3");
