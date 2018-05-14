@@ -65,7 +65,7 @@
         尚未添加
       </span>
     </p>
-    <p class="dialogBox">
+    <!-- <p class="dialogBox">
       <span class="messageTitle">商户协议：</span> 
       <span v-if="thephoto.protocol && thephoto.protocol.length != 0">
         <img :src="thephoto.protocol" class="beforeImg" @click="lookImg(thephoto.protocol)">
@@ -73,7 +73,7 @@
       <span v-else>
         尚未添加
       </span>
-    </p>
+    </p> -->
     
     <p class="dialogBox checkBox">
       <span class="messageTitle">商户状态：</span> 
