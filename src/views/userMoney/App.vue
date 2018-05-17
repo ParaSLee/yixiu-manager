@@ -1,7 +1,7 @@
 <template>
 <div>
   <div class="serchBox">
-    全部用户
+    全部用户数:{{ all }}
   </div>
   
   <mu-circular-progress :size="40" v-if="circleShow" class="circleBox"/>
@@ -61,6 +61,7 @@
           2:"chosed",
           3:"closed"
         },
+        all: '',
         users: [],
         loading:true,
         nextpage:true,
@@ -212,9 +213,24 @@
       // this.getQlist(this.findquestion)
       let userList = await this.$api.sendData('https://m.yixiutech.com/sql/find/', {
           collection:'User',
-          limit: 20,
+          limit: 0,
           select:{_id:1, name:1, email:1, mobile:1, wx:1},
 		  })
+      this.all = userList.length;
+      // console.log(userList);
+      let userss = [];
+      // userss.push();
+      for(var x =0 ; x < userList.length ;x++){
+        userss.push(userList[x].wx)
+      }
+
+      // let mo = userList.mobile;
+      // console.log(userss);
+      // this.users = userList;
+      // for(var y =0 ; y < userList.length ;y++){
+      //   console.log(userss[y].nickname);
+      //   userList[y].name = userss[y].nickname;
+      // }
       console.log(userList);
       this.users = userList;
       sessionStorage.setItem('userInfo', JSON.stringify(res));
