@@ -79,7 +79,7 @@
   <mu-circular-progress :size="40" v-if="circleShow" class="circleBox"/>
 
 
-  <Mdialog @close="close" @delclose="getShopList(findshopLish)" :shopData="signalShop" :dialog="dialog"></Mdialog>
+  <Mdialog @close="close" @delclose="getShopList(findshopLish)" :shopData.async="signalShop" :dialog="dialog"></Mdialog>
   <shopRebateMoney @closeRebate="closeRebate" @delclose="getShopList(findshopLish)" :shopData="signalShop" :dialog="dialog1"></shopRebateMoney>
   <mu-pagination v-if="!returnAllShow" :total="total" :current="current" @pageChange="handleClick" class="ManagePagination">
   </mu-pagination>

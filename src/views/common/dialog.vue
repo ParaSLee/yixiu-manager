@@ -1,6 +1,11 @@
 <template>
 <div>
-  <mu-dialog :open="dialog" title="商户详情" @close="close" scrollable>   
+  <mu-dialog :open="dialog" @close="close" scrollable>   
+    <div slot="title" class="titleBox">
+      商户详情
+      <mu-raised-button label="刷新" mini class="demo-raised-button blueBtn changebtn" @click="renew" primary/>
+      <mu-circular-progress :size="40" v-if="circleShow" class="circleBox changebtn"/>
+    </div>
     <p class="dialogBox canchose">
       <span class="messageTitle">商户ID：</span> 
       {{ shopData._id }}
@@ -137,9 +142,8 @@
 
 <script>
 import { Uploader, Icon } from 'vant';
-import { changeState,delVideoData } from './api'
+import { changeState,delVideoData, getVideoData } from './api'
 import seebigphoto from "./seeBigPhoto"
-import axios from 'axios'
 
   export default {
     props:{
@@ -297,6 +301,21 @@ import axios from 'axios'
         this.close();
         this.$emit("delclose")
       },
+      renew(){
+        let findshop = {
+          collection:"Shop",
+          _id:this.shopData._id
+        }
+        getVideoData(findshop).then(res => {
+          // this.shopData = res[0];
+          this.shopData.certificate = res[0].certificate;
+          this.enterPhoto();
+          // console.log(res[0])
+          // console.log(this.shopData)
+        },(err => {
+          console.log(err)
+        }))
+      }
     },
     created(){
       this.chosevalue = this.shopData.qualificationState;
@@ -367,5 +386,14 @@ import axios from 'axios'
   .tig{
     color: #FF6138;
     font-size: 14px;
+  }
+  .changebtn{
+    float: right;
+  }
+  .titleBox{
+    width: 100%;
+  }
+  .blueBtn{
+    font-size: 18px;
   }
 </style>
