@@ -31,6 +31,11 @@
     <p class="dialogBox">
       <span class="messageTitle">商户封面：</span> 
       <img :src="shopData.cover" class="cover" @click="lookImg(shopData.cover)">
+      <span class="dphoto">
+        <van-uploader :after-read="onRead" accept="image/gif, image/jpeg" multiple>
+          <van-icon name="photograph" />
+        </van-uploader>
+      </span>
     </p>
     
     <p class="dialogBox">
@@ -142,8 +147,9 @@
 
 <script>
 import { Uploader, Icon } from 'vant';
-import { changeState,delVideoData, getVideoData } from './api'
+import { changeState,delVideoData, getVideoData, upVideoData } from './api'
 import seebigphoto from "./seeBigPhoto"
+import axios from 'axios';
 
   export default {
     props:{
@@ -252,9 +258,7 @@ import seebigphoto from "./seeBigPhoto"
         this.shop.sellPhone = this.chosesellValue==="可销售"? true : false;
         this.shop._id = this.shopData._id;
         delete this.shop.qualificationState;
-        // console.log(this.shop)
         changeState(this.shop).then(res => {
-          // console.log(res)
           this.changesellShow = false;
           this.shopData.sellPhone = res.sellPhone
         },(err => {
@@ -307,15 +311,41 @@ import seebigphoto from "./seeBigPhoto"
           _id:this.shopData._id
         }
         getVideoData(findshop).then(res => {
-          // this.shopData = res[0];
           this.shopData.certificate = res[0].certificate;
           this.enterPhoto();
-          // console.log(res[0])
-          // console.log(this.shopData)
         },(err => {
           console.log(err)
         }))
-      }
+      },
+      //传递照片
+      onRead(file,content){
+        this.circleShow = true;
+        let fd = new FormData();
+        // console.log(file)
+        
+        fd.append('file', file.file);
+
+        let config = {
+          headers: {'Content-Type': 'multipart/form-data'}
+        }
+        axios.post('https://m.yixiutech.com/upload2', fd, config)
+        .then(res => {
+          let findshop = {
+            collection:"Shop",
+            find:{
+              _id:this.shopData._id
+            },
+            update:{
+              cover:res.data.data,
+            }
+          }
+          upVideoData(findshop).then(res => {
+            console.log(res);
+          },(err => {
+            console.log(err)
+          }))
+        })
+      },
     },
     created(){
       this.chosevalue = this.shopData.qualificationState;
@@ -395,5 +425,8 @@ import seebigphoto from "./seeBigPhoto"
   }
   .blueBtn{
     font-size: 18px;
+  }
+  .dphoto{
+    margin-left: 10px;
   }
 </style>
