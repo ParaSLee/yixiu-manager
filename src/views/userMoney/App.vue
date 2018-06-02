@@ -221,7 +221,7 @@
       let userss = [];
       // userss.push();
       for(var x =0 ; x < userList.length ;x++){
-        userss.push(userList[x].wx)
+        userss.push(userList[x].wx.nickname)
       }
 
       // let mo = userList.mobile;
@@ -231,6 +231,7 @@
       //   console.log(userss[y].nickname);
       //   userList[y].name = userss[y].nickname;
       // }
+      console.log('-----------------');
       console.log(userList);
       this.users = userList;
       sessionStorage.setItem('userInfo', JSON.stringify(res));

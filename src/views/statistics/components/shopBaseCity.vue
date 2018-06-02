@@ -130,7 +130,7 @@
       },
       changeMoneyData(money,type){
         if (type=="B") {
-          money = parseInt(money*0.2);
+          money = parseInt(money*0.05);
           // console.log(money)
         }
         if (money<100) {
