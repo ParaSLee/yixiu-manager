@@ -221,7 +221,7 @@
       let userss = [];
       // userss.push();
       for(var x =0 ; x < userList.length ;x++){
-        userss.push(userList[x].wx.nickname)
+        userss.push(userList[x].wx)
       }
 
       // let mo = userList.mobile;
